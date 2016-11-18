@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title> UI Context </title>
+    <!-- favicon: VERY IMPORTANT =) -->
+    <link rel="shortcut icon" href="demo_framework_server/favicon.ico">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Bootstrap Core CSS -->
+
+    <!-- Moment.js date/time parsing -->
+
+    <!-- Custom Fonts -->
+
+    <!-- Plugin CSS -->
+
+    <!-- Theme CSS -->
+
+    <!-- JQuery From WebSource --> 
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- demo_framework_server/css/<here> -->
+    <link rel="stylesheet" href="demo_framework_server/css/style.css">
+
+
+    <!-- My javascript here --> 
+
+    <!-- Google Maps API -->
+
+    <!-- Javascript which requires flask templating here --> 
+  </head>
+  <body>
+    <h1> Cool Shit, Yo </h1>
+  </body>
+</html>
