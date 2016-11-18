@@ -24,12 +24,20 @@ def favicon():
         mimetype='image/vnd.microsoft.icon'
     )
 
+@app.route('/webhook', methods=['GET','POST'])
+def webhook():
+    content = flask.request
+    print(content)
+
 @app.route('/')
 def index():
     return flask.render_template('index.html')
 # END FLASK APPLICATION ROUTES ################################################
 
 # HELPER FUNCTIONS ############################################################
+def monitor_modules():
+    pass
+
 # END HELPER FUNCTIONS ########################################################
 
 # UNIT TESTS ##################################################################
