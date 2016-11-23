@@ -1,6 +1,5 @@
 # Python libraries
 import flask
-import logging as log
 import threading
 import os
 import shutil
@@ -13,16 +12,31 @@ from urllib.request import urlopen
 
 # GLOBALS #####################################################################
 HOSTNAME = '0.0.0.0'
-GITLAB_SERVER = '10.0.1.10'
+GITLAB_SERVER = '192.168.0.125'
 PORT = 6969
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
-DEMO_DIR = '/home/mike/workspace/demo_framework/demos'
+DEMO_DIR = os.path.join(os.path.dirname(__file__),'demos')
 API_TOKEN = '_9BHn9oy7zGvoM-RRziy'
 API_URL = 'http://10.0.1.10/api/v3/projects/all?private_token={}'
 API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 demos = []
+
+def print_config():
+    """
+    prints configuration to console
+    """
+    global HOSTNAME, GITLAB_SERVER, PORT, STATIC, TEMPLATES, DEMO_DIR, API_TOKEN, API_URL, API_URL
+    print('HOSTNAME : {}'.format(HOSTNAME))
+    print('GITLAB_SERVER : {}'.format(GITLAB_SERVER))
+    print('PORT : {}'.format(PORT))
+    print('STATIC : {}'.format(STATIC))
+    print('TEMPLATES : {}'.format(TEMPLATES))
+    print('DEMO_DIR : {}'.format(DEMO_DIR))
+    print('API_TOKEN : {}'.format(API_TOKEN))
+    print('API_URL : {}'.format(API_URL))
+
 
 # FLASK APPLICATION ROUTES ####################################################
 @app.route('/favicon.ico')
@@ -105,7 +119,8 @@ def reset():
     get_demos()
 
 if __name__ == "__main__":
-    reset()
+    print_config()
+    #reset() # waiting for GitLab server to be back up
     app.run(
         host=HOSTNAME,
         port=PORT,
