@@ -17,8 +17,8 @@ PORT = 6969
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
 DEMO_DIR = os.path.join(os.path.dirname(__file__),'demos')
-API_TOKEN = '_9BHn9oy7zGvoM-RRziy'
-API_URL = 'http://10.0.1.10/api/v3/projects/all?private_token={}'
+API_TOKEN = '8icMAisLE_cMZZ9v1TtE'
+API_URL = 'http://192.168.0.125/api/v3/projects/all?private_token={}'
 API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 demos = []
