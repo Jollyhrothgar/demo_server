@@ -4,6 +4,7 @@ We import the mlpux module here, as well as the module we want to inspect.
 """
 from test_module import test_module
 from unittest import TestCase
+import time
 
 test = TestCase()
 

@@ -31,7 +31,7 @@ API_URL = 'http://192.168.0.125/api/v3/projects/all?private_token={}'
 API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 
-mlpux_instances = {} # maps uuid to mlpux_instance copy
+mlpux_instances = {} # maps uuid to mlpux decorated function
 mlpux_instance = {
     'PORT':None,
     'IP':None,
@@ -77,6 +77,11 @@ def webhook():
 def index():
     return flask.render_template('index.html')
 
+@app.route("/hello",methods=['GET'])
+def hello():
+    print("HELLO")
+    return flask.make_response("200".encode(encoding="utf8"))
+
 
 @app.route('/register_function',methods=['POST'])
 def register_function():
@@ -85,15 +90,21 @@ def register_function():
     ip = flask.request.remote_addr
     data = pickle.loads(content)
     uuid = data['uuid']
-    mlpux_instances[uuid] = dict(mlpux_instance)
-    mlpux_instances[uuid]['PORT'] = CLIENT_PORT 
-    mlpux_instances[uuid]['IP'] = ip
-    CLIENT_PORT += 1
+    
+    if uuid not in mlpux_instances:
+        mlpux_instances[uuid] = dict(mlpux_instance)
+        mlpux_instances[uuid]['PORT'] = CLIENT_PORT 
+        mlpux_instances[uuid]['IP'] = ip
+        CLIENT_PORT += 1
+
     mlpux_instances[uuid]['func'][data['name']] = {'parameters':data['parameters'], 'documentation':data['documentation']}
 
     print("FLASK SERVER UPDATED", mlpux_instances)
     print("ORIGIN IP: ", ip)
-    return "AWESOME".encode(encoding='utf8')
+   
+    # TODO implement failure handling
+    ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[uuid]['PORT']}
+    return flask.jsonify(ret_val)
 
 # END FLASK APPLICATION ROUTES ################################################
 
