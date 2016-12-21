@@ -1,0 +1,269 @@
+/********************DROP DOWN BUTTON*****************************************/
+/* Dropdown Button */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index:100; /* this puts content 'on top' */
+}
+
+/* Links inside the dropdown */
+.dropdown-content p {
+    color: black;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content p:hover {background-color: #f1f1f1}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+/*************************DROP DOWN BUTTON************************************/
+
+.speech_input{
+  font-size: 2em;
+  color: #000000;
+  text-align:center;
+  font-family:"Geneva, sans-serif";
+  width:90%;
+  border:2px solid blue;
+}
+
+.debugElem{
+  border:5px solid red;
+
+}
+
+.highlight {
+    border: 1px solid #4195fc; /* some kind of blue border */
+
+    /* other CSS styles */
+
+    /* round the corners */
+    -webkit-border-radius: 12px;
+       -moz-border-radius: 12px;
+            border-radius: 12px;
+
+
+    /* make it glow! */
+    -webkit-box-shadow: 0px 0px 12px #4195fc;
+       -moz-box-shadow: 0px 0px 12px #4195fc;
+            box-shadow: 0px 0px 12px #4195fc; /* some variation of blue for the shadow */
+
+}
+
+.dimOverlay {
+  opacity:0.4;
+}
+
+/************************BANDED ROWS FOR TABLES*******************************/
+.bandedTable tr:nth-child(even) {
+    /*background-color: #dddddd;*/
+    background-color: #a6a6a6;
+}
+.UICbandedTable th {    
+    font-size: 16px;
+    background-color: #e6e6e6;
+}
+
+.UICbandedTable td,th {
+    padding: 12px;
+    text-align: center;
+}
+.UICbandedTable tr:nth-child(even) {
+    /*background-color: #dddddd;*/
+    background-color: #c6c6c6;
+}
+.UICbandedTable tr:nth-child(odd) {
+    /*background-color: #dddddd;*/
+    background-color: #d6d6d6;
+}
+
+.UICEmbBandedTable th {    
+    font-size: 20px;
+    /*background-color: #e6e6e6;*/
+}
+
+.UICEmbBandedTable td{ 
+  width:50%;
+  
+}
+
+.UICEmbBandedTable td,th {
+    padding: 12px;
+    text-align: center;
+}
+.UICEmbBandedTable tr:nth-child(even) {
+    /*background-color: #dddddd;*/
+    background-color: #505050; /* light grey */
+}
+.UICEmbBandedTable tr:nth-child(odd) {
+    /*background-color: #dddddd;*/
+    background-color: #606060; /* light grey */
+}
+
+/************************BANDED ROWS FOR TABLES*******************************/
+
+
+/************************TRANSPARANT MOUSE DIV********************************/
+.mouseTransparent div {
+  pointer-events: none;
+}
+
+/************************TRANSPARANT MOUSE DIV********************************/
+
+/* Slider CSS */
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+/* End Slider CSS */
+
+/* Tabbed Interface 
+body{
+  padding     : 1.5em;
+  background  : #f8f8f8;
+  font-family : sans-serif;
+  line-height : 1.5;
+}
+
+.tabbed{
+  float : left;
+  width : 100%;
+}
+
+.tabbed > input{
+  display : none;
+}
+
+.tabbed > section > h1{
+  float       : left;
+  box-sizing  : border-box;
+  margin      : 0;
+  padding     : 0.5em 0.5em 0;
+  overflow    : hidden;
+  font-size   : 1em;
+  font-weight : normal;
+}
+
+.tabbed > input:first-child + section > h1{
+  padding-left : 1em;
+}
+
+.tabbed > section > h1 > label{
+  display                 : block;
+  padding                 : 0.25em 0.75em;
+  border                  : 1px solid #ddd;
+  border-bottom           : none;
+  border-top-left-radius  : 4px;
+  border-top-right-radius : 4px;
+  box-shadow              : 0 0 0.5em rgba(0,0,0,0.0625);
+  background              : #fff;
+  cursor                  : pointer;
+     -moz-user-select     : none;
+      -ms-user-select     : none;
+  -webkit-user-select     : none;
+}
+
+.tabbed > section > div{
+  position      : relative;
+  z-index       : 1;
+  float         : right;
+  box-sizing    : border-box;
+  width         : 100%;
+  margin        : 2.5em 0 0 -100%;
+  padding       : 0.5em 0.75em;
+  border        : 1px solid #ddd;
+  border-radius : 4px;
+  box-shadow    : 0 0 0.5em rgba(0,0,0,0.0625);
+  background    : #fff;
+}
+
+.tabbed > input:checked + section > h1{
+  position : relative;
+  z-index  : 2;
+}
+
+.tabbed > input:not(:checked) + section > div{
+  display : none;
+}
+
+ End Tabbed CSS */

@@ -10,7 +10,6 @@ import inspect
 import itertools
 from functools import wraps
 from collections import OrderedDict
-import json
 import pickle
 from urllib.request import urlopen
 import time
@@ -21,7 +20,7 @@ import threading
 # GLOBALS #####################################################################
 HOSTNAME = '0.0.0.0'
 GITLAB_SERVER = '192.168.0.125'
-PORT = 6969
+PORT = 80
 CLIENT_PORT = 35557
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
@@ -31,20 +30,31 @@ API_URL = 'http://192.168.0.125/api/v3/projects/all?private_token={}'
 API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 
+# regestry of known instances of mlpux decorated functions.
 mlpux_instances = {} # maps uuid to mlpux decorated function
+
+# template for how to talk to functions
 mlpux_instance = {
     'PORT':None,
     'IP':None,
-    'func':{}, # dict of func name to func params
+    'functions':[], # dict of func name to func params
 }
 
-# dict of uuids pointing to mlpux_instance dicts
+# TODO
+# Need a periodic check to see if the various function servers are up, and if not, kill from UI
+def check_up(server_ip, port):
+    """
+    checks for whether or not attached mlpux clients are alive
+    """
+
+    return True
 
 def print_config():
     """
     prints configuration to console
     """
     global HOSTNAME, GITLAB_SERVER, PORT, STATIC, TEMPLATES, DEMO_DIR, API_TOKEN, API_URL, API_URL
+    print(80*"=")
     print('HOSTNAME : {}'.format(HOSTNAME))
     print('GITLAB_SERVER : {}'.format(GITLAB_SERVER))
     print('PORT : {}'.format(PORT))
@@ -53,6 +63,7 @@ def print_config():
     print('DEMO_DIR : {}'.format(DEMO_DIR))
     print('API_TOKEN : {}'.format(API_TOKEN))
     print('API_URL : {}'.format(API_URL))
+    print(80*"=")
 
 
 # FLASK APPLICATION ROUTES ####################################################
@@ -82,25 +93,70 @@ def hello():
     print("HELLO")
     return flask.make_response("200".encode(encoding="utf8"))
 
+# mlpux_instances structure:
+#    {
+#        uuid: {
+#            'PORT':<port number>,
+#            'IP':<ip address>,
+#            'functions':[
+#                'parameters':parameters,
+#                'documentation':documentation, 
+#                'name':func.__name__,
+#                'ui_args':ui_kwargs,
+#                'uuid':_UUID
+#            ],
+#            ...similarly for all functions associated with the uuid
+#        }
+#    }
+@app.route("/get_demos",methods=['GET'])
+def get_demos():
+    """
+    Respond to front end request for demo list. Returns a list of demos to populate
+    a selection on the UI.
+
+    Sends UUID for the function and a UUID to talk to the mlpux server.
+    """
+
+    # Check for dead clients
+    dead_clients = []
+    for uuid,client in mlpux_instances.items():
+        if not check_up(mlpux_instances[uuid]['IP'], mlpux_instances[uuid]['PORT']):
+            dead_clients.append(uuid)
+
+    # Remove dead clients
+    for uuid in dead_clients:
+        print ("LOST CONTACT WITH", mlpux_instances['uuid'], "REMOVING")
+        del mlpux_instances[uuid]
+
+    # Now that we've pruned the dead stuff, we may proceed.
+    return_data = []
+    for uuid,client in mlpux_instances.items():
+        for function in client['functions']:
+            return_data.append({"uuid":uuid,"IP":mlpux_instances[uuid]['IP'], "PORT":mlpux_instances[uuid]['PORT'], "name":function['name']})
+    return flask.jsonify(return_data)
 
 @app.route('/register_function',methods=['POST'])
 def register_function():
     global mlpux_instance, mlpux_instances, CLIENT_PORT
-    content = flask.request.data
+    request_content = flask.request.data
     ip = flask.request.remote_addr
-    data = pickle.loads(content)
-    uuid = data['uuid']
+    _func_data = pickle.loads(request_content) # mlpux.py: _func_data
+    uuid = _func_data['uuid']
     
     if uuid not in mlpux_instances:
-        mlpux_instances[uuid] = dict(mlpux_instance)
+        mlpux_instances[uuid] = dict(mlpux_instance) 
         mlpux_instances[uuid]['PORT'] = CLIENT_PORT 
         mlpux_instances[uuid]['IP'] = ip
+        mlpux_instances[uuid]['functions'] = [ dict(_func_data['function']) ]
         CLIENT_PORT += 1
-
-    mlpux_instances[uuid]['func'][data['name']] = {'parameters':data['parameters'], 'documentation':data['documentation']}
-
-    print("FLASK SERVER UPDATED", mlpux_instances)
-    print("ORIGIN IP: ", ip)
+    else:
+        # if somehow the connection dies to the client, there will be a new
+        # uuid, so there should not be duplicate functions within one uuid.
+        mlpux_instances[uuid]['functions'].append(dict(_func_data['function']))
+        
+    print("FLASK SERVER UPDATED WITH ", mlpux_instances[uuid]['functions'][-1]['name'])
+    print("CLIENT AT {}:{}".format(mlpux_instances[uuid]['IP'], mlpux_instances[uuid]['PORT']))
+    print(80*"=")
    
     # TODO implement failure handling
     ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[uuid]['PORT']}
