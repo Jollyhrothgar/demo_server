@@ -1,4 +1,8 @@
 demos
+git
+__pycache__
+*.pyc
+mlpux_demo*
 demo_framework.log
 tags
 venv*
