@@ -31,7 +31,7 @@ API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 
 # regestry of known instances of mlpux decorated functions.
-mlpux_instances = {} # maps uuid to mlpux decorated function
+mlpux_instances = {} # maps client_uuid to mlpux decorated function
 
 # template for how to talk to functions
 mlpux_instance = {
@@ -42,10 +42,13 @@ mlpux_instance = {
 
 # TODO
 # Need a periodic check to see if the various function servers are up, and if not, kill from UI
-def check_up(server_ip, port):
+def check_up(client_uuid):
     """
     checks for whether or not attached mlpux clients are alive
     """
+    global mlpux_instances
+    ip = mlpux_instances[client_uuid]['IP']
+    port = mlpux_instances[client_uuid]['PORT']
 
     return True
 
@@ -95,7 +98,7 @@ def hello():
 
 # mlpux_instances structure:
 #    {
-#        uuid: {
+#        client_uuid: {
 #            'PORT':<port number>,
 #            'IP':<ip address>,
 #            'functions':[
@@ -103,63 +106,104 @@ def hello():
 #                'documentation':documentation, 
 #                'name':func.__name__,
 #                'ui_args':ui_kwargs,
-#                'uuid':_UUID
+#                'func_uuid':uuid.uuid4()
 #            ],
 #            ...similarly for all functions associated with the uuid
 #        }
 #    }
-@app.route("/get_demos",methods=['GET'])
-def get_demos():
+@app.route("/request_demo_list",methods=['GET'])
+def request_demo_list():
     """
     Respond to front end request for demo list. Returns a list of demos to populate
     a selection on the UI.
 
     Sends UUID for the function and a UUID to talk to the mlpux server.
     """
+    global mlpux_instances
 
     # Check for dead clients
     dead_clients = []
-    for uuid,client in mlpux_instances.items():
-        if not check_up(mlpux_instances[uuid]['IP'], mlpux_instances[uuid]['PORT']):
-            dead_clients.append(uuid)
+    for client_uuid,client in mlpux_instances.items():
+        if not check_up(client_uuid):
+            dead_clients.append(client_uuid)
 
     # Remove dead clients
-    for uuid in dead_clients:
-        print ("LOST CONTACT WITH", mlpux_instances['uuid'], "REMOVING")
-        del mlpux_instances[uuid]
+    for client_uuid in dead_clients:
+        print ("LOST CONTACT WITH", mlpux_instances['client_uuid'], "REMOVING")
+        del mlpux_instances[client_uuid]
 
     # Now that we've pruned the dead stuff, we may proceed.
     return_data = []
-    for uuid,client in mlpux_instances.items():
+    for client_uuid,client in mlpux_instances.items():
         for function in client['functions']:
-            return_data.append({"uuid":uuid,"IP":mlpux_instances[uuid]['IP'], "PORT":mlpux_instances[uuid]['PORT'], "name":function['name']})
+            print(mlpux_instances[client_uuid])
+            return_data.append({"client_uuid":client_uuid,"IP":mlpux_instances[client_uuid]['IP'], "PORT":mlpux_instances[client_uuid]['PORT'], "name":function['name'], "func_uuid":function['func_uuid']})
     return flask.jsonify(return_data)
+
+@app.route("/request_demo",methods=['POST'])
+def request_demo():
+    """
+    Back endpoint for UI request for a demo function. Request is a JSON object
+    of the form:
+
+        {'func_uuid':<uuid for function>, 'client_uuid':<uuid for client>}
+
+    """
+    try:
+        request_content = json.loads(flask.request.data)
+    except:
+        return flask.jsonify({'error':"<h1> DEMO CONNECTION FAILED </h1>"})
+    
+    if 'func_uuid' not in request_content or 'client_uuid' not in request_content:
+        return flask.jsonify({'error':"<h1> KEYS FOR FUNCTION UUID OR CLIENT UUID MISSING </h1>"})
+
+    client_uuid = request_content['client_uuid']
+    func_uuid = request_content['func_uuid']
+    if not check_up(client_uuid):
+        return flask.jsonify({'error','<h1> CLIENT SERVER FOR FUNCTION IS DOWN </h1>'})
+    
+    # use an array to preserver key-value for JSON
+    # [ [key, value], [key, value], ... ]
+    func_message = {}
+
+    # Finally, if we're here, we're probably good.
+    # Choice Time:
+    #     - should all the processing for how to interface be done on mlpux side?
+    #       - Probably, yes
+    #     - Need to fully parse function signature, send as ordered dict (maybe?)
+    #     - front end needs to know:
+    #       - Input fields
+    #       - What to do with output
+    #     - Handle via form
+
 
 @app.route('/register_function',methods=['POST'])
 def register_function():
     global mlpux_instance, mlpux_instances, CLIENT_PORT
+    # TODO
+    # need input checking here
     request_content = flask.request.data
     ip = flask.request.remote_addr
     _func_data = pickle.loads(request_content) # mlpux.py: _func_data
-    uuid = _func_data['uuid']
+    client_uuid = _func_data['client_uuid']
     
-    if uuid not in mlpux_instances:
-        mlpux_instances[uuid] = dict(mlpux_instance) 
-        mlpux_instances[uuid]['PORT'] = CLIENT_PORT 
-        mlpux_instances[uuid]['IP'] = ip
-        mlpux_instances[uuid]['functions'] = [ dict(_func_data['function']) ]
+    if client_uuid not in mlpux_instances:
+        mlpux_instances[client_uuid] = dict(mlpux_instance) 
+        mlpux_instances[client_uuid]['PORT'] = CLIENT_PORT 
+        mlpux_instances[client_uuid]['IP'] = ip
+        mlpux_instances[client_uuid]['functions'] = [ dict(_func_data['function']) ]
         CLIENT_PORT += 1
     else:
         # if somehow the connection dies to the client, there will be a new
-        # uuid, so there should not be duplicate functions within one uuid.
-        mlpux_instances[uuid]['functions'].append(dict(_func_data['function']))
+        # client_uuid, so there should not be duplicate functions within one client_uuid.
+        mlpux_instances[client_uuid]['functions'].append(dict(_func_data['function']))
         
-    print("FLASK SERVER UPDATED WITH ", mlpux_instances[uuid]['functions'][-1]['name'])
-    print("CLIENT AT {}:{}".format(mlpux_instances[uuid]['IP'], mlpux_instances[uuid]['PORT']))
+    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['name'])
+    print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']))
     print(80*"=")
    
     # TODO implement failure handling
-    ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[uuid]['PORT']}
+    ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[client_uuid]['PORT']}
     return flask.jsonify(ret_val)
 
 # END FLASK APPLICATION ROUTES ################################################

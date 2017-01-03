@@ -28,6 +28,18 @@
     <!-- Theme CSS -->
     <link href="demo_framework_server/css/creative.min.css" rel="stylesheet">
 
+    <!-- My javascript here --> 
+    <!--<script src="demo_framework_server/js/js.cookie.js"></script>    -->
+    <script type="text/javascript" src="demo_framework_server/js/functions.js"> </script>
+
+    <!-- Google Maps API -->
+    <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqgpyknPVo1wWuY60K-bJYPpk-c49fTLs&signed_in=true&callback=initMap"></script>-->
+
+    <!-- Javascript which requires flask templating here --> 
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
 </head>
 
 <body id="page-top">
@@ -69,13 +81,19 @@
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="section-heading">Available Demos</h1>
-          <div id="demo_list"></div>
+          <div id="demo_list_div"/> 
         </div>
       </div>
       <div class="row">
         <center>
-        <input id="demo_reload_button" type="button" class="btn btn-xl btn-primary" value="Reload Demos"/> 
+        <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"/> 
         </center>
+      </div>
+    </section>
+
+    <section class="bg-light" id="client_session">
+      <div class="row">
+        <div id="demo_client_session"/>
       </div>
     </section>
 

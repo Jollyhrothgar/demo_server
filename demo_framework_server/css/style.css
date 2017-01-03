@@ -58,6 +58,15 @@
 
 }
 
+.spacedTable {
+  boarder-collapse: collapse; 
+}
+
+.spacedRow {
+  padding-top: .5em;
+  padding-bottom: .5em;
+}
+
 .highlight {
     border: 1px solid #4195fc; /* some kind of blue border */
 
