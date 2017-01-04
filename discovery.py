@@ -58,13 +58,13 @@ def get_ip(service_name=None,port=None,service_found=None):
         t.start()
 
 def get_ip_by_port(port):
-    # s = _send_broadcast(DISC_REQUEST.encode('utf-8'),port)
+    s = _send_broadcast(DISC_REQUEST.encode('utf-8'),port)
 
-    # message_recieved = select.select([s],[],[],TIMEOUT)
-    # if message_recieved[0]:
-        # m,server = s.recvfrom(1024)
-        # print("Service on port '{}' found at ip {}".format(port,server[0]))
-        # return server[0]
+    message_recieved = select.select([s],[],[],TIMEOUT)
+    if message_recieved[0]:
+        m,server = s.recvfrom(1024)
+        print("Service on port '{}' found at ip {}".format(port,server[0]))
+        return server[0]
 
     print("Broadcast discovery timed out, starting sweep discovery")
     s = _sweep_request(DISC_REQUEST.encode('utf-8'),port)
@@ -122,9 +122,9 @@ def _sweep_request(msg,port):
     return s
 
 if __name__ == "__main__":
-    print(get_ip(port=3498))
-    # print(get_ip(service_name="demo server backend"))
-    # discoverable(port = 3498)
+    # print(get_ip(port=3498))
+    # print(get_ip(service_name="something"))
+    discoverable(service_name = "something")
     # while True:
         # pass
     pass
