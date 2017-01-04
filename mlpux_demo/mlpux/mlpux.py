@@ -13,6 +13,8 @@ import socket
 
 # once discovery works over ProjectNetwork, we may search for it here.
 import discovery 
+# find server ip with:
+# IP = discovery.get_ip("demo framework backend")
 
 
 # Rigel's meeting To-Dos
@@ -100,21 +102,20 @@ def show_functions():
     return flask.jsonify(display_out)
 
 
-@app.route('/execute/<str:func_name>', methods=['POST'])
+@app.route('/execute/<string:func_name>', methods=['POST'])
 def execute_function(func_name):
     """
     For now, the function name is used to select the function and the arguments are
     POSTed in the body of the request.
     """
     global _functions
+
     # step 1: extract arguments
     # step 2: look up function by uuid
     # step 3: execute function
     # step 4: return results (processing done server-side)
 
-    output = _functions[func_name](
-
-    return flask.make_response(_functions[func_name](**kwargs))
+    return flask.make_response(flask.request.args)
 
 # TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
