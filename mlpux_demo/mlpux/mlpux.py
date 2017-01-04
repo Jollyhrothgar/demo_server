@@ -11,6 +11,8 @@ import uuid
 import flask
 import socket
 
+# once discovery works over ProjectNetwork, we may search for it here.
+import discovery 
 
 
 # Rigel's meeting To-Dos
@@ -109,6 +111,8 @@ def execute_function(func_name):
     # step 2: look up function by uuid
     # step 3: execute function
     # step 4: return results (processing done server-side)
+
+    output = _functions[func_name](
 
     return flask.make_response(_functions[func_name](**kwargs))
 

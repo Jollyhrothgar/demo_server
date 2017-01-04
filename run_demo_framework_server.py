@@ -14,6 +14,9 @@ import pickle
 from urllib.request import urlopen
 import time
 import threading
+import discovery
+
+discovery.discoverable(service_name="demo server backend")
 
 # Framework
 

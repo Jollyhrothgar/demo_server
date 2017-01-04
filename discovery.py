@@ -3,8 +3,11 @@ import select
 import threading as thread
 PORT = 4242
 
-'''Starts a discovery service using either a unique service name or a unique service port. Non-blocking'''
 def discoverable(service_name=None,port=None):
+    '''
+    Starts a discovery service using either a unique service name or a
+    unique service port. Non-blocking
+    '''
     if not port:
         port = PORT
     def wait():
@@ -14,6 +17,8 @@ def discoverable(service_name=None,port=None):
         while True:
             result = select.select([s],[],[])
             m,client = s.recvfrom(1024)
+            
+            # print(client)
 
             t = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
             t.sendto("discovery|{}".format(service_name).encode('utf-8'),client)
@@ -22,8 +27,14 @@ def discoverable(service_name=None,port=None):
     t.start()
     return
 
-'''Get the IP of a service on the network based on its unique service name or its unique service port. If service_found is specified, the function will not block and will call the service_found callback with the specified IP. Otherwise, the function  will block and will return the IP of the specified service'''
 def get_ip(service_name=None,port=None,service_found=None):
+    '''
+    Get the IP of a service on the network based on its unique service name
+    or its unique service port. If service_found is specified, the function
+    will not block and will call the service_found callback with the specified
+    IP. Otherwise, the function  will block and will return the IP of the
+    specified service
+    '''
     def block(service_name,port):
         if service_name:
             return get_ip_by_service_name(service_name)
