@@ -14,6 +14,9 @@ import pickle
 from urllib.request import urlopen
 import time
 import threading
+import discovery
+
+discovery.discoverable(service_name="demo server backend")
 
 # Framework
 
@@ -21,7 +24,6 @@ import threading
 HOSTNAME = '0.0.0.0'
 GITLAB_SERVER = '192.168.0.125'
 PORT = 80
-CLIENT_PORT = 35557
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
 DEMO_DIR = os.path.join(os.path.dirname(__file__),'demos')
@@ -46,9 +48,12 @@ def check_up(client_uuid):
     """
     checks for whether or not attached mlpux clients are alive
     """
-    global mlpux_instances
-    ip = mlpux_instances[client_uuid]['IP']
-    port = mlpux_instances[client_uuid]['PORT']
+    # global mlpux_instances
+    # try:
+        # ip = mlpux_instances[client_uuid]['IP']
+    # except:
+        # for key in mlpux_instances.keys():
+            # print(client_uuid,key)
 
     return True
 
@@ -150,7 +155,8 @@ def request_demo():
 
     """
     try:
-        request_content = json.loads(flask.request.data)
+        request_content = flask.request.get_data().decode('utf-8')
+        request_content = json.loads(request_content)
     except:
         return flask.jsonify({'error':"<h1> DEMO CONNECTION FAILED </h1>"})
     
@@ -166,6 +172,7 @@ def request_demo():
     # [ [key, value], [key, value], ... ]
     func_message = {}
 
+    print(request_content)
     # Finally, if we're here, we're probably good.
     # Choice Time:
     #     - should all the processing for how to interface be done on mlpux side?
@@ -175,11 +182,12 @@ def request_demo():
     #       - Input fields
     #       - What to do with output
     #     - Handle via form
+    return flask.jsonify({'message':"SUCCESS"})
 
 
 @app.route('/register_function',methods=['POST'])
 def register_function():
-    global mlpux_instance, mlpux_instances, CLIENT_PORT
+    global mlpux_instance, mlpux_instances
     # TODO
     # need input checking here
     request_content = flask.request.data
@@ -189,10 +197,9 @@ def register_function():
     
     if client_uuid not in mlpux_instances:
         mlpux_instances[client_uuid] = dict(mlpux_instance) 
-        mlpux_instances[client_uuid]['PORT'] = CLIENT_PORT 
         mlpux_instances[client_uuid]['IP'] = ip
+        mlpux_instances[client_uuid]['PORT'] = _func_data['PORT']
         mlpux_instances[client_uuid]['functions'] = [ dict(_func_data['function']) ]
-        CLIENT_PORT += 1
     else:
         # if somehow the connection dies to the client, there will be a new
         # client_uuid, so there should not be duplicate functions within one client_uuid.
@@ -210,6 +217,9 @@ def register_function():
 
 # HELPER FUNCTIONS ############################################################
 def monitor_modules():
+    """ 
+    TODO maybe run on thread to monitor connection to clients?
+    """ 
     pass
 
 def git_cmd(*args):

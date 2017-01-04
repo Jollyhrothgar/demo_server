@@ -6,7 +6,7 @@ function getDemos(){
         success : function(data) {
             console.log("Requested Demo List: ", data);
                 var demo_list = $('<table id="demo_list" align="center" width="85%" class="spacedTable">')
-                $('#demo_list_div').html('')
+                $('#demo_list_div').html('') // this resets anything already in the div
                 demo_list.append(
                     $('<tr>').append(
                         $('<th>').text(''),
@@ -40,12 +40,16 @@ function showFunction(element_id){
     console.log("Reqesting function info from client id:", client_uuid);
     console.log("Function id: ", func_uuid);
 
+    $('#demo_client_session_div').html('');
+
     $.ajax({
         type: "POST",
         url: $SCRIPT_ROOT + "/request_demo",
         contentType: "application/json",
+        data: JSON.stringify({'client_uuid':client_uuid,'func_uuid':func_uuid}),
         success:function(data){
             console.log("SHOWING FUNCTION!!!");
+            console.log("RECIEVED",data);
         }
     });
 }
