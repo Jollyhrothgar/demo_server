@@ -3,12 +3,16 @@ We import the mlpux module here, as well as the module we want to inspect.
 
 """
 from test_module import test_module
-from unittest import TestCase
 import time
 
-test = TestCase()
+from formencode.variabledecode import variable_decode
+from formencode.variabledecode import variable_encode
+
+import requests
 
 def run_tests():
+
+    # Check what happens when functions are run (the decorator is processed)
     print(80*'=')
     print("Test 1: a module with no arguments")
     ret_val = test_module.no_args()
@@ -49,6 +53,16 @@ def run_tests():
             extra2='blowme'
     )
     print(ret_val)
+
+    print(80*'+')
+    print("RUNNING NETWORK TESTS")
+
+    print(80*"=")
+    # Now run tests with network requests
+    r = requests.get('http://0.0.0.0:52758/execute/square',{'1':'arg1_content','2':'arg2_content'})
+    print('SENT:',r.url)
+    print('RESPONSE:', r.text)
+
 
 if __name__ == '__main__':
     run_tests()

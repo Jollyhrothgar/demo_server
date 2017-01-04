@@ -16,6 +16,8 @@ import discovery
 # find server ip with:
 # IP = discovery.get_ip("demo framework backend")
 
+from formencode.variabledecode import variable_decode
+from formencode.variabledecode import variable_encode
 
 # Rigel's meeting To-Dos
 
@@ -63,7 +65,7 @@ def PickUnusedPort():
 # always run locally, but may set the remote server as desired.
 _IP_ADDRESS = '0.0.0.0'
 _DEMO_SERVER_ADDRESS = '127.0.0.1' # maybe use discovery service?
-_PORT = PickUnusedPort()
+_PORT = 52758 #PickUnusedPort() # development
 _UUID = str(uuid.uuid4())
 
 # Flask App
@@ -87,7 +89,7 @@ def start_server(ip, port):
     _app_thread.start()
     # FIXME needs to be handled with a handshake
     # - send a message, wait, then try again until success
-    time.sleep(2)
+    time.sleep(0.5)
 
 # TODO: does server persist? Is the server process orphaned? Why can't we access this part?
 # We probably need a main.py that imports the module, runs, and waits.
@@ -120,8 +122,26 @@ def execute_function(func_name):
     # step 3: execute function
     # step 4: return results (processing done server-side)
     print("GOT REQUEST: ",flask.request.args)
+    print("DECODED:",variable_decode(flask.request.args))
 
-    return flask.jsonify({"CRAP":"PILE"})
+    print("TRYING TO EXECUTE:",func_name)
+    if func_name not in _functions:
+        msg = "COULDN'T FIND FUNCTION {} in {}".format(func_name,"IN",_functions.keys())
+        print(msg)
+        return flask.jsonify({'message':msg)
+    func_args = variable_decode(flask.request.args) # expect to be a dictionary
+    # Convention: 
+    #   call signature: call(1,2,3) 
+    #   unnamed arguments
+    #   then: {'1':'1','2':'2','3':'3'}
+    # Try to execute function
+    try:
+
+    # Return an error message
+    except:
+        
+
+    return flask.jsonify(func_args)
 
 # TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
@@ -150,16 +170,38 @@ def generate_ui_args(parameters, **ui_kwargs):
                 "NAME":"",
             }
         )
-        param_data[-1]["POSITIONAL_ONLY"] = v.kind is inspect.Parameter.POSITIONAL_ONLY # tricky
-        param_data[-1]["POSITIONAL_OR_KEYWORD"] = v.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD # standard binding behavior for functions
-        param_data[-1]["VAR_POSITIONAL"] = v.kind is inspect.Parameter.VAR_POSITIONAL # like *args
-        param_data[-1]["KEYWORD_ONLY"] = v.kind is inspect.Parameter.KEYWORD_ONLY # params appear after * or *args entry in func def.
-        param_data[-1]["VAR_KEYWORD"] = v.kind is inspect.Parameter.VAR_KEYWORD # like **kwargs
-        param_data[-1]["DEFAULT"] = v.default if v.default is not inspect.Parameter.empty else False
-        param_data[-1]["ANNOTATION"] = v.annotation if v.annotation is not inspect.Parameter.empty else False
-        param_data[-1]["NAME"] = v.name
-    # Now some logic can be done with function stuff.
+        # can be tricky
+        param_data[-1]["POSITIONAL_ONLY"] = \
+                v.kind is inspect.Parameter.POSITIONAL_ONLY 
 
+        # standard binding behavior for functions
+        param_data[-1]["POSITIONAL_OR_KEYWORD"] = \
+                v.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD 
+
+        # true for things like *args
+        param_data[-1]["VAR_POSITIONAL"] = \
+                v.kind is inspect.Parameter.VAR_POSITIONAL
+
+        # true for params after *args in func def
+        param_data[-1]["KEYWORD_ONLY"] = \
+                v.kind is inspect.Parameter.KEYWORD_ONLY
+
+        # True for **kwargs like arguments
+        param_data[-1]["VAR_KEYWORD"] = \
+                v.kind is inspect.Parameter.VAR_KEYWORD
+
+        # True if parameter is a default argument
+        param_data[-1]["DEFAULT"] = \
+                v.default if v.default is not inspect.Parameter.empty else False
+
+        # True if parameter is annotated
+        param_data[-1]["ANNOTATION"] = \
+                v.annotation if v.annotation is not inspect.Parameter.empty else False
+
+        # The name of the parameter
+        param_data[-1]["NAME"] = v.name
+
+    # TODO? Now some logic can be done with function stuff.
     return param_data 
 
 def create_function_server(func, **ui_kwargs):
@@ -196,11 +238,12 @@ def create_function_server(func, **ui_kwargs):
             'parameters':parameters,
             'documentation':documentation,
             'name':func.__name__,
+            'signature':str(inspect.signature(func)),
             'ui_kwargs':ui_kwargs,
             'func_uuid':str(uuid.uuid4()),
         }
     }
-    print(func.__name__, parameters)
+    print("SIGNATURE:",_func_data['function']['signature'])
 
     _functions[func.__name__]['attributes'] = dict(_func_data)
 
