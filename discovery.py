@@ -106,15 +106,15 @@ def get_ip_by_service_name(service_name):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1].split(".")
 
-    #for subnet in range(2):
-    for dest in range(255):
-        ip[2] = str(subnet)
-        ip[3] = str(dest+1)
-        try:
-            s.sendto("discovery request".encode('utf-8'),('.'.join(ip),PORT))
-        except:
-            #Don't get too caught up if a host is unreachable
-            pass
+    for subnet in range(2):
+        for dest in range(255):
+            ip[2] = str(subnet)
+            ip[3] = str(dest+1)
+            try:
+                s.sendto("discovery request".encode('utf-8'),('.'.join(ip),PORT))
+            except:
+                #Don't get too caught up if a host is unreachable
+                pass
 
     while True:
         m,server = s.recvfrom(1024)
@@ -127,7 +127,7 @@ def get_ip_by_service_name(service_name):
 
 
 # print(get_ip(port=4242))
-# print(get_ip(service_name="something"))
+print(get_ip(service_name="something"))
 # discoverable(service_name="something")
 # while True:
     # pass
