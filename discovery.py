@@ -3,6 +3,8 @@ import select
 import threading as thread
 PORT = 4242
 TIMEOUT = 1
+DISC_REQUEST = "discovery request"
+DISC_RESPONSE = "discovery|{0}"
 
 def discoverable(service_name=None,port=None):
     '''
@@ -15,14 +17,18 @@ def discoverable(service_name=None,port=None):
         s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         s.bind(('',port))
         s.setblocking(0)
+        print("Service '{}' is now accepting discovery requests".format(service_name if service_name else port))
+
         while True:
             result = select.select([s],[],[])
             m,client = s.recvfrom(1024)
-            print("Discovery request recieved from {}".format(client))
+            if m.decode('utf-8') == DISC_REQUEST:
+                print("Discovery request recieved from {}".format(client[0]))
 
-            t = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-            t.sendto("discovery|{}".format(service_name).encode('utf-8'),client)
-            t.close()
+                t = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+                t.sendto(DISC_RESPONSE.format(service_name).encode('utf-8'),client)
+                t.close()
+
     t = thread.Thread(target = wait)
     t.start()
     return
@@ -52,43 +58,26 @@ def get_ip(service_name=None,port=None,service_found=None):
         t.start()
 
 def get_ip_by_port(port):
-    s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
-    s.sendto("discovery request".encode('utf-8'),('<broadcast>',port))
+    # s = _send_broadcast(DISC_REQUEST.encode('utf-8'),port)
 
-    message_recieved = select.select([s],[],[],TIMEOUT)
-    if message_recieved[0]:
-        m,server = s.recvfrom(1024)
-        print("Service on port '{}' found at ip {}".format(port,server[0]))
-        return server[0]
+    # message_recieved = select.select([s],[],[],TIMEOUT)
+    # if message_recieved[0]:
+        # m,server = s.recvfrom(1024)
+        # print("Service on port '{}' found at ip {}".format(port,server[0]))
+        # return server[0]
 
     print("Broadcast discovery timed out, starting sweep discovery")
+    s = _sweep_request(DISC_REQUEST.encode('utf-8'),port)
 
-    s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1].split(".")
-
-    for subnet in range(2):
-        for dest in range(255):
-            ip[2] = str(subnet)
-            ip[3] = str(dest+1)
-            try:
-                s.sendto("discovery request".encode('utf-8'),('.'.join(ip),port))
-            except:
-                #Don't get too caught up if a host is unreachable
-                pass
-
-    m,server = s.recvfrom(1024)
-    print("Service on port '{}' found at ip {}".format(port,server[0]))
-    return server[0]
-
+    while True:
+        m,server = s.recvfrom(1024)
+        if m.decode('utf-8').split("|")[0] == DISC_RESPONSE.split("|")[0]:
+            print("Service on port '{}' found at ip {}".format(port,server[0]))
+            return server[0]
 
 def get_ip_by_service_name(service_name):
-    s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
-    s.sendto("discovery request".encode('utf-8'),('<broadcast>',PORT))
+    s = _send_broadcast(DISC_REQUEST.encode('utf-8'),PORT)
 
-    #Wait until the proper service responds
     done = False
     while not done:
         message_recieved = select.select([s],[],[],TIMEOUT)
@@ -102,32 +91,40 @@ def get_ip_by_service_name(service_name):
             done = True
 
     print("Broadcast discovery timed out, starting sweep discovery")
+    s = _sweep_request(DISC_REQUEST.encode('utf-8'),PORT)
+
+    while True:
+        m,server = s.recvfrom(1024)
+        m = m.decode('utf-8')
+        print("Service '{}' found at ip {}".format(m.split('|')[1],server[0]))
+        if m.split('|')[1] == service_name:
+            return server[0]
+
+def _send_broadcast(msg,port):
+    s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+    s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
+    s.sendto(msg,('<broadcast>',port))
+    return s 
+
+def _sweep_request(msg,port):
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1].split(".")
-
+    print("Searching for services on the {}.{}.X.XXX subnet".format(ip[0],ip[1]))
     for subnet in range(2):
         for dest in range(255):
             ip[2] = str(subnet)
             ip[3] = str(dest+1)
             try:
-                s.sendto("discovery request".encode('utf-8'),('.'.join(ip),PORT))
+                s.sendto(msg,('.'.join(ip),port))
             except:
-                #Don't get too caught up if a host is unreachable
                 pass
+    return s
 
-    while True:
-        m,server = s.recvfrom(1024)
-        m = m.decode('utf-8')
-        if m.split('|')[1] == service_name:
-            print("Service '{}' found at ip {}".format(service_name,server[0]))
-            return server[0]
-
-
-
-
-# print(get_ip(port=4242))
-print(get_ip(service_name="something"))
-# discoverable(service_name="something")
-# while True:
-    # pass
+if __name__ == "__main__":
+    print(get_ip(port=3498))
+    # print(get_ip(service_name="demo server backend"))
+    # discoverable(port = 3498)
+    # while True:
+        # pass
+    pass
