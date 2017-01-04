@@ -127,7 +127,7 @@ def get_ip_by_service_name(service_name):
 
 
 # print(get_ip(port=4242))
-print(get_ip(service_name="something"))
+# print(get_ip(service_name="something"))
 # discoverable(service_name="something")
 # while True:
     # pass
