@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +18,7 @@
     <link href="demo_framework_server/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-  
+
     <!-- Custom CSS --> 
     <link href="demo_framework_server/css/style.css" rel="stylesheet">
 
@@ -37,44 +37,44 @@
 
     <!-- Javascript which requires flask templating here --> 
     <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
 
-</head>
+  </head>
 
-<body id="page-top">
+  <body id="page-top">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top">Demo Framework UI</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a class="page-scroll" href="#demos">Demos</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+          </button>
+          <a class="navbar-brand page-scroll" href="#page-top">Demo Framework UI</a>
         </div>
-        <!-- /.container-fluid -->
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a class="page-scroll" href="#demos">Demos</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container-fluid -->
     </nav>
 
     <header>
-        <div class="header-content">
-            <div class="header-content-inner">
-                <h1 id="homeHeading">MLPUX Demos</h1>
-                <hr>
-                <p>Use the MLPUX module to decorate your code and produce interactive web demos!</p>
-                <a href="#demos" class="btn btn-primary btn-xl page-scroll">View Demos</a>
-            </div>
+      <div class="header-content">
+        <div class="header-content-inner">
+          <h1 id="homeHeading">MLPUX Demos</h1>
+          <hr>
+          <p>Use the MLPUX module to decorate your code and produce interactive web demos!</p>
+          <a href="#demos" class="btn btn-primary btn-xl page-scroll">View Demos</a>
         </div>
+      </div>
     </header>
 
     <section class="bg-dark" id="demos">
@@ -86,14 +86,14 @@
       </div>
       <div class="row">
         <center>
-        <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"/> 
+          <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"/> 
         </center>
       </div>
     </section>
 
     <section class="bg-light" id="client_session">
       <div class="row">
-        <div id="demo_client_session"/>
+        <div id="demo_client_session_div"/>
       </div>
     </section>
 
@@ -111,6 +111,6 @@
     <!-- Theme JavaScript -->
     <script src="demo_framework_server/js/creative.min.js"></script>
 
-</body>
+  </body>
 
 </html>

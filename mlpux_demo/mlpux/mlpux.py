@@ -9,6 +9,9 @@ import http.client
 import time
 import uuid
 import flask
+import socket
+
+
 
 # Rigel's meeting To-Dos
 
@@ -43,10 +46,20 @@ import flask
 # It seems that this whole body is unique in scope to each decorator.
 _functions = {}
 
+def PickUnusedPort():
+    """
+    Pick an unused local port to run the MLPUX server on.
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('localhost', 0))
+    addr, port = s.getsockname()
+    s.close()
+    return port
+
 # always run locally, but may set the remote server as desired.
 _IP_ADDRESS = '0.0.0.0'
 _DEMO_SERVER_ADDRESS = '127.0.0.1' # maybe use discovery service?
-_PORT = None # recieve port from _DEMO_SERVER
+_PORT = PickUnusedPort()
 _UUID = str(uuid.uuid4())
 
 # Flask App
@@ -54,6 +67,7 @@ app = flask.Flask(__name__)
 _kill_server = threading.Event()
 _app_thread = None
 _kill_server.clear()
+
 
 def start_server(ip, port):
     global _app_thread
@@ -73,28 +87,30 @@ def start_server(ip, port):
 
 # TODO: does server persist? Is the server process orphaned? Why can't we access this part?
 # We probably need a main.py that imports the module, runs, and waits.
-@app.route('/functions/', methods=['GET'])
+@app.route('/test_up', methods=['GET'])
 def get_functions():
-    global _functions
-    print("Hello")
-    for func in _functions.keys():
-        print(func)
     return flask.make_response("200".encode(encoding="utf8"))
 
-@app.route('/test_up',methods=['GET'])
-def test_up():
+@app.route('/show_functions',methods=['GET'])
+def show_functions():
     global _functions
     display_out = { name:str(function['attributes']['function']['parameters']) for name,function in _functions.items() }
     return flask.jsonify(display_out)
 
 
-@app.route('/execute_function', methods=['POST'])
-def execute_function():
+@app.route('/execute/<str:func_name>', methods=['POST'])
+def execute_function(func_name):
+    """
+    For now, the function name is used to select the function and the arguments are
+    POSTed in the body of the request.
+    """
+    global _functions
     # step 1: extract arguments
     # step 2: look up function by uuid
     # step 3: execute function
     # step 4: return results (processing done server-side)
-    return "EXECUTED"
+
+    return flask.make_response(_functions[func_name](**kwargs))
 
 # TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
@@ -103,6 +119,9 @@ def generate_ui_args(parameters, **ui_kwargs):
     given by the decoration. ui_kwargs are ignored for now.
 
     For now, we simply make a list of args. Annotations to be handled later.
+
+    Here we should infer all the UI types. For now we just handle the basic
+    case.
     """
     # parameters is a dict of 'name':Parameter objects
     param_data = []
@@ -129,15 +148,24 @@ def generate_ui_args(parameters, **ui_kwargs):
         param_data[-1]["ANNOTATION"] = v.annotation if v.annotation is not inspect.Parameter.empty else False
         param_data[-1]["NAME"] = v.name
     # Now some logic can be done with function stuff.
+
     return param_data 
 
 def create_function_server(func, **ui_kwargs):
     """
     Use inspect to get the properties of the function
     """
+
     global _functions, _UUID, _PORT, _app_thread, _IP_ADDRESS
-    print("IS THREAD RUNNING: ",_app_thread)
-    print('FUNCTION:', func.__name__)
+    
+    # Start Server Thread
+    if _app_thread is None:
+        print("Starting server thread on port ",_PORT)
+        start_server(_IP_ADDRESS, _PORT) 
+
+    print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
+
+    print('PROCESSING FUNCTION:', func.__name__)
     # if you want names and values as a dictionary:
     args_spec = inspect.getfullargspec(func)
     members = dict(inspect.getmembers(func))
@@ -151,8 +179,8 @@ def create_function_server(func, **ui_kwargs):
     # bind ui elements (if not existing) to function arguments (TODO)
     _func_data = {
         'client_uuid':_UUID,
+        'PORT':_PORT,
         # IP - supplied by server
-        # PORT - supplied by server
         'function':{ # each time this is sent, only one key is 'unknown', we can obtain this server-side.
             'parameters':parameters,
             'documentation':documentation,
@@ -161,27 +189,32 @@ def create_function_server(func, **ui_kwargs):
             'func_uuid':str(uuid.uuid4()),
         }
     }
+    print(func.__name__, parameters)
+
     _functions[func.__name__]['attributes'] = dict(_func_data)
 
     data = pickle.dumps(_func_data,-1)
-    print("SENDING: ",_func_data,"AS: ",data)
+    print("SENDING FUNCTION")
 
-    # TODO replace with discovery service
-    h = http.client.HTTPConnection('0.0.0.0', 80) 
+    # FIXME replace with discovery service
+    try:
+        h = http.client.HTTPConnection('0.0.0.0', 80) 
+        test = h.request("HEAD","/")
+        test_resp = h.getresponse()
+    except ConnectionRefusedError as e:
+        if _app_thread.isAlive():
+            print("NO RESPONSE FROM DEMO SERVER, MLPUX SERVER IS RUNNING IN BACKEND MODE, {}:{}".format(_IP_ADDRESS,_PORT))
+            return
+        else:
+            raise ValueError("MLPUX SERVER IS NOT RUNNING. DEMO SERVER IS NOT RUNNING.")
+        
+    # If we're here, the connection is okay
     h.request('POST', '/register_function', data)
     response = h.getresponse()
-    ret_data = json.loads(response.read().decode('utf8'))
+    print(response.status)
 
-    print(ret_data)
-    if ret_data['status'] != "SUCCESS":
-        raise ValueError("THERE WAS NO RESPONSE FROM THE SERVER!")
-    else:
-        if _app_thread is None:
-            print("starting server thread on port {}".format(ret_data['PORT']))
-            _PORT = ret_data['PORT']
-            start_server(_IP_ADDRESS, _PORT) 
-            time.sleep(2)
-    #print(_functions)
+    ret_data = json.loads(response.read().decode('utf8'))
+    print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!")
     return 
 
 def demo(*ui_args, **ui_kwargs):
