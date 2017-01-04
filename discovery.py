@@ -1,8 +1,11 @@
 import socket
 import select
 import threading as thread
+import time
+
 PORT = 4242
 TIMEOUT = 1
+RETRY = 5
 DISC_REQUEST = "discovery request"
 DISC_RESPONSE = "discovery|{0}"
 
@@ -58,47 +61,63 @@ def get_ip(service_name=None,port=None,service_found=None):
         t.start()
 
 def get_ip_by_port(port):
-    s = _send_broadcast(DISC_REQUEST.encode('utf-8'),port)
-
-    message_recieved = select.select([s],[],[],TIMEOUT)
-    if message_recieved[0]:
-        m,server = s.recvfrom(1024)
-        print("Service on port '{}' found at ip {}".format(port,server[0]))
-        return server[0]
-
-    print("Broadcast discovery timed out, starting sweep discovery")
-    s = _sweep_request(DISC_REQUEST.encode('utf-8'),port)
-
+    retries = 0
     while True:
-        m,server = s.recvfrom(1024)
-        if m.decode('utf-8').split("|")[0] == DISC_RESPONSE.split("|")[0]:
-            print("Service on port '{}' found at ip {}".format(port,server[0]))
-            return server[0]
+        s = _send_broadcast(DISC_REQUEST.encode('utf-8'),port)
 
-def get_ip_by_service_name(service_name):
-    s = _send_broadcast(DISC_REQUEST.encode('utf-8'),PORT)
-
-    done = False
-    while not done:
         message_recieved = select.select([s],[],[],TIMEOUT)
         if message_recieved[0]:
             m,server = s.recvfrom(1024)
-            m = m.decode('utf-8')
-            if m.split('|')[1] == service_name:
-                print("Service '{}' found at ip {}".format(service_name,server[0]))
-                return server[0]
-        else:
-            done = True
-
-    print("Broadcast discovery timed out, starting sweep discovery")
-    s = _sweep_request(DISC_REQUEST.encode('utf-8'),PORT)
-
-    while True:
-        m,server = s.recvfrom(1024)
-        m = m.decode('utf-8')
-        print("Service '{}' found at ip {}".format(m.split('|')[1],server[0]))
-        if m.split('|')[1] == service_name:
+            print("Service on port '{}' found at ip {}".format(port,server[0]))
             return server[0]
+
+        print("Broadcast discovery timed out, starting sweep discovery")
+        s = _sweep_request(DISC_REQUEST.encode('utf-8'),port)
+
+        while True:
+            message_recieved = select.select([s],[],[],TIMEOUT)
+            if message_recieved[0]:
+                m,server = s.recvfrom(1024)
+                if m.decode('utf-8').split("|")[0] == DISC_RESPONSE.split("|")[0]:
+                    print("Service on port '{}' found at ip {}".format(port,server[0]))
+                    return server[0]
+        print("Discovery failed, retrying in {} seconds".format(RETRY*(2**retries)))
+        time.sleep(RETRY*(2**retries))
+        retries +=1
+
+def get_ip_by_service_name(service_name):
+    retries = 0
+    while True:
+        s = _send_broadcast(DISC_REQUEST.encode('utf-8'),PORT)
+
+        while True:
+            message_recieved = select.select([s],[],[],TIMEOUT)
+            if message_recieved[0]:
+                m,server = s.recvfrom(1024)
+                m = m.decode('utf-8')
+                if m.split('|')[1] == service_name:
+                    print("Service '{}' found at ip {}".format(service_name,server[0]))
+                    return server[0]
+            else:
+                break
+
+        print("Broadcast discovery timed out, starting sweep discovery")
+        s = _sweep_request(DISC_REQUEST.encode('utf-8'),PORT)
+
+        while True:
+            message_recieved = select.select([s],[],[],TIMEOUT)
+            if message_recieved[0]:
+                m,server = s.recvfrom(1024)
+                m = m.decode('utf-8')
+                print("Service '{}' found at ip {}".format(m.split('|')[1],server[0]))
+                if m.split('|')[1] == service_name:
+                    return server[0]
+            else:
+                break
+
+        print("Discovery failed, retrying in {} seconds".format(RETRY*(2**retries)))
+        time.sleep(RETRY*(2**retries))
+        retries += 1
 
 def _send_broadcast(msg,port):
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
