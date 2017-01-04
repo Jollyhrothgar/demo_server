@@ -102,7 +102,7 @@ def show_functions():
     return flask.jsonify(display_out)
 
 
-@app.route('/execute/<string:func_name>', methods=['POST'])
+@app.route('/execute/<string:func_name>', methods=['GET'])
 def execute_function(func_name):
     """
     For now, the function name is used to select the function and the arguments are
@@ -110,12 +110,18 @@ def execute_function(func_name):
     """
     global _functions
 
+    # TODO 1/3/2017 determine how to handle ImmutableMultiDict
+    # Why is this data structure necessary? Should we just convert it to a dict?
+    # can we preserve the essential function signature when doing so:
+    # -> We just want to call the function at this point, which might require unnamed args, followed by keyword args
+
     # step 1: extract arguments
     # step 2: look up function by uuid
     # step 3: execute function
     # step 4: return results (processing done server-side)
+    print("GOT REQUEST: ",flask.request.args)
 
-    return flask.make_response(flask.request.args)
+    return flask.jsonify({"CRAP":"PILE"})
 
 # TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
