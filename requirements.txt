@@ -2,3 +2,5 @@ flask
 flask-socketio
 numpy
 matplotlib
+formencode
+requests
