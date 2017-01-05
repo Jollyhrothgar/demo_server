@@ -123,13 +123,8 @@ def execute_function(func_name):
     # Dictionary of args
     func_args = variable_decode(flask.request.args) 
     # Convention: 
-    #   call signature: call('this','is','the order') 
-    #   unnamed arguments - i.e. *args
-    #   then: {'0':'this','1':'is','2':'the order'} args are sorted into a list
-    #
-    #   kwargs: order doesn't matter because there are keywords. 
-    # Try to execute function, catch the exception if any.
-    # 
+    # kwargs as usual for GET, but *args as:
+    # /base/path?args=[thing1, thing2...]
     # Holy python order: (*args, *kwargs, an_arg, another_arg)
     args = []
     kwargs = {}
@@ -238,8 +233,8 @@ def create_function_server(func, **ui_kwargs):
         start_server(_IP_ADDRESS, _PORT) 
 
     print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
-
     print('PROCESSING FUNCTION:', func.__name__)
+    
     # if you want names and values as a dictionary:
     args_spec = inspect.getfullargspec(func)
     members = dict(inspect.getmembers(func))
