@@ -59,9 +59,9 @@ def run_tests():
 
     print(80*"=")
     # Now run tests with network requests
-    r = requests.get('http://0.0.0.0:52758/execute/square',{'1':'arg1_content','2':'arg2_content'})
-    print('SENT:',r.url)
-    print('RESPONSE:', r.text)
+    # r = requests.get('http://0.0.0.0:52758/execute/square',{'1':'arg1_content','2':'arg2_content'})
+    # print('SENT:',r.url)
+    # print('RESPONSE:', r.text)
 
 
 if __name__ == '__main__':

@@ -35,8 +35,8 @@ function getDemos(){
 
 function showFunction(element_id){
     var elem = document.getElementById(element_id);
-    var client_uuid = $("#"+element_id).attr("data-func-uuid");
-    var func_uuid = $("#"+element_id).attr("data-client-uuid");
+    var client_uuid = $("#"+element_id).attr("data-client-uuid");
+    var func_uuid = $("#"+element_id).attr("data-func-uuid");
     console.log("Reqesting function info from client id:", client_uuid);
     console.log("Function id: ", func_uuid);
 
@@ -48,8 +48,9 @@ function showFunction(element_id){
         contentType: "application/json",
         data: JSON.stringify({'client_uuid':client_uuid,'func_uuid':func_uuid}),
         success:function(data){
-            console.log("SHOWING FUNCTION!!!");
+            console.log("SHOWING FUNCTION!!!")
             console.log("RECIEVED",data);
+            $('#demo_client_session_div').html('<h1>'+JSON.stringify(data)+'</h1>');
         }
     });
 }

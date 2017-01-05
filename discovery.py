@@ -9,6 +9,16 @@ RETRY = 5
 DISC_REQUEST = "discovery request"
 DISC_RESPONSE = "discovery|{0}"
 
+def select_unused_port():
+    """
+    Select and return an unused local port as a string.
+    """
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('localhost', 0))
+    addr, port = s.getsockname()
+    s.close()
+    return port
+
 def discoverable(service_name=None,port=None):
     '''
     Starts a discovery service using either a unique service name or a
@@ -143,6 +153,8 @@ def _sweep_request(msg,port):
 if __name__ == "__main__":
     # print(get_ip(port=3498))
     # print(get_ip(service_name="something"))
+
+    # for testing: comment if you want to discover the discovery service
     # discoverable(service_name = "something")
     # while True:
         # pass

@@ -154,6 +154,7 @@ def request_demo():
         {'func_uuid':<uuid for function>, 'client_uuid':<uuid for client>}
 
     """
+    global mlpux_instances
     try:
         request_content = flask.request.get_data().decode('utf-8')
         request_content = json.loads(request_content)
@@ -165,25 +166,20 @@ def request_demo():
 
     client_uuid = request_content['client_uuid']
     func_uuid = request_content['func_uuid']
+
     if not check_up(client_uuid):
         return flask.jsonify({'error','<h1> CLIENT SERVER FOR FUNCTION IS DOWN </h1>'})
-    
-    # use an array to preserver key-value for JSON
-    # [ [key, value], [key, value], ... ]
-    func_message = {}
 
-    print(request_content)
-    # Finally, if we're here, we're probably good.
-    # Choice Time:
-    #     - should all the processing for how to interface be done on mlpux side?
-    #       - Probably, yes
-    #     - Need to fully parse function signature, send as ordered dict (maybe?)
-    #     - front end needs to know:
-    #       - Input fields
-    #       - What to do with output
-    #     - Handle via form
-    return flask.jsonify({'message':"SUCCESS"})
+    if client_uuid not in mlpux_instances:
+        return flask.jsonify({'error':'client is unknown'})
 
+    for function in mlpux_instances[client_uuid]['functions']:
+        if func_uuid == function['func_uuid']:
+            # TODO 1/4/2017: handle function signature better.
+            d = {k:v for k,v in function.items() if k in ['name','signature','func_uuid']}
+            d['client_uuid'] = client_uuid
+            return flask.jsonify(d)
+    return flask.jsonify({"error":"function not found"})
 
 @app.route('/register_function',methods=['POST'])
 def register_function():
@@ -245,6 +241,22 @@ def recreate_demo(project_name):
     print(stuff)
     return
 
+def lookup_function_name(client_uuid, func_uuid, mlpux_instances):
+    """
+    Looks up function name from client and function uuid. Linear time, may need
+    to make more efficient if number of functions becomes very large.
+    """
+    func_name = None
+    if client_uuid not in mlpux_instances:
+        print("ERROR: client {} does not exist.".format(client_uuid))
+        return func_name
+    functions = mlpux_instances[client_uuid]['functions']
+    for function in functions:
+        if func_uuid == function['func_uuid']:
+            func_name = function['name']
+            return func_name
+    print("ERROR: function {} does not exist for client {}".format(func_name,client_uuid))
+    return func_name
 
 #### MAYBE KILL THIS PART? TODO ####
 def clear_demos():
@@ -275,8 +287,6 @@ def get_demos():
         recreate_demo(demo)
     return
 
-#### END MAYBE KILL THIS PART ####
-
 # END HELPER FUNCTIONS ########################################################
 
 # UNIT TESTS ##################################################################
@@ -297,6 +307,6 @@ if __name__ == "__main__":
         }
     )
     app_thread.start()
-    time.sleep(2)
+    time.sleep(0.5)
     print_config()
     #reset() # waiting for GitLab server to be back up

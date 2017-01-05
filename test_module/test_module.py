@@ -88,7 +88,7 @@ def arbitrary_func(*args, **kwargs):
 
     Note that order of args and kwargs matters, therefore, order should be maintained no matter what.
     """
-    return_string = "number of args:{0}, number of kwargs{1}".format(len(args),len(kwargs))
+    return_string = "number of args: {0}, number of kwargs: {1}".format(len(args),len(kwargs))
     return return_string
 
 
