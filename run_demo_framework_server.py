@@ -75,6 +75,11 @@ def print_config():
 
 
 # FLASK APPLICATION ROUTES ####################################################
+
+@app.route('/test_up',methods=['GET'])
+def test_up():
+    return flask.make_response("200".encode(encoding="utf8"))
+    
 @app.route('/favicon.ico')
 def favicon():
     search_path = os.path.join(app.root_path,STATIC)

@@ -11,6 +11,7 @@ import uuid
 import flask
 import socket
 import ast
+import requests
 
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
@@ -18,14 +19,20 @@ from formencode.variabledecode import variable_encode
 import discovery 
 
 # GLOBALS
-try:
-    _DEMO_SERVER_ADDRESS = discovery.get_ip("demo server backend")
-except:
-    _DEMO_SERVER_ADDRESS = '127.0.0.1'
-# _DEMO_SERVER_ADDRESS = '127.0.0.1'
+_DEMO_SERVER_ADDRESS = False
+def set_ip(ip):
+    """
+    Code that should run once there is a connection to the server needs to run
+    here.
 
-_IP_ADDRESS = '0.0.0.0'
-# _DEMO_SERVER_ADDRESS = '127.0.0.1' # maybe use discovery service?
+    TODO a bit later
+    """
+    global _DEMO_SERVER_ADDRESS
+    _DEMO_SERVER_ADDRESS = ip
+
+discovery.get_ip(service_name="demo server backend",service_found = set_ip)
+
+_MLPUX_IP_ADDRESS = '0.0.0.0'
 _UUID = str(uuid.uuid4())
 
 _functions = {}
@@ -67,12 +74,14 @@ _kill_server.clear()
 #   meta decorators which modify the behavior of mlpux.demo itself.
 # It seems that this whole body is unique in scope to each decorator.
 
-_PORT = 52758 #PickUnusedPort() # development
-#_PORT = discovery.select_unused_port()
-
+_MLPUX_PORT = 52758 #PickUnusedPort() # development
+#_MLPUX_PORT = discovery.select_unused_port()
 # Flask App
-def start_server(ip, port):
+def start_server(ip, port, discovery_name=None):
     global _app_thread
+    if discovery_name is None:
+        discovery_name = str(port)
+    discovery.discoverable(service_name="mlpux_module_{}".format(discovery_name))
     _app_thread = threading.Thread(
         target=app.run,
         kwargs = {
@@ -83,14 +92,24 @@ def start_server(ip, port):
         }
     )
     _app_thread.start()
-    # FIXME needs to be handled with a handshake
-    # - send a message, wait, then try again until success
-    time.sleep(0.5)
+
+    # wait for server to come up
+    done = False
+    while not done:
+        try:
+            r = requests.get('http://{}:{}/test_up'.format(ip,port))
+            print(r.text)
+        except:
+            time.sleep(0.2)
+        else:
+            if int(r.text) == 200:
+                done = True
+
 
 # TODO: does server persist? Is the server process orphaned? Why can't we access this part?
 # We probably need a main.py that imports the module, runs, and waits.
 @app.route('/test_up', methods=['GET'])
-def get_functions():
+def test_up():
     return flask.make_response("200".encode(encoding="utf8"))
 
 @app.route('/show_functions',methods=['GET'])
@@ -225,30 +244,26 @@ def create_function_server(func, **ui_kwargs):
     Use inspect to get the properties of the function
     """
 
-    global _functions, _UUID, _PORT, _app_thread, _IP_ADDRESS
+    global _functions, _UUID, _MLPUX_PORT, _app_thread, _MLPUX_IP_ADDRESS
     
-    # Start Server Thread
-    if _app_thread is None:
-        print("Starting server thread on port ",_PORT)
-        start_server(_IP_ADDRESS, _PORT) 
-
-    print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
     print('PROCESSING FUNCTION:', func.__name__)
     
     # if you want names and values as a dictionary:
     args_spec = inspect.getfullargspec(func)
     members = dict(inspect.getmembers(func))
     annotations = members['__annotations__']
+    module_file = str(members['__globals__']['__package__'])
+    if module_file is None or len(module_file) < 1:
+        module_file = str(_MLPUX_PORT)
     documentation = members['__doc__']
     parameters = inspect.signature(func).parameters
     parameters = generate_ui_args(parameters, **ui_kwargs)
-
     _functions[func.__name__] = { 'func':func }
 
     # bind ui elements (if not existing) to function arguments (TODO)
     _func_data = {
         'client_uuid':_UUID,
-        'PORT':_PORT,
+        'PORT':_MLPUX_PORT,
         # IP - supplied by server
         'function':{ # each time this is sent, only one key is 'unknown', we can obtain this server-side.
             'parameters':parameters,
@@ -259,32 +274,42 @@ def create_function_server(func, **ui_kwargs):
             'func_uuid':str(uuid.uuid4()),
         }
     }
+    
+    # Start Server Thread
+    if _app_thread is None:
+        print("Starting server thread on port ",_MLPUX_PORT)
+        print("Service for file: {}".format(module_file))
+        start_server(ip = _MLPUX_IP_ADDRESS, port = _MLPUX_PORT, discovery_name = module_file) 
+    print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
+
     print("SIGNATURE:",_func_data['function']['signature'])
+    print("TEST UP: ",_DEMO_SERVER_ADDRESS)
 
     _functions[func.__name__]['attributes'] = dict(_func_data)
 
     data = pickle.dumps(_func_data,-1)
-    print("SENDING FUNCTION")
 
-    # FIXME replace with discovery service
-    try:
-        h = http.client.HTTPConnection('0.0.0.0', 80) 
-        test = h.request("HEAD","/")
-        test_resp = h.getresponse()
-    except ConnectionRefusedError as e:
-        if _app_thread.isAlive():
-            print("NO RESPONSE FROM DEMO SERVER, MLPUX SERVER IS RUNNING IN BACKEND MODE, {}:{}".format(_IP_ADDRESS,_PORT))
-            return
-        else:
-            raise ValueError("MLPUX SERVER IS NOT RUNNING. DEMO SERVER IS NOT RUNNING.")
-        
-    # If we're here, the connection is okay
-    h.request('POST', '/register_function', data)
-    response = h.getresponse()
-    print(response.status)
+    if not _DEMO_SERVER_ADDRESS:
+        # Demo server was not found with the discovery service.
+        print("DEMO SERVICE WAS NOT DISCOVERED, MLPUX SERVER IS RUNNING IN BACKEND MODE, {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
+    else:
+        # double check that server is still up, but don't bother if its not discoverable.
+        try:
+            r = requests.get('http://{}/test_up'.format(_DEMO_SERVER_ADDRESS))
+        except ConnectionError as e:
+            if _app_thread.isAlive():
+                print("DEMO SERVER DIED, MLPUX SERVER IS RUNNING IN BACKEND MODE, {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
+                return
+            else:
+                raise ValueError("ERROR MLPUX SERVER IS NOT RUNNING. DEMO SERVER IS NOT RUNNING.")
 
-    ret_data = json.loads(response.read().decode('utf8'))
-    print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!")
+        # If we're here, the connection is okay
+        print("SENDING FUNCTION")
+        r = requests.post(url='http://{}/register_function'.format(_DEMO_SERVER_ADDRESS),data=data)
+        print(r.text)
+
+        ret_data = json.loads(r.text)
+        print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data)
     return 
 
 def demo(*ui_args, **ui_kwargs):

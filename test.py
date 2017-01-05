@@ -11,7 +11,6 @@ from formencode.variabledecode import variable_encode
 import requests
 
 def run_tests():
-
     # Check what happens when functions are run (the decorator is processed)
     print(80*'=')
     print("Test 1: a module with no arguments")
@@ -54,17 +53,21 @@ def run_tests():
     )
     print(ret_val)
 
+def run_network_tests():
     print(80*'+')
     print("RUNNING NETWORK TESTS")
 
     print(80*"=")
     # Now run tests with network requests
-    # r = requests.get('http://0.0.0.0:52758/execute/square',{'1':'arg1_content','2':'arg2_content'})
-    # print('SENT:',r.url)
-    # print('RESPONSE:', r.text)
+    r = requests.get('http://0.0.0.0:52758/execute/square',{'x':10})
+    print('SENT:',r.url)
+    print('RESPONSE:', r.text)
+    
+    r = requests.get('http://0.0.0.0:52758/execute/square',{'args':'[10]'})
+    print('SENT:',r.url)
+    print('RESPONSE:', r.text)
 
 
 if __name__ == '__main__':
     run_tests()
-
-
+    run_network_tests()
