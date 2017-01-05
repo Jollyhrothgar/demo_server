@@ -18,7 +18,8 @@ from formencode.variabledecode import variable_encode
 
 import discovery 
 
-# GLOBALS
+# GLOBALS #####################################################################
+
 _DEMO_SERVER_ADDRESS = False
 def set_ip(ip):
     """
@@ -42,13 +43,10 @@ _kill_server = threading.Event()
 _app_thread = None
 _kill_server.clear()
 
+_MLPUX_PORT = 52758
+#_MLPUX_PORT = discovery.select_unused_port()
+
 # Rigel's meeting To-Dos
-
-# 1. TODO:
-# Need discovery service for the server
-# - tough for project network
-# - can be done
-
 # 2. TODO:
 # no decorator arguemnts , i.e.:
 # @mlpux.demo
@@ -74,9 +72,6 @@ _kill_server.clear()
 #   meta decorators which modify the behavior of mlpux.demo itself.
 # It seems that this whole body is unique in scope to each decorator.
 
-_MLPUX_PORT = 52758 #PickUnusedPort() # development
-#_MLPUX_PORT = discovery.select_unused_port()
-# Flask App
 def start_server(ip, port, discovery_name=None):
     global _app_thread
     if discovery_name is None:
@@ -105,9 +100,6 @@ def start_server(ip, port, discovery_name=None):
             if int(r.text) == 200:
                 done = True
 
-
-# TODO: does server persist? Is the server process orphaned? Why can't we access this part?
-# We probably need a main.py that imports the module, runs, and waits.
 @app.route('/test_up', methods=['GET'])
 def test_up():
     return flask.make_response("200".encode(encoding="utf8"))
@@ -178,7 +170,6 @@ def execute_function(func_name):
         return flask.jsonify(msg)
     return flask.jsonify({"msg":"success","result":result})
 
-# TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
     """
     Parse the information extracted from inspecting a function, along with the instructions
@@ -195,48 +186,31 @@ def generate_ui_args(parameters, **ui_kwargs):
         # Check what kind the Parameter is.
         param_data.append({
                 "PAR_UUID":uuid.uuid4(),
-                "POSITIONAL_ONLY":0,
-                "POSITIONAL_OR_KEYWORD":0,
-                "VAR_POSITIONAL":0,
-                "KEYWORD_ONLY":0,
-                "VAR_KEYWORD":0,
-                "DEFAULT":0,
-                "ANNOTATION":0,
-                "NAME":"",
+                "POSITIONAL_ONLY":0,        # Tricky
+                "POSITIONAL_OR_KEYWORD":0,  # Standard python binding
+                "VAR_POSITIONAL":0,         # True if *args-like
+                "KEYWORD_ONLY":0,           # True for params following *args-like
+                "VAR_KEYWORD":0,            # True if **kwargs-like
+                "DEFAULT":0,                # True if param has default value
+                "ANNOTATION":0,             # True if parameter is annotated
+                "NAME":"",                  # Parameter Name
             }
         )
-        # can be tricky
         param_data[-1]["POSITIONAL_ONLY"] = \
                 v.kind is inspect.Parameter.POSITIONAL_ONLY 
-
-        # standard binding behavior for functions
         param_data[-1]["POSITIONAL_OR_KEYWORD"] = \
                 v.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD 
-
-        # true for things like *args
         param_data[-1]["VAR_POSITIONAL"] = \
                 v.kind is inspect.Parameter.VAR_POSITIONAL
-
-        # true for params after *args in func def
         param_data[-1]["KEYWORD_ONLY"] = \
                 v.kind is inspect.Parameter.KEYWORD_ONLY
-
-        # True for **kwargs like arguments
         param_data[-1]["VAR_KEYWORD"] = \
                 v.kind is inspect.Parameter.VAR_KEYWORD
-
-        # True if parameter is a default argument
         param_data[-1]["DEFAULT"] = \
                 v.default if v.default is not inspect.Parameter.empty else False
-
-        # True if parameter is annotated
         param_data[-1]["ANNOTATION"] = \
                 v.annotation if v.annotation is not inspect.Parameter.empty else False
-
-        # The name of the parameter
         param_data[-1]["NAME"] = v.name
-
-    # TODO? Now some logic can be done with function stuff.
     return param_data 
 
 def create_function_server(func, **ui_kwargs):
