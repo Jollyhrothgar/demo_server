@@ -10,14 +10,30 @@ import time
 import uuid
 import flask
 import socket
-
-# once discovery works over ProjectNetwork, we may search for it here.
-import discovery 
-# find server ip with:
-# IP = discovery.get_ip("demo framework backend")
+import ast
 
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
+
+import discovery 
+
+# GLOBALS
+try:
+    _DEMO_SERVER_ADDRESS = discovery.get_ip("demo server backend")
+except:
+    _DEMO_SERVER_ADDRESS = '127.0.0.1'
+# _DEMO_SERVER_ADDRESS = '127.0.0.1'
+
+_IP_ADDRESS = '0.0.0.0'
+# _DEMO_SERVER_ADDRESS = '127.0.0.1' # maybe use discovery service?
+_UUID = str(uuid.uuid4())
+
+_functions = {}
+
+app = flask.Flask(__name__)
+_kill_server = threading.Event()
+_app_thread = None
+_kill_server.clear()
 
 # Rigel's meeting To-Dos
 
@@ -50,31 +66,11 @@ from formencode.variabledecode import variable_encode
 # - instead of speccing out complex arguemnts to mlpux.demo, perhaps use
 #   meta decorators which modify the behavior of mlpux.demo itself.
 # It seems that this whole body is unique in scope to each decorator.
-_functions = {}
 
-def PickUnusedPort():
-    """
-    Pick an unused local port to run the MLPUX server on.
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('localhost', 0))
-    addr, port = s.getsockname()
-    s.close()
-    return port
-
-# always run locally, but may set the remote server as desired.
-_IP_ADDRESS = '0.0.0.0'
-_DEMO_SERVER_ADDRESS = '127.0.0.1' # maybe use discovery service?
 _PORT = 52758 #PickUnusedPort() # development
-_UUID = str(uuid.uuid4())
+#_PORT = discovery.select_unused_port()
 
 # Flask App
-app = flask.Flask(__name__)
-_kill_server = threading.Event()
-_app_thread = None
-_kill_server.clear()
-
-
 def start_server(ip, port):
     global _app_thread
     _app_thread = threading.Thread(
@@ -112,36 +108,61 @@ def execute_function(func_name):
     """
     global _functions
 
-    # TODO 1/3/2017 determine how to handle ImmutableMultiDict
-    # Why is this data structure necessary? Should we just convert it to a dict?
-    # can we preserve the essential function signature when doing so:
-    # -> We just want to call the function at this point, which might require unnamed args, followed by keyword args
-
-    # step 1: extract arguments
-    # step 2: look up function by uuid
-    # step 3: execute function
-    # step 4: return results (processing done server-side)
     print("GOT REQUEST: ",flask.request.args)
     print("DECODED:",variable_decode(flask.request.args))
-
     print("TRYING TO EXECUTE:",func_name)
+
+    callback = None
     if func_name not in _functions:
-        msg = "COULDN'T FIND FUNCTION {} in {}".format(func_name,"IN",_functions.keys())
+        msg = "COULDN'T FIND FUNCTION {} in {}".format(func_name,_functions.keys())
         print(msg)
-        return flask.jsonify({'message':msg)
-    func_args = variable_decode(flask.request.args) # expect to be a dictionary
+        return flask.jsonify({'error':msg})
+    else:
+        callback = _functions[func_name]['func']
+
+    # Dictionary of args
+    func_args = variable_decode(flask.request.args) 
     # Convention: 
-    #   call signature: call(1,2,3) 
-    #   unnamed arguments
-    #   then: {'1':'1','2':'2','3':'3'}
-    # Try to execute function
+    #   call signature: call('this','is','the order') 
+    #   unnamed arguments - i.e. *args
+    #   then: {'0':'this','1':'is','2':'the order'} args are sorted into a list
+    #
+    #   kwargs: order doesn't matter because there are keywords. 
+    # Try to execute function, catch the exception if any.
+    # 
+    # Holy python order: (*args, *kwargs, an_arg, another_arg)
+    args = []
+    kwargs = {}
     try:
-
-    # Return an error message
+        for k,v in func_args.items():
+            if k == 'args':
+                try:
+                    args += ast.literal_eval(v)
+                except:
+                    msg = {"error":"could not evaluate {} as an *args array.".format(v)}
+                    return flask.jsonify(msg)
+            else:
+                kwargs[k] = ast.literal_eval(v)
     except:
-        
+        msg = {"error":"could not parse arguments!"}
+        msg.update(func_args)
+        flask.jsonify(msg)
 
-    return flask.jsonify(func_args)
+    result = "function returned nothing"
+    try:
+        if len(args) > 0 and len(kwargs.keys()) > 0:
+            result = callback(*args,**kwargs) 
+        elif len(args) > 0 and len(kwargs.keys()) == 0:
+            result = callback(*args) 
+        elif len(args) == 0 and len(kwargs.keys()) > 0:
+            print(kwargs)
+            result = callback(**kwargs)
+        elif len(args) == 0 and len(kwargs.keys()) == 0:
+            result = callback()
+    except:
+        msg = {"error":"Problem executing function {} with arguments func args: {}".format(func_name,func_args)}
+        return flask.jsonify(msg)
+    return flask.jsonify({"msg":"success","result":result})
 
 # TODO: more robust
 def generate_ui_args(parameters, **ui_kwargs):
