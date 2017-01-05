@@ -41,7 +41,7 @@ def get_ip(service_name=None,port=None,service_found=None):
     Get the IP of a service on the network based on its unique service name
     or its unique service port. If service_found is specified, the function
     will not block and will call the service_found callback with the specified
-    IP. Otherwise, the function  will block and will return the IP of the
+    IP. Otherwise, the function will block and will return the IP of the
     specified service
     '''
     def block(service_name,port):
@@ -123,7 +123,7 @@ def _send_broadcast(msg,port):
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
     s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
     s.sendto(msg,('<broadcast>',port))
-    return s 
+    return s
 
 def _sweep_request(msg,port):
     s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -143,7 +143,7 @@ def _sweep_request(msg,port):
 if __name__ == "__main__":
     # print(get_ip(port=3498))
     # print(get_ip(service_name="something"))
-    discoverable(service_name = "something")
+    # discoverable(service_name = "something")
     # while True:
         # pass
     pass
