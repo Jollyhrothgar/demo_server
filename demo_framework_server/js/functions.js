@@ -7,6 +7,9 @@ function clearDemos(){
     $('#demo_client_session_div').html('');
     $('#demo_title').html('');
     $('#demo_title_divider').html('');
+    $("#demo_subtitle_divider").html('');
+    $("#demo_documentation").html('');
+    $('#demo_client_session_div').html('');
 }
 
 function getDemos(){
@@ -51,7 +54,13 @@ function getDemos(){
 // look up using jQuery, else '.' breaks it, even thought it is valid HTML.
 function jq( an_id ) {
     return "#"+an_id.replace(/(:|\.|\[|\]|,|=)/g, "\\$1");
+}
 
+function show_newline(text_string) {
+    if(text_string == null){
+        return "";
+    }
+    return text_string.replace(/\n/g, "<br/>");
 }
 
 function showFunction(element_id){
@@ -75,9 +84,11 @@ function showFunction(element_id){
             console.log("RECIEVED",data);
             var client_session = $('<table id="client_session" align="center" width="85%" class="spacedTable>');
             $('#demo_title').html('Demo: '+data['func_name']);
-            $('#demo_client_session_div').html('<p>'+JSON.stringify(data)+'</p>');
+            $("#demo_subtitle_divider").html("<b>Module:</b> "+data['func_scope']+"<br> <b>Signature:</b> "+data['signature']);
+            $("#demo_documentation").html(show_newline(data['documentation']));
+            $('#demo_client_session_div').html('<br><p>'+JSON.stringify(data)+'</p>');
         },
-        failure:function(data){
+        error:function(data){
             $('#demo_client_session_div').html('<h1> CONNECTION FAILED </h1>');
         }
     });

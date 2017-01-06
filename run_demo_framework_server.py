@@ -164,7 +164,6 @@ def request_demo():
 
     """
     global mlpux_instances
-    print("DDDDDDDDDDDDDATA",flask.request.get_data().decode('utf-8'))
     try:
         request_content = flask.request.get_data().decode('utf-8')
         request_content = json.loads(request_content)
@@ -186,9 +185,9 @@ def request_demo():
     for function in mlpux_instances[client_uuid]['functions']:
         if func_key == function['func_key']:
             # TODO 1/4/2017: handle function signature better.
-            d = {k:v for k,v in function.items() if k in ['func_name','signature','func_key']}
+            d = {k:v for k,v in function.items() if k in ['func_name','func_scope','documentation','signature','func_key']}
             d['client_uuid'] = client_uuid
-            return flask.jsonify(d)
+            return flask.jsonify(dict(d))
     return flask.jsonify({"error":"function not found"})
 
 @app.route('/register_function',methods=['POST'])
