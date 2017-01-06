@@ -75,6 +75,11 @@ def print_config():
 
 
 # FLASK APPLICATION ROUTES ####################################################
+
+@app.route('/test_up',methods=['GET'])
+def test_up():
+    return flask.make_response("200".encode(encoding="utf8"))
+    
 @app.route('/favicon.ico')
 def favicon():
     search_path = os.path.join(app.root_path,STATIC)
@@ -96,11 +101,6 @@ def webhook():
 def index():
     return flask.render_template('index.html')
 
-@app.route("/hello",methods=['GET'])
-def hello():
-    print("HELLO")
-    return flask.make_response("200".encode(encoding="utf8"))
-
 # mlpux_instances structure:
 #    {
 #        client_uuid: {
@@ -109,7 +109,7 @@ def hello():
 #            'functions':[
 #                'parameters':parameters,
 #                'documentation':documentation, 
-#                'name':func.__name__,
+#                'func_name':func.__name__,
 #                'ui_args':ui_kwargs,
 #                'func_uuid':uuid.uuid4()
 #            ],
@@ -142,7 +142,16 @@ def request_demo_list():
     for client_uuid,client in mlpux_instances.items():
         for function in client['functions']:
             print(mlpux_instances[client_uuid])
-            return_data.append({"client_uuid":client_uuid,"IP":mlpux_instances[client_uuid]['IP'], "PORT":mlpux_instances[client_uuid]['PORT'], "name":function['name'], "func_uuid":function['func_uuid']})
+            ret = {
+                'IP':mlpux_instances[client_uuid]['IP'],
+                'PORT':mlpux_instances[client_uuid]['PORT'],
+                'client_uuid':client_uuid,
+                'func_uuid':function['func_uuid'],
+                'func_name':function['func_name'],
+                'func_scope':function['func_scope'],
+                'func_key':function['func_key']
+            }
+            return_data.append(dict(ret))
     return flask.jsonify(return_data)
 
 @app.route("/request_demo",methods=['POST'])
@@ -161,11 +170,11 @@ def request_demo():
     except:
         return flask.jsonify({'error':"<h1> DEMO CONNECTION FAILED </h1>"})
     
-    if 'func_uuid' not in request_content or 'client_uuid' not in request_content:
+    if 'func_key' not in request_content or 'client_uuid' not in request_content:
         return flask.jsonify({'error':"<h1> KEYS FOR FUNCTION UUID OR CLIENT UUID MISSING </h1>"})
 
     client_uuid = request_content['client_uuid']
-    func_uuid = request_content['func_uuid']
+    func_key = request_content['func_key']
 
     if not check_up(client_uuid):
         return flask.jsonify({'error','<h1> CLIENT SERVER FOR FUNCTION IS DOWN </h1>'})
@@ -174,11 +183,11 @@ def request_demo():
         return flask.jsonify({'error':'client is unknown'})
 
     for function in mlpux_instances[client_uuid]['functions']:
-        if func_uuid == function['func_uuid']:
+        if func_key == function['func_key']:
             # TODO 1/4/2017: handle function signature better.
-            d = {k:v for k,v in function.items() if k in ['name','signature','func_uuid']}
+            d = {k:v for k,v in function.items() if k in ['func_name','func_scope','documentation','signature','func_key']}
             d['client_uuid'] = client_uuid
-            return flask.jsonify(d)
+            return flask.jsonify(dict(d))
     return flask.jsonify({"error":"function not found"})
 
 @app.route('/register_function',methods=['POST'])
@@ -199,9 +208,10 @@ def register_function():
     else:
         # if somehow the connection dies to the client, there will be a new
         # client_uuid, so there should not be duplicate functions within one client_uuid.
+        # must have a list of exactly one unique function
         mlpux_instances[client_uuid]['functions'].append(dict(_func_data['function']))
         
-    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['name'])
+    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['func_name'])
     print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']))
     print(80*"=")
    
@@ -241,7 +251,7 @@ def recreate_demo(project_name):
     print(stuff)
     return
 
-def lookup_function_name(client_uuid, func_uuid, mlpux_instances):
+def lookup_function_name(client_uuid, func_key, mlpux_instances):
     """
     Looks up function name from client and function uuid. Linear time, may need
     to make more efficient if number of functions becomes very large.
@@ -252,8 +262,8 @@ def lookup_function_name(client_uuid, func_uuid, mlpux_instances):
         return func_name
     functions = mlpux_instances[client_uuid]['functions']
     for function in functions:
-        if func_uuid == function['func_uuid']:
-            func_name = function['name']
+        if func_key == function['func_key']:
+            func_name = function['func_name']
             return func_name
     print("ERROR: function {} does not exist for client {}".format(func_name,client_uuid))
     return func_name

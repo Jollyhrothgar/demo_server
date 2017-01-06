@@ -78,22 +78,36 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </header>
 
     <section class="bg-dark" id="demos">
+      <div class="container"> 
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="section-heading">Available Demos</h1>
-          <div id="demo_list_div"/> 
+          <div id="demo_list_div"></div> 
         </div>
       </div>
+      </div>
       <div class="row">
+        <div class="container">
         <center>
-          <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"/> 
+          <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"></input> 
         </center>
+      </div>
       </div>
     </section>
 
     <section class="bg-light" id="client_session">
-      <div class="row">
-        <div id="demo_client_session_div"/>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h1 class="section-heading"><div id="demo_title"></div></h1>
+            <div id = "demo_title_divider"></div>
+            <br>
+            <h2 class="section-heading"> <div id = "demo_subtitle_divider"></div></h2> 
+            <br>
+            <p><div id = "demo_documentation"></div></p>
+          </div>
+          <div id="demo_client_session_div"></div>
+        </div>
       </div>
     </section>
 
@@ -110,6 +124,10 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
     <!-- Theme JavaScript -->
     <script src="demo_framework_server/js/creative.min.js"></script>
+
+    <script>
+      initializeUI();
+    </script>
 
   </body>
 

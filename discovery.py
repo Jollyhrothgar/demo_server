@@ -4,8 +4,10 @@ import threading as thread
 import time
 
 PORT = 4242
-TIMEOUT = 1
-RETRY = 5
+# TIMEOUT = 1
+# RETRY = 5
+TIMEOUT = 100
+RETRY = 100
 DISC_REQUEST = "discovery request"
 SERV_REQUEST = "service|{0}"
 DISC_RESPONSE = "discovery|{0}"

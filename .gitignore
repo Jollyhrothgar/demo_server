@@ -3,3 +3,4 @@ __pycache__
 demo_framework.log
 tags
 venv*
+run.command
