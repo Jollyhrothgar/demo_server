@@ -7,6 +7,7 @@ PORT = 4242
 TIMEOUT = 1
 RETRY = 5
 DISC_REQUEST = "discovery request"
+SERV_REQUEST = "service|{0}"
 DISC_RESPONSE = "discovery|{0}"
 
 def select_unused_port():
@@ -26,21 +27,39 @@ def discoverable(service_name=None,port=None):
     '''
     if not port:
         port = PORT
+    services = set([service_name])
     def wait():
         s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        s.bind(('',port))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        try:
+            s.bind(('',port))
+        except OSError:
+            print("Existing discovery service found on machine on this port. Delegating service discovery to existing service.")
+            s.sendto(SERV_REQUEST.format(service_name).encode('utf-8'),('localhost',port))
+            return
+
         s.setblocking(0)
         print("Service '{}' is now accepting discovery requests".format(service_name if service_name else port))
 
         while True:
             result = select.select([s],[],[])
             m,client = s.recvfrom(1024)
-            if m.decode('utf-8') == DISC_REQUEST:
-                print("Discovery request recieved from {}".format(client[0]))
+            m = m.decode('utf-8')
+            if m == DISC_REQUEST:
+                print("Discovery request recieved from '{}'".format(client[0]))
 
-                t = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-                t.sendto(DISC_RESPONSE.format(service_name).encode('utf-8'),client)
-                t.close()
+                for service in services:
+                    t = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+                    t.sendto(DISC_RESPONSE.format(service).encode('utf-8'),client)
+                    t.close()
+            elif m.split("|")[0] == SERV_REQUEST.split("|")[0]:
+                service = m.split("|")[1]
+                if service in services:
+                    print("Duplicate service delegation recieved for service '{}'".format(service))
+                else:
+                    services.add(service)
+                    print("Service delegation recieved for service '{}'".format(service))
 
     t = thread.Thread(target = wait)
     t.start()
@@ -153,9 +172,11 @@ def _sweep_request(msg,port):
 if __name__ == "__main__":
     # print(get_ip(port=3498))
     # print(get_ip(service_name="something"))
+    # print(get_ip(service_name="something else"))
 
     # for testing: comment if you want to discover the discovery service
     # discoverable(service_name = "something")
+    # discoverable(service_name = "something else")
     # while True:
         # pass
     pass
