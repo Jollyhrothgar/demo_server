@@ -1,4 +1,16 @@
+function initializeUI(){
+    clearDemos();
+}
+
+function clearDemos(){
+    $('#demo_list_div').html('');
+    $('#demo_client_session_div').html('');
+    $('#demo_title').html('');
+    $('#demo_title_divider').html('');
+}
+
 function getDemos(){
+    clearDemos();
     $.ajax({
         type : "GET",
         url : $SCRIPT_ROOT + "/request_demo_list",
@@ -10,6 +22,7 @@ function getDemos(){
                 demo_list.append(
                     $('<tr>').append(
                         $('<th>').text(''),
+                        $('<th>').text('Module'),
                         $('<th>').text('Demo Name'),
                         $('<th>').text('IP'),
                         $('<th>').text('PORT')
@@ -17,11 +30,12 @@ function getDemos(){
                 );
                 for(var i = 0; i < data.length; i++){
                     console.log(data[i]);
-                    var id = "func_"+data[i]['func_uuid'];
+                    var id = "func_"+data[i]['func_key'];
                     demo_list.append(
                         $('<tr>').append(
-                            $('<td>').html('<br><a href="#demo_client_session" data-func-uuid="'+data[i]['func_uuid']+'" data-client-uuid="'+data[i]['client_uuid']+'" id="'+id+'" type="button" class="btn page-scroll btn-primary" onclick="showFunction(\''+id+'\')"> Show </a><br>'),
-                            $('<td>').text(data[i]['name']),
+                            $('<td>').html('<br><a href="#client_session" data-func-key="'+data[i]['func_key']+'" data-client-uuid="'+data[i]['client_uuid']+'" id="'+id+'" type="button" class="btn page-scroll btn-primary page-scroll" onclick="showFunction(\''+id+'\')"> Show </a><br>'),
+                            $('<td>').text(data[i]['func_scope']),
+                            $('<td>').text(data[i]['func_name']),
                             $('<td>').text(data[i]['IP']),
                             $('<td>').text(data[i]['PORT'])
                         )
@@ -33,24 +47,38 @@ function getDemos(){
     );
 }
 
-function showFunction(element_id){
-    var elem = document.getElementById(element_id);
-    var client_uuid = $("#"+element_id).attr("data-client-uuid");
-    var func_uuid = $("#"+element_id).attr("data-func-uuid");
-    console.log("Reqesting function info from client id:", client_uuid);
-    console.log("Function id: ", func_uuid);
+// func_key has css elements in the id such as '.', so we must escape it to 
+// look up using jQuery, else '.' breaks it, even thought it is valid HTML.
+function jq( an_id ) {
+    return "#"+an_id.replace(/(:|\.|\[|\]|,|=)/g, "\\$1");
 
+}
+
+function showFunction(element_id){
+    var client_uuid = $(jq(element_id)).attr("data-client-uuid");
+    var func_key = $(jq(element_id)).attr("data-func-key");
+    console.log("client_uuid",client_uuid);
+    console.log("func_key",func_key);
+    console.log("Reqesting function info from client id:", client_uuid);
+    console.log("Function id: ", func_key);
+
+    $('#demo_title_divider').html('<hr>');
     $('#demo_client_session_div').html('');
 
     $.ajax({
         type: "POST",
         url: $SCRIPT_ROOT + "/request_demo",
         contentType: "application/json",
-        data: JSON.stringify({'client_uuid':client_uuid,'func_uuid':func_uuid}),
+        data: JSON.stringify({'client_uuid':client_uuid,'func_key':func_key}),
         success:function(data){
             console.log("SHOWING FUNCTION!!!")
             console.log("RECIEVED",data);
-            $('#demo_client_session_div').html('<h1>'+JSON.stringify(data)+'</h1>');
+            var client_session = $('<table id="client_session" align="center" width="85%" class="spacedTable>');
+            $('#demo_title').html('Demo: '+data['func_name']);
+            $('#demo_client_session_div').html('<p>'+JSON.stringify(data)+'</p>');
+        },
+        failure:function(data){
+            $('#demo_client_session_div').html('<h1> CONNECTION FAILED </h1>');
         }
     });
 }

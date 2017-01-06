@@ -2,13 +2,21 @@
 We import the mlpux module here, as well as the module we want to inspect.
 
 """
-from test_module import test_module
+import mlpux 
+
+from a_test_module import test_module
 import time
 
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
 
 import requests
+
+import discovery
+
+@mlpux.demo()
+def square(x):
+    return x*x
 
 def run_tests():
     # Check what happens when functions are run (the decorator is processed)
@@ -70,4 +78,4 @@ def run_network_tests():
 
 if __name__ == '__main__':
     run_tests()
-    run_network_tests()
+    #run_network_tests()
