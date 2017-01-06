@@ -10,6 +10,7 @@ function clearDemos(){
     $("#demo_subtitle_divider").html('');
     $("#demo_documentation").html('');
     $('#demo_client_session_div').html('');
+    $('#demo_client_inputs').html('');
 }
 
 function getDemos(){
@@ -72,6 +73,8 @@ function showFunction(element_id){
     console.log("Function id: ", func_key);
 
     $('#demo_title_divider').html('<hr>');
+    $('#demo_client_inputs').html('');
+    $('#demo_client_message').html('');
     $('#demo_client_session_div').html('');
 
     $.ajax({
@@ -86,10 +89,45 @@ function showFunction(element_id){
             $('#demo_title').html('Demo: '+data['func_name']);
             $("#demo_subtitle_divider").html("<b>Module:</b> "+data['func_scope']+"<br><p> </p><br> <b>Signature:</b> "+data['signature']);
             $("#demo_documentation").html(show_newline(data['documentation']));
+            
             $('#demo_client_session_div').html('<br><p>'+JSON.stringify(data)+'</p>');
+            
+            var input_form = $('<table id="list_params" align="center" width="85%" class="spacedTable">');
+            for(var i = 0; i < data['parameters'].length; i++){
+                var input_field = $('<input>')
+                input_field.attr('id',data['parameters']['name'])
+                var input_field_label = $('<p>');
+                input_field_label.attr('id','label_'+data['parameters'][i]['name']);
+                if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] !== null){
+                    var anno = data['parameters'][i]['annotation']
+                    clean_anno = anno.replace(/</g,"");
+                    clean_anno = clean_anno.replace(/>/g,"");
+                    input_field_label.html('<b>'+data['parameters'][i]['name']+'<b> ('+clean_anno+')');
+                } else if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] == null){
+                    input_field_label.html('<b>'+data['parameters'][i]['name']+'<b>');
+                }
+                if(data['parameters'][i]['type'] == 'keyword'){
+                    input_field_label.html('<b>Keyword Argument List</b> <br> comma separated values <br> i.e.: arg1=10, arg2=42.42');
+                }
+                if(data['parameters'][i]['type'] == 'positional'){
+                    input_field_label.html('<b>Positional Argument List</b> <br> comma separated values <br> i.e.: "daimler",10,88.3');
+                }
+                
+                if(data['parameters'][i]['default_value'] !== null){
+                    input_field.attr('value',data['parameters'][i]['default_value'])
+                }
+
+                input_form.append(
+                    $('<tr>').append(
+                        $('<td>').html(input_field_label),
+                        $('<td>').html(input_field)
+                    )
+                )
+            }
+            $('#demo_client_inputs').append(input_form);
         },
         error:function(data){
-            $('#demo_client_session_div').html('<h1> CONNECTION FAILED </h1>');
+            $('#demo_client_message').html('<h1> CONNECTION FAILED </h1>');
         }
     });
 }

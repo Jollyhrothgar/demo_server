@@ -121,19 +121,32 @@ def generate_ui_args(parameters, **ui_kwargs):
     """
     # parameters is a dict of 'name':Parameter objects
     param_data = []
+    ui_data = []
+    position = 0
     for k,v in parameters.items():
         # Check what kind the Parameter is.
         param = {
-                "PAR_UUID":str(uuid.uuid4()), # another uuid
-                "POSITIONAL_ONLY":False,        # Only for *args or (arg1,arg2,arg3)
-                "POSITIONAL_OR_KEYWORD":False,  # Standard python binding
-                "VAR_POSITIONAL":False,         # True if positional argument
-                "KEYWORD_ONLY":False,           # True for keyword argument
+                "PAR_UUID":str(uuid.uuid4()),   # another uuid
+                "POSITIONAL_ONLY":False,        # ??
+                # Mutually Exclusive Function Parameter Attributes
+                "POSITIONAL_OR_KEYWORD":False,  # Standard python for a function argument.
+                "VAR_POSITIONAL":False,         # True if *args-like
+                "KEYWORD_ONLY":False,           # ??
                 "VAR_KEYWORD":False,            # True if **kwargs-like
                 "DEFAULT":False,                # True if param has default value
                 "ANNOTATION":False,             # True if parameter is annotated
-                "NAME":"",                  # Parameter Name
+                "NAME":"",                      # Parameter Name
             }
+        
+        ui_param = {
+                "name":None,
+                "type":None,
+                "position":position,
+                "input_type":'input',
+                "default_value":None,
+                "user_input":None,
+                "annotation":None
+        }
         
         param["POSITIONAL_ONLY"] = \
                 v.kind is inspect.Parameter.POSITIONAL_ONLY 
@@ -148,9 +161,25 @@ def generate_ui_args(parameters, **ui_kwargs):
         param["DEFAULT"] = \
                 v.default if v.default is not inspect.Parameter.empty else False
         param["ANNOTATION"] = \
-                v.annotation if v.annotation is not inspect.Parameter.empty else False
+                str(repr(v.annotation)) if v.annotation is not inspect.Parameter.empty else False
         param["NAME"] = v.name
+
+        position+=1
+        
+        if param['VAR_KEYWORD']:
+            ui_param['type'] = 'keyword'
+        if param['VAR_POSITIONAL']:
+            ui_param['type'] = 'positional'
+        if param['POSITIONAL_OR_KEYWORD']:
+            ui_param['type'] = 'standard'
+        if param["DEFAULT"]:
+            ui_param['default_value'] = repr(v.default)
+        if param["ANNOTATION"] is not False:
+            ui_param['annotation'] = str(repr(v.annotation))
+
+        ui_param['name'] = param["NAME"]
         param_data.append(dict(param))
+        ui_data.append(dict(ui_param))
 
     # Now, we need to figure out the number of input fields
     for param in param_data:
@@ -161,8 +190,10 @@ def generate_ui_args(parameters, **ui_kwargs):
             "VAR_POSITIONAL: {:>10}, ".format(param["VAR_POSITIONAL"]),
             "VAR_KEYWORD: {:>10}, ".format(param["VAR_KEYWORD"]), 
             "KEYWORD_ONLY: {:>10}".format(param["KEYWORD_ONLY"]),
+            "ANNOTATION: {:>10}".format(param["ANNOTATION"]),
+            "SUM: {:>10}".format(sum([int(v) for k,v in param.items() if isinstance(v,bool)])) # check mutual exclusivity
             )
-    return param_data 
+    return ui_data
 
 def create_function_server(func, **ui_kwargs):
     """

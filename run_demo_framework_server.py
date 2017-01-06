@@ -184,7 +184,7 @@ def request_demo():
     for function in mlpux_instances[client_uuid]['functions']:
         if func_key == function['func_key']:
             # TODO 1/4/2017: handle function signature better.
-            d = {k:v for k,v in function.items() if k in ['func_name','func_scope','documentation','signature','func_key']}
+            d = {k:v for k,v in function.items() if k in ['annotation','func_name','func_scope','documentation','signature','func_key','parameters']}
             d['client_uuid'] = client_uuid
             return flask.jsonify(dict(d))
     return flask.jsonify({"error":"function not found"})
