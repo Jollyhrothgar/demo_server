@@ -20,6 +20,8 @@ from formencode.variabledecode import variable_encode
 import discovery 
 
 # GLOBALS #####################################################################
+
+
 _DEMO_SERVER_ADDRESS = False
 def set_ip(ip):
     """
@@ -30,10 +32,9 @@ def set_ip(ip):
     """
     global _DEMO_SERVER_ADDRESS
     _DEMO_SERVER_ADDRESS = ip
+discovery.get_ip(service_name="demo server",service_found = set_ip)
 
-discovery.get_ip(service_name="demo server backend",service_found = set_ip)
-
-_MLPUX_IP_ADDRESS = '0.0.0.0'
+_MLPUX_IP_ADDRESS = '0.0.0.0' # always run locally
 _UUID = str(uuid.uuid4())
 
 _functions = {}
@@ -72,13 +73,8 @@ _MLPUX_PORT = discovery.select_unused_port()
 #   meta decorators which modify the behavior of mlpux.demo itself.
 # It seems that this whole body is unique in scope to each decorator.
 
-def start_server(ip, port, discovery_name=None):
+def start_server(ip, port):
     global _app_thread
-    if discovery_name is None:
-        discovery_name = str(port)
-    discovery_name = "mlpux_module_{}".format(discovery_name)
-    print("DISCOVERABLE",discovery_name)
-    discovery.discoverable(service_name="mlpux_module_{}".format(discovery_name))
     _app_thread = threading.Thread(
         target=app.run,
         kwargs = {
@@ -155,6 +151,17 @@ def generate_ui_args(parameters, **ui_kwargs):
                 v.annotation if v.annotation is not inspect.Parameter.empty else False
         param["NAME"] = v.name
         param_data.append(dict(param))
+
+    # Now, we need to figure out the number of input fields
+    for param in param_data:
+        print(
+            "PARAM: {:>10}, ".format(param["NAME"]),
+            "POSITIONAL_OR_KEYWORD: {:>10}, ".format(param["POSITIONAL_OR_KEYWORD"]),
+            "POSITIONAL_ONLY: {:>10}, ".format(param["POSITIONAL_ONLY"]),
+            "VAR_POSITIONAL: {:>10}, ".format(param["VAR_POSITIONAL"]),
+            "VAR_KEYWORD: {:>10}, ".format(param["VAR_KEYWORD"]), 
+            "KEYWORD_ONLY: {:>10}".format(param["KEYWORD_ONLY"]),
+            )
     return param_data 
 
 def create_function_server(func, **ui_kwargs):
@@ -162,7 +169,7 @@ def create_function_server(func, **ui_kwargs):
     Use inspect to get the properties of the function
     """
 
-    global _functions, _UUID, _MLPUX_PORT, _app_thread, _MLPUX_IP_ADDRESS
+    global _functions, _UUID, _MLPUX_PORT, _app_thread, _MLPUX_IP_ADDRESS, _DEMO_SERVER_ADDRESS
 
     func_name = func.__name__
     
@@ -220,7 +227,7 @@ def create_function_server(func, **ui_kwargs):
     if _app_thread is None:
         print("Starting server thread on port ",_MLPUX_PORT)
         print("Service for file: {}".format(module_file))
-        start_server(ip = _MLPUX_IP_ADDRESS, port = _MLPUX_PORT, discovery_name = module_file) 
+        start_server(ip = _MLPUX_IP_ADDRESS, port = _MLPUX_PORT) 
     print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
 
     print("SIGNATURE:",_func_data['function']['signature'])
@@ -230,13 +237,26 @@ def create_function_server(func, **ui_kwargs):
 
     data = pickle.dumps(_func_data,-1)
 
+    # Wait five seconds to find server.
+    seconds = 0
+    while not _DEMO_SERVER_ADDRESS:
+        wait_interval = 0.25
+        time.sleep(wait_interval)
+        seconds += wait_interval
+        if seconds > 5:
+            # Use default for local running
+            print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds))
+            _DEMO_SERVER_ADDRESS = '0.0.0.0'
+            break
+
     if not _DEMO_SERVER_ADDRESS:
         # Demo server was not found with the discovery service.
         print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
     else:
         # double check that server is still up, but don't bother if its not discoverable.
         try:
-            r = requests.get('http://{}/test_up'.format(_DEMO_SERVER_ADDRESS))
+            # use port for development
+            r = requests.get('http://{}:{}/test_up'.format(_DEMO_SERVER_ADDRESS,5002))
         except ConnectionError as e:
             if _app_thread.isAlive():
                 print("DEMO SERVER DIED, MLPUX SERVER IS RUNNING IN BACKEND MODE. REEQUESTS MAY BE SENT TO: {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
@@ -246,7 +266,8 @@ def create_function_server(func, **ui_kwargs):
 
         # If we're here, the connection is okay
         print("SENDING FUNCTION")
-        r = requests.post(url='http://{}/register_function'.format(_DEMO_SERVER_ADDRESS),data=data)
+        # use port for non-privelaged development.
+        r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_ADDRESS,5002),data=data)
         print(r.text)
 
         ret_data = json.loads(r.text)

@@ -1,0 +1,2408 @@
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'type': 'slider', 'max_range': 25, 'var': 'x', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  58049
+Service for file: test_module
+DISCOVERABLE mlpux_module_test_module
+Service 'mlpux_module_mlpux_module_test_module' is now accepting discovery requests
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x104bc7b70>
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58049
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58049
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg3': 'Mr. Dingleberry', 'arg1': 1, 'arg2': 2}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"], "arg3": "Mrs. Dingleberry", "arg1": 1, "arg2": 2}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'type': 'slider', 'var': 'x', 'min_range': -25, 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  58566
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x106906ae8>
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58566
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58566
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg3': 'Mr. Dingleberry', 'arg2': 2, 'arg1': 1, 'arg_list': [1, 2, 'Mr. Dingleberry'], 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg3": "Mrs. Dingleberry", "arg2": 2, "arg1": 1, "arg_list": [1, 2, "Mrs. Dingleberry"], "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'min_range': -25, 'type': 'slider', 'var': 'x', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  58785
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x105991a60>
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:58785
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  False
+DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  0.0.0.0:58785
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg2': 2, 'arg1': 1, 'arg_list': [1, 2, 'Mr. Dingleberry'], 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg3': 'Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg2": 2, "arg1": 1, "arg_list": [1, 2, "Mrs. Dingleberry"], "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg3": "Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'var': 'x', 'min_range': -25, 'type': 'slider', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  59067
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x107725ae8>
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59067
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59067, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59067}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg1': 1, 'arg2': 2, 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"], "arg1": 1, "arg2": 2, "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'var': 'x', 'type': 'slider', 'max_range': 25, 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  59264
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x1077a5ae8>
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59264
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59264, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 59264}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg_list': [1, 2, 'Mr. Dingleberry'], 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg1': 1, 'arg2': 2, 'arg3': 'Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg_list": [1, 2, "Mrs. Dingleberry"], "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg1": 1, "arg2": 2, "arg3": "Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'min_range': -25, 'var': 'x', 'type': 'slider', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  59399
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x10801e8c8>
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:59399
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 59399, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 59399, 'status': 'SUCCESS'}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg2': 2, 'arg1': 1, 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"], "arg2": 2, "arg1": 1, "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'var': 'x', 'max_range': 25, 'type': 'slider', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60039
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  60039
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'max_range': 25, 'var': 'x', 'type': 'slider', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  60281
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  False
+Broadcast discovery timed out, starting sweep discovery
+Searching for services on the 192.168.X.XXX subnet
+Service 'something' found at ip 192.168.0.165
+Discovery failed, retrying in 5 seconds
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x107458c80>
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60281
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60281, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60281}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg1': 1, 'arg2': 2, 'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry'], 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg1": 1, "arg2": 2, "arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"], "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'max_range': 25, 'type': 'slider', 'var': 'x', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  60450
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  False
+Broadcast discovery timed out, starting sweep discovery
+Searching for services on the 192.168.X.XXX subnet
+Service 'something' found at ip 192.168.0.165
+Discovery failed, retrying in 5 seconds
+WAITED FOR 5.25 SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x10752fd90>
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60450
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  0.0.0.0
+SENDING FUNCTION
+{
+  "PORT": 60450, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 60450, 'status': 'SUCCESS'}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg2': 2, 'arg1': 1, 'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry']}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg2": 2, "arg1": 1, "arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"]}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'type': 'slider', 'max_range': 25, 'var': 'x', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+Starting server thread on port  60750
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x1044d9bf8>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:60750
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 60750, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 60750}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg2': 2, 'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg3': 'Mr. Dingleberry', 'arg1': 1, 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg2": 2, "arg_list": [1, 2, "Mrs. Dingleberry"], "arg3": "Mrs. Dingleberry", "arg1": 1, "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'min_range': -25, 'type': 'slider', 'var': 'x', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+PARAM: x, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+Starting server thread on port  61670
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+PARAM: mystr, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: myint, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+PARAM: arg1, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: arg3, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+PARAM: arg1, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: arg3, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+PARAM: arg1, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: default1, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: default2, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+PARAM: args, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: False, VAR_POSITIONAL: True, KEYWORD_ONLY: False
+PARAM: kwargs, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: False, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x1081d9bf8>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+PARAM: args, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: False, VAR_POSITIONAL: True, KEYWORD_ONLY: False
+PARAM: kwargs, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: False, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:61670
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+PARAM: x, POSITIONAL_ONLY: False, POSITIONAL_OR_KEYWORD: True, VAR_POSITIONAL: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 61670, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 61670}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg1': 1, 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg2': 2, 'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry']}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg1": 1, "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg2": 2, "arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"]}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'min_range': -25, 'type': 'slider', 'var': 'x', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+PARAM: x, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+Starting server thread on port  63091
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+PARAM: mystr, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: myint, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+PARAM: arg1, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: arg3, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+PARAM: arg1, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: arg3, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+PARAM: arg1, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: arg2, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: default1, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: default2, POSITIONAL_OR_KEYWORD: True, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: args, POSITIONAL_OR_KEYWORD: False, POSITIONAL_ONLY: False, VAR_POSITIONAL: True, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: kwargs, POSITIONAL_OR_KEYWORD: False, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: True, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x104051c80>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+PARAM: args, POSITIONAL_OR_KEYWORD: False, POSITIONAL_ONLY: False, VAR_POSITIONAL: True, VAR_KEYWORD: False, KEYWORD_ONLY: False
+PARAM: kwargs, POSITIONAL_OR_KEYWORD: False, POSITIONAL_ONLY: False, VAR_POSITIONAL: False, VAR_KEYWORD: True, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_only
+LOCAL ADDRESS 0.0.0.0:63091
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_only
+PARAM: args, POSITIONAL_OR_KEYWORD: False, POSITIONAL_ONLY: False, VAR_POSITIONAL: True, VAR_KEYWORD: False, KEYWORD_ONLY: False
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 63091, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'status': 'SUCCESS', 'PORT': 63091}
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'type': 'slider', 'min_range': -25, 'var': 'x', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+PARAM: x         ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+Starting server thread on port  64352
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+PARAM: mystr     ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: myint     ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+PARAM: arg1      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: arg2      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: arg3      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+PARAM: arg1      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: arg2      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: arg3      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+PARAM: arg1      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: arg2      ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: default1  ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: default2  ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: args      ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: kwargs    ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x1080a9bf8>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+PARAM: args      ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM: kwargs    ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_only
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_only
+PARAM: args      ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: kwargs_only
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.kwargs_only
+PARAM: kwargs    ,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (**kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64352
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+PARAM: x         ,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64352, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64352, 'status': 'SUCCESS'}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg3': 'Mr. Dingleberry', 'arg2': 2, 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg1': 1}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg_list": [1, 2, "Mrs. Dingleberry"], "arg3": "Mrs. Dingleberry", "arg2": 2, "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg1": 1}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'type': 'slider', 'min_range': -25, 'var': 'x', 'max_range': 25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+PARAM:          x,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+Starting server thread on port  64529
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+PARAM:      mystr,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:      myint,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg3,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg3,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:   default1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:   default2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x107736bf8>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_only
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_only
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: kwargs_only
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.kwargs_only
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (**kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64529
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+PARAM:          x,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64529, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64529, 'status': 'SUCCESS'}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'result': '1 + 2 = 3, says Mr. Mr. Dingleberry', 'arg2': 2, 'arg1': 1, 'arg3': 'Mr. Dingleberry', 'arg_list': [1, 2, 'Mr. Dingleberry']}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"result": "1 + 2 = 3, says Mr. Mrs. Dingleberry", "arg2": 2, "arg1": 1, "arg3": "Mrs. Dingleberry", "arg_list": [1, 2, "Mrs. Dingleberry"]}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles
+Service 'demo server' found at ip 192.168.0.82
+********************************************************************************
+ui_args: ()
+ui_kwargs: {'x': {'var': 'x', 'max_range': 25, 'type': 'slider', 'min_range': -25}}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.square
+PARAM:          x,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+Starting server thread on port  64714
+Service for file: test_module
+200
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x:float)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: no_args
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.no_args
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: ()
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: str_args
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.str_args
+PARAM:      mystr,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:      myint,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (mystr:str, myint:int)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg3,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_notype_clone
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_notype_clone
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg3,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, arg3)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: hard_func
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.hard_func
+PARAM:       arg1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       arg2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:   default1,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:   default2,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (arg1, arg2, default1='Fanny', default2:int=19, *args, **kwargs) -> <function str_args at 0x1087f4c80>
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: arbitrary_func
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.arbitrary_func
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args, **kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: args_only
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.args_only
+PARAM:       args,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          1,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (*args)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: kwargs_only
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'str'>
+FUNCTION SCOPE a_test_module.test_module
+FUNCTION KEY: a_test_module.test_module.kwargs_only
+PARAM:     kwargs,  POSITIONAL_OR_KEYWORD:          0,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          1,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (**kwargs)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+********************************************************************************
+ui_args: ()
+ui_kwargs: {}
+PROCESSING FUNCTION: square
+LOCAL ADDRESS 0.0.0.0:64714
+<class 'NoneType'>
+FUNCTION SCOPE test
+FUNCTION KEY: test.square
+PARAM:          x,  POSITIONAL_OR_KEYWORD:          1,  POSITIONAL_ONLY:          0,  VAR_POSITIONAL:          0,  VAR_KEYWORD:          0,  KEYWORD_ONLY:          0
+IS MLPUX SERVER THREAD RUNNING:  True
+SIGNATURE: (x)
+TEST UP:  192.168.0.82
+SENDING FUNCTION
+{
+  "PORT": 64714, 
+  "status": "SUCCESS"
+}
+
+SUCCESSFULLY REGISTERED FUNCTION TO SERVER! {'PORT': 64714, 'status': 'SUCCESS'}
+================================================================================
+Test 1: a module with no arguments
+================================================================================
+Test 2: a module with float arguments
+100.0
+================================================================================
+Test 3: a module with two arguments that are string and int
+Hi there Jillywanker, you earned 147 schmeckles
+================================================================================
+Test 4: a module with arguments that do not specifiy type, and returns a python dict object
+{'arg2': 2, 'arg1': 1, 'arg_list': [1, 2, 'Mr. Dingleberry'], 'arg3': 'Mr. Dingleberry', 'result': '1 + 2 = 3, says Mr. Mr. Dingleberry'}
+================================================================================
+Test 5: a module with arguments that do not specifiy type, and returns json str
+{"arg2": 2, "arg1": 1, "arg_list": [1, 2, "Mrs. Dingleberry"], "arg3": "Mrs. Dingleberry", "result": "1 + 2 = 3, says Mr. Mrs. Dingleberry"}
+================================================================================
+Test 6: args and kwargs in functions
+number of args: 4, number of kwargs: 2
+================================================================================
+Test 7: a particularly complex signature
+Hi there happy, you earned gilmore schmeckles

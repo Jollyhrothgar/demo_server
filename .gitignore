@@ -4,3 +4,5 @@ demo_framework.log
 tags
 venv*
 run.command
+run_all.sh
+*.command

@@ -91,4 +91,20 @@ def arbitrary_func(*args, **kwargs):
     return_string = "number of args: {0}, number of kwargs: {1}".format(len(args),len(kwargs))
     return return_string
 
+@mlpux.demo()
+def args_only(*args):
+    """
+    A function which consists only of positional arguments, with no keywords.
+
+    Call with any number of parameters - returns a list of those parameters back.abs
+    """
+    return args;
+
+@mlpux.demo()
+def kwargs_only(**kwargs):
+    """
+    A function that only takes keyword arguments, and returns them.
+    """
+    return kwargs
+
 

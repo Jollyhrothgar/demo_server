@@ -84,7 +84,7 @@ function showFunction(element_id){
             console.log("RECIEVED",data);
             var client_session = $('<table id="client_session" align="center" width="85%" class="spacedTable>');
             $('#demo_title').html('Demo: '+data['func_name']);
-            $("#demo_subtitle_divider").html("<b>Module:</b> "+data['func_scope']+"<br> <b>Signature:</b> "+data['signature']);
+            $("#demo_subtitle_divider").html("<b>Module:</b> "+data['func_scope']+"<br><p> </p><br> <b>Signature:</b> "+data['signature']);
             $("#demo_documentation").html(show_newline(data['documentation']));
             $('#demo_client_session_div').html('<br><p>'+JSON.stringify(data)+'</p>');
         },
