@@ -13,6 +13,7 @@ import socket
 import ast
 import requests
 import os
+import sys
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
 
@@ -91,7 +92,7 @@ def start_server(ip, port):
     while not done:
         try:
             r = requests.get('http://{}:{}/test_up'.format(ip,port))
-            print(r.text)
+            print(r.text, file=sys.stderr)
         except:
             time.sleep(0.2)
         else:
@@ -175,7 +176,8 @@ def generate_ui_args(parameters, **ui_kwargs):
         if param["DEFAULT"]:
             ui_param['default_value'] = repr(v.default)
         if param["ANNOTATION"] is not False:
-            ui_param['annotation'] = str(repr(v.annotation))
+            ui_param['annotation'] = str(repr(v.annotation)).replace('<','')
+            ui_param['annotation'] = ui_param['annotation'].replace('>','')
 
         ui_param['name'] = param["NAME"]
         param_data.append(dict(param))
@@ -204,8 +206,8 @@ def create_function_server(func, **ui_kwargs):
 
     func_name = func.__name__
     
-    print('PROCESSING FUNCTION:', func_name)
-    print('LOCAL ADDRESS {}:{}'.format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
+    print('PROCESSING FUNCTION:', func_name, file=sys.stderr)
+    print('LOCAL ADDRESS {}:{}'.format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
     
     # if you want names and values as a dictionary:
     args_spec = inspect.getfullargspec(func)
@@ -220,7 +222,7 @@ def create_function_server(func, **ui_kwargs):
 
     # File Scope
     module_file = os.path.splitext(os.path.basename(os.path.normpath(members['__globals__']['__file__'])))[0]
-    print(type(module_folder))
+    print(type(module_folder), file=sys.stderr)
 
     func_scope = ""
     if module_folder is None:
@@ -228,8 +230,8 @@ def create_function_server(func, **ui_kwargs):
     else:
         func_scope = module_folder + "." + module_file
     func_key = func_scope + "." + func_name
-    print('FUNCTION SCOPE',func_scope)
-    print('FUNCTION KEY:',func_key)
+    print('FUNCTION SCOPE',func_scope, file=sys.stderr)
+    print('FUNCTION KEY:',func_key, file=sys.stderr)
     documentation = members['__doc__']
     parameters = inspect.signature(func).parameters
     parameters = generate_ui_args(parameters, **ui_kwargs)
@@ -256,13 +258,13 @@ def create_function_server(func, **ui_kwargs):
     
     # Start Server Thread
     if _app_thread is None:
-        print("Starting server thread on port ",_MLPUX_PORT)
-        print("Service for file: {}".format(module_file))
+        print("Starting server thread on port ",_MLPUX_PORT, file=sys.stderr)
+        print("Service for file: {}".format(module_file), file=sys.stderr)
         start_server(ip = _MLPUX_IP_ADDRESS, port = _MLPUX_PORT) 
-    print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive())
+    print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive(), file=sys.stderr)
 
-    print("SIGNATURE:",_func_data['function']['signature'])
-    print("TEST UP: ",_DEMO_SERVER_ADDRESS)
+    print("SIGNATURE:",_func_data['function']['signature'], file=sys.stderr)
+    print("TEST UP: ",_DEMO_SERVER_ADDRESS, file=sys.stderr)
 
     _functions[func_key]['attributes'] = dict(_func_data)
 
@@ -276,13 +278,13 @@ def create_function_server(func, **ui_kwargs):
         seconds += wait_interval
         if seconds > 5:
             # Use default for local running
-            print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds))
+            print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds), file=sys.stderr)
             _DEMO_SERVER_ADDRESS = '0.0.0.0'
             break
 
     if not _DEMO_SERVER_ADDRESS:
         # Demo server was not found with the discovery service.
-        print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
+        print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
     else:
         # double check that server is still up, but don't bother if its not discoverable.
         try:
@@ -290,23 +292,23 @@ def create_function_server(func, **ui_kwargs):
             r = requests.get('http://{}:{}/test_up'.format(_DEMO_SERVER_ADDRESS,5002))
         except ConnectionError as e:
             if _app_thread.isAlive():
-                print("DEMO SERVER DIED, MLPUX SERVER IS RUNNING IN BACKEND MODE. REEQUESTS MAY BE SENT TO: {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
+                print("DEMO SERVER DIED, MLPUX SERVER IS RUNNING IN BACKEND MODE. REEQUESTS MAY BE SENT TO: {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
                 return
             else:
                 raise ValueError("ERROR MLPUX SERVER IS NOT RUNNING. DEMO SERVER IS NOT RUNNING.")
 
         # If we're here, the connection is okay
-        print("SENDING FUNCTION")
+        print("SENDING FUNCTION", file=sys.stderr)
         # use port for non-privelaged development.
         r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_ADDRESS,5002),data=data)
-        print(r.text)
+        print(r.text, file=sys.stderr)
 
         ret_data = json.loads(r.text)
-        print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data)
+        print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data, file=sys.stderr)
     return 
 
 def demo(*ui_args, **ui_kwargs):
-    print('*'*80)
+    print('*'*80, file=sys.stderr)
     print ('ui_args:'  , ui_args)
     print ('ui_kwargs:', ui_kwargs)
 
@@ -327,14 +329,14 @@ def execute_function(func_scope, func_name):
     global _functions
 
     func_key = func_scope + "." + func_name
-    print("GOT REQUEST: ",flask.request.args)
-    print("DECODED:",variable_decode(flask.request.args))
-    print("TRYING TO EXECUTE:",func_key)
+    print("GOT REQUEST: ",flask.request.args, file=sys.stderr)
+    print("DECODED:",variable_decode(flask.request.args), file=sys.stderr)
+    print("TRYING TO EXECUTE:",func_key, file=sys.stderr)
 
     callback = None
     if func_key not in _functions:
         msg = "COULDN'T FIND FUNCTION {} (KEY: {}) in {}".format(func_name, func_key, _functions.keys())
-        print(msg)
+        print(msg, file=sys.stderr)
         return flask.jsonify({'error':msg})
     else:
         callback = _functions[func_key]['func']
@@ -354,11 +356,13 @@ def execute_function(func_scope, func_name):
                     args += ast.literal_eval(v)
                 except:
                     msg = {"error":"could not evaluate {} as an *args array.".format(v)}
+                    print(msg, file=sys.stderr)
                     return flask.jsonify(msg)
             else:
                 kwargs[k] = ast.literal_eval(v)
     except:
         msg = {"error":"could not parse arguments!"}
+        print(msg, file=sys.stderr)
         msg.update(func_args)
         flask.jsonify(msg)
 
@@ -369,12 +373,13 @@ def execute_function(func_scope, func_name):
         elif len(args) > 0 and len(kwargs.keys()) == 0:
             result = callback(*args) 
         elif len(args) == 0 and len(kwargs.keys()) > 0:
-            print(kwargs)
+            print(kwargs, file=sys.stderr)
             result = callback(**kwargs)
         elif len(args) == 0 and len(kwargs.keys()) == 0:
             result = callback()
     except:
         msg = {"error":"Problem executing function {} with arguments func args: {}".format(func_key,func_args)}
+        print(msg, file=sys.stderr)
         return flask.jsonify(msg)
     return flask.jsonify({"msg":"success","result":result})
 

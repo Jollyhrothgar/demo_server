@@ -11,6 +11,9 @@ function clearDemos(){
     $("#demo_documentation").html('');
     $('#demo_client_session_div').html('');
     $('#demo_client_inputs').html('');
+    $("#demo_confirm_exe").html('');
+    $("#demo_results").html('');
+    $("#execute_demo").html('');
 }
 
 function getDemos(){
@@ -76,6 +79,9 @@ function showFunction(element_id){
     $('#demo_client_inputs').html('');
     $('#demo_client_message').html('');
     $('#demo_client_session_div').html('');
+    $("#demo_confirm_exe").html('');
+    $("#demo_results").html('');
+    $("#execute_demo").html('');
 
     $.ajax({
         type: "POST",
@@ -94,15 +100,13 @@ function showFunction(element_id){
             
             var input_form = $('<table id="list_params" align="center" width="85%" class="spacedTable">');
             for(var i = 0; i < data['parameters'].length; i++){
-                var input_field = $('<input>')
-                input_field.attr('id',data['parameters']['name'])
+                var input_field = $('<input id="'+data['parameters'][i]['name']+'" class="inputParameter" data-func-scope="'+data['func_scope']+'" data-arg-type="'+data['parameters'][i]['type']+'" data-func-name="'+data['func_name']+'">');
                 var input_field_label = $('<p>');
-                input_field_label.attr('id','label_'+data['parameters'][i]['name']);
                 if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] !== null){
                     var anno = data['parameters'][i]['annotation']
                     clean_anno = anno.replace(/</g,"");
                     clean_anno = clean_anno.replace(/>/g,"");
-                    input_field_label.html('<b>'+data['parameters'][i]['name']+'<b> ('+clean_anno+')');
+                    input_field_label.html('<b>'+data['parameters'][i]['name']+'</b> ('+clean_anno+')');
                 } else if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] == null){
                     input_field_label.html('<b>'+data['parameters'][i]['name']+'<b>');
                 }
@@ -110,7 +114,7 @@ function showFunction(element_id){
                     input_field_label.html('<b>Keyword Argument List</b> <br> comma separated values <br> i.e.: arg1=10, arg2=42.42');
                 }
                 if(data['parameters'][i]['type'] == 'positional'){
-                    input_field_label.html('<b>Positional Argument List</b> <br> comma separated values <br> i.e.: "daimler",10,88.3');
+                    input_field_label.html('<b>Positional Argument List</b> <br> comma separated values <br> i.e.: "daimler", 10, 88.3');
                 }
                 
                 if(data['parameters'][i]['default_value'] !== null){
@@ -125,9 +129,67 @@ function showFunction(element_id){
                 )
             }
             $('#demo_client_inputs').append(input_form);
+            var execute_button = $("<input>");
+            execute_button.attr('id','execute_demo_button');
+            execute_button.attr('onclick',"sendFunctionArguments()");
+            execute_button.attr('type','button');
+            execute_button.attr('class','btn btn-xl btn-primary');
+            execute_button.attr('value','Execute Demo');
+            $("#execute_demo").append(execute_button);
         },
         error:function(data){
             $('#demo_client_message').html('<h1> CONNECTION FAILED </h1>');
+        }
+    });
+}
+
+function sendFunctionArguments(){
+    console.log("SENDING ARGS");
+    var func_scope = null
+    var func_name = null
+    var payload = {}
+
+    $( ".inputParameter" ).each(function( index ) {
+        func_scope = $(this).attr('data-func-scope');
+        func_name = $(this).attr('data-func-name');
+        var type = $(this).attr('data-arg-type');
+        if(type == 'positional'){
+            payload.args = JSON.stringify($(this).val().split(","));
+        } else if(type == 'keyword'){
+            var temp = $(this).val().split(",");
+            for(var i = 0; i < temp.length; i++){
+                var temp2 = temp[i].split('=');
+                payload[temp2[0]] = temp2[1];
+            }
+        } else {
+            payload[$(this).attr('id')] = $(this).val();
+        }
+    });
+
+    console.log( "Data ready:", func_scope, func_name, payload);
+    var endpoint = '/execute/'+func_scope+'/'+func_name
+
+    // Now post the data to the engineering server.
+    $.ajax({
+        url:$SCRIPT_ROOT+endpoint,
+        type:"GET",
+        data:payload,
+        success:function(data){
+            console.log("RESPONSE",data);
+            if(data['msg'] == 'success'){
+                // <div id="demo_confirm_exe"> </div>
+                // <div id="demo_results"> </div>
+                var result = $('<h2>').text(JSON.stringify(data['result']));
+                $("#demo_results").append(result);
+            }
+            if( 'error' in data ){
+                var result = $('<h2>').text(JSON.stringify(data['error']));
+                $("#demo_results").append(result);
+            }
+        },
+        error:function(data){
+            console.log("ERROR WITH EXECUTION");
+                $("#demo_results").append(result);
         }
     });
 }

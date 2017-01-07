@@ -1,6 +1,8 @@
 # Python libraries
+import ast
 import flask
 import threading
+import sys
 import os
 import shutil
 import json
@@ -15,7 +17,10 @@ from urllib.request import urlopen
 import time
 import threading
 import discovery
+import requests
 
+from formencode.variabledecode import variable_decode
+from formencode.variabledecode import variable_encode
 # Framework
 
 # GLOBALS #####################################################################
@@ -52,7 +57,7 @@ def check_up(client_uuid):
         # ip = mlpux_instances[client_uuid]['IP']
     # except:
         # for key in mlpux_instances.keys():
-            # print(client_uuid,key)
+            # print(client_uuid,key, file=sys.stderr)
 
     return True
 
@@ -61,16 +66,16 @@ def print_config():
     prints configuration to console
     """
     global HOSTNAME, GITLAB_SERVER, PORT, STATIC, TEMPLATES, DEMO_DIR, API_TOKEN, API_URL, API_URL
-    print(80*"=")
-    print('HOSTNAME : {}'.format(HOSTNAME))
-    print('GITLAB_SERVER : {}'.format(GITLAB_SERVER))
-    print('PORT : {}'.format(PORT))
-    print('STATIC : {}'.format(STATIC))
-    print('TEMPLATES : {}'.format(TEMPLATES))
-    print('DEMO_DIR : {}'.format(DEMO_DIR))
-    print('API_TOKEN : {}'.format(API_TOKEN))
-    print('API_URL : {}'.format(API_URL))
-    print(80*"=")
+    print(80*"=", file=sys.stderr)
+    print('HOSTNAME : {}'.format(HOSTNAME), file=sys.stderr)
+    print('GITLAB_SERVER : {}'.format(GITLAB_SERVER), file=sys.stderr)
+    print('PORT : {}'.format(PORT), file=sys.stderr)
+    print('STATIC : {}'.format(STATIC), file=sys.stderr)
+    print('TEMPLATES : {}'.format(TEMPLATES), file=sys.stderr)
+    print('DEMO_DIR : {}'.format(DEMO_DIR), file=sys.stderr)
+    print('API_TOKEN : {}'.format(API_TOKEN), file=sys.stderr)
+    print('API_URL : {}'.format(API_URL), file=sys.stderr)
+    print(80*"=", file=sys.stderr)
 
 
 # FLASK APPLICATION ROUTES ####################################################
@@ -93,7 +98,7 @@ def favicon():
 def webhook():
     data = flask.request.json
     recreate_demo(data['repository']['name'])
-    print("webhook:", json.dumps(data,indent=2) ,"end webhook.")
+    print("webhook:", json.dumps(data,indent=2) ,"end webhook.", file=sys.stderr)
     return ""
 
 @app.route('/')
@@ -140,7 +145,7 @@ def request_demo_list():
     return_data = []
     for client_uuid,client in mlpux_instances.items():
         for function in client['functions']:
-            print(mlpux_instances[client_uuid])
+            #print(mlpux_instances[client_uuid], file=sys.stderr)
             ret = {
                 'IP':mlpux_instances[client_uuid]['IP'],
                 'PORT':mlpux_instances[client_uuid]['PORT'],
@@ -210,13 +215,73 @@ def register_function():
         # must have a list of exactly one unique function
         mlpux_instances[client_uuid]['functions'].append(dict(_func_data['function']))
         
-    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['func_name'])
-    print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']))
-    print(80*"=")
+    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['func_name'], file=sys.stderr)
+    print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']), file=sys.stderr)
+    print(80*"=", file=sys.stderr)
    
     # TODO implement failure handling
     ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[client_uuid]['PORT']}
     return flask.jsonify(ret_val)
+
+@app.route('/execute/<string:func_scope>/<string:func_name>', methods=['GET'])
+def execute(func_scope, func_name):
+    
+    func_key = func_scope + "." + func_name
+    func_args = variable_decode(flask.request.args)
+    print("GOT REQUEST: ",flask.request.args, file=sys.stderr)
+    print("DECODED:",func_args, file=sys.stderr)
+    print("TRYING TO EXECUTE:",func_key, file=sys.stderr)
+    print("CHECK",type(func_args), file=sys.stderr)
+
+    # Dictionary of args
+    # Convention: 
+    # kwargs as usual for GET, but *args as:
+    # /base/path?args=[thing1, thing2...]
+    # Holy python order: (*args, *kwargs, an_arg, another_arg)
+    args = []
+    kwargs = {}
+    # try:
+    for k,v in func_args.items():
+        if k == 'args':
+            try:
+                args += ast.literal_eval(v)
+            except:
+                msg = {"error":"could not evaluate {} as an *args array.".format(v)}
+                print(msg,file=sys.stderr)
+                return flask.jsonify(msg)
+        else:
+            kwargs[k] = ast.literal_eval(v)
+    # except:
+        # msg = {"error":"could not parse arguments!"}
+        # msg.update(func_args)
+        # print(msg,file=sys.stderr)
+        # flask.jsonify(msg)
+    
+    # args and kwargs are ready here.
+    print("PARSED ARGUMENTS", args,kwargs, file=sys.stdout)
+    payload = {}
+    if len(args) > 0:
+        payload = {
+            'args':json.dumps(args),
+        }
+    if len(kwargs) > 0:
+        payload.update(kwargs)
+
+    print("PAYLOAD",payload,file=sys.stderr)
+
+    for client_uuid, client in mlpux_instances.items():
+        for function in client['functions']:
+            if func_key == function['func_key'] and func_name == function['func_name']:
+                mlpux_ip = mlpux_instances[client_uuid]['IP']
+                mlpux_port = mlpux_instances[client_uuid]['PORT']
+
+                r = requests.get('http://{}:{}/execute/{}/{}'.format(mlpux_ip,mlpux_port,func_scope,func_name),payload)
+                print("SENDING",mlpux_ip, mlpux_port, func_scope, func_name, payload, file=sys.stderr)
+                print("URL",r.url)
+                print("GOT",r.json(), file=sys.stderr)
+                return flask.jsonify(r.json())
+                break
+    return flask.jsonify({"FAILURE":"FAILURE"})
 
 # END FLASK APPLICATION ROUTES ################################################
 
@@ -235,9 +300,9 @@ def git_cmd(*args):
 
 def recreate_demo(project_name):
     if os.path.isdir('{}/{}'.format(DEMO_DIR, project_name)):
-        print("Removing Demo Area: {}/{}".format(DEMO_DIR, project_name))
+        print("Removing Demo Area: {}/{}".format(DEMO_DIR, project_name), file=sys.stderr)
         shutil.rmtree('{}/{}'.format(DEMO_DIR, project_name))
-    print("Creating Demo Area")
+    print("Creating Demo Area", file=sys.stderr)
     git_cmd('clone', 'http://{}/demos/{}'.format(GITLAB_SERVER, project_name), '{}/{}'.format(DEMO_DIR, project_name))
     open('{}/__init__.py'.format(DEMO_DIR),'a').close()
 
@@ -245,9 +310,9 @@ def recreate_demo(project_name):
     # of mlpux.build_ui decorator. 
     exec("import demos.test_module.test_module as {}".format(project_name))
     # for i in dir(project_name):
-        # print(i)
+        # print(i, file=sys.stderr)
     stuff = eval("{}.no_args()".format(project_name))
-    print(stuff)
+    print(stuff, file=sys.stderr)
     return
 
 def lookup_function_name(client_uuid, func_key, mlpux_instances):
@@ -257,27 +322,27 @@ def lookup_function_name(client_uuid, func_key, mlpux_instances):
     """
     func_name = None
     if client_uuid not in mlpux_instances:
-        print("ERROR: client {} does not exist.".format(client_uuid))
+        print("ERROR: client {} does not exist.".format(client_uuid), file=sys.stderr)
         return func_name
     functions = mlpux_instances[client_uuid]['functions']
     for function in functions:
         if func_key == function['func_key']:
             func_name = function['func_name']
             return func_name
-    print("ERROR: function {} does not exist for client {}".format(func_name,client_uuid))
+    print("ERROR: function {} does not exist for client {}".format(func_name,client_uuid), file=sys.stderr)
     return func_name
 
 #### MAYBE KILL THIS PART? TODO ####
 def clear_demos():
     global demos
     demos = []
-    print("Emptying the demos area")
+    print("Emptying the demos area", file=sys.stderr)
     try:
         shutil.rmtree(DEMO_DIR)
         shutil.os.mkdir(DEMO_DIR)
     except:
         shutil.os.mkdir(DEMO_DIR)
-    print("Ready for Demos")
+    print("Ready for Demos", file=sys.stderr)
     return
 
 def get_demos():
@@ -291,7 +356,7 @@ def get_demos():
         if project['namespace']['name'] == 'demos':
             tokens = project['name_with_namespace'].split()
             demos.append(tokens[2]) # third token is project name
-            print("DEMO FOUND: ", project['path_with_namespace'])
+            print("DEMO FOUND: ", project['path_with_namespace'], file=sys.stderr)
     for demo in demos:
         recreate_demo(demo)
     return
