@@ -52,10 +52,11 @@ def run_tests():
     print(80*'=')
     print("Test 7: a particularly complex signature")
     ret_val = test_module.hard_func(
+            1,2,3,
             arg1="dude", 
             arg2="whereis", 
             default1="mycar", 
-            default2=20, 
+            default2=20,
             extra='hi', 
             extra2='blowme'
     )

@@ -124,6 +124,7 @@ def generate_ui_args(parameters, **ui_kwargs):
     param_data = []
     ui_data = []
     position = 0
+    found_positional = True
     for k,v in parameters.items():
         # Check what kind the Parameter is.
         param = {
@@ -132,7 +133,7 @@ def generate_ui_args(parameters, **ui_kwargs):
                 # Mutually Exclusive Function Parameter Attributes
                 "POSITIONAL_OR_KEYWORD":False,  # Standard python for a function argument.
                 "VAR_POSITIONAL":False,         # True if *args-like
-                "KEYWORD_ONLY":False,           # ??
+                "KEYWORD_ONLY":False,           # True for args following signature like: (*, arg1, arg2...) - only named arguments accepted.
                 "VAR_KEYWORD":False,            # True if **kwargs-like
                 "DEFAULT":False,                # True if param has default value
                 "ANNOTATION":False,             # True if parameter is annotated
@@ -165,24 +166,24 @@ def generate_ui_args(parameters, **ui_kwargs):
                 str(repr(v.annotation)) if v.annotation is not inspect.Parameter.empty else False
         param["NAME"] = v.name
 
-        position+=1
-        
         if param['VAR_KEYWORD']:
             ui_param['type'] = 'keyword'
         if param['VAR_POSITIONAL']:
             ui_param['type'] = 'positional'
-        if param['POSITIONAL_OR_KEYWORD']:
+            found_positional == True
+            if position != 0:
+                raise ValueError("Someone wrote a really ambiguous function signature. You must place positional arguments first in your function signature. Think carefully about symantics and readability of your function. If you make me rewrite this module to accomodate your shitty python, I will end you. --Mike")
+        if param['POSITIONAL_OR_KEYWORD'] or param['KEYWORD_ONLY']:
             ui_param['type'] = 'standard'
         if param["DEFAULT"]:
             ui_param['default_value'] = repr(v.default)
         if param["ANNOTATION"] is not False:
             ui_param['annotation'] = str(repr(v.annotation)).replace('<','')
             ui_param['annotation'] = ui_param['annotation'].replace('>','')
-
         ui_param['name'] = param["NAME"]
         param_data.append(dict(param))
         ui_data.append(dict(ui_param))
-
+        position+=1
     # Now, we need to figure out the number of input fields
     for param in param_data:
         print(
@@ -234,7 +235,11 @@ def create_function_server(func, **ui_kwargs):
     print('FUNCTION KEY:',func_key, file=sys.stderr)
     documentation = members['__doc__']
     parameters = inspect.signature(func).parameters
-    parameters = generate_ui_args(parameters, **ui_kwargs)
+    try:
+        parameters = generate_ui_args(parameters, **ui_kwargs)
+    except Exception as e:
+        print("Problem with function: {}, Exception '{}'. Skipping".format(func_key,e), file=sys.stderr)
+        return
 
     if func_key in _functions:
         raise ValueError("ERROR: You defined a function with a name collision with a pre-existing funciton. mlpux is first come-first-serve, therefore your function will not be registered. This is rare but possible in cases where your function lives in a module inside a directory which shares the same module and directory name with another previously defined function. This is a consequence of trying to keep things human-readable for the web API. Here is an example of this type of collision: /some/path/to/module/module.py(contains 'func') and /other/path/to/module/module.py(contains'func'). Your function key is {} which already exists as a key in {}. Name your function something else, name your module something else, or name the directory your module lives in something else.".format(func_key,str(_functions.keys())))
@@ -320,66 +325,70 @@ def demo(*ui_args, **ui_kwargs):
         return wrapper
     return decorator
 
-@app.route('/execute/<string:func_scope>/<string:func_name>', methods=['GET'])
-def execute_function(func_scope, func_name):
+@app.route('/execute', methods=['POST','GET'])
+def execute_function():
     """
     For now, the function name is used to select the function and the arguments are
     POSTed in the body of the request.
+
+    Note that argument parsing will be handled by server front end, and must be
+    posted here as a pickled python object.
     """
+
     global _functions
 
-    func_key = func_scope + "." + func_name
-    print("GOT REQUEST: ",flask.request.args, file=sys.stderr)
-    print("DECODED:",variable_decode(flask.request.args), file=sys.stderr)
-    print("TRYING TO EXECUTE:",func_key, file=sys.stderr)
+    
+    request_content = flask.request.data
+    print("MLPUX SERVER RECEIVED: {}".format(repr(request_content)), file=sys.stderr)
+    arguments = pickle.loads(request_content)
+    print("DECODED: {}".format(repr(arguments)), file=sys.stderr)
+    try:
+        func_key = arguments['func_key']
+        args = arguments['args']
+        kwargs = arguments['kwargs']
+    except:
+        msg = {'error':"Data posted to MLPUX server was not formatted correctly. Expecting {'func_key':func_key, 'args':args, 'kwargs':kwargs}, but got {}".format(repr(arguments))}
+        print(msg, file=sys.stderr)
+        return flask.jsonify(msg)
 
     callback = None
     if func_key not in _functions:
-        msg = "COULDN'T FIND FUNCTION {} (KEY: {}) in {}".format(func_name, func_key, _functions.keys())
+        msg = {'error' "COULDN'T FIND FUNCTION {} (KEY: {}) in {}".format(func_name, func_key, _functions.keys())}
         print(msg, file=sys.stderr)
-        return flask.jsonify({'error':msg})
+        return flask.jsonify(msg)
     else:
         callback = _functions[func_key]['func']
 
-    # Dictionary of args
-    func_args = variable_decode(flask.request.args) 
-    # Convention: 
-    # kwargs as usual for GET, but *args as:
-    # /base/path?args=[thing1, thing2...]
-    # Holy python order: (*args, *kwargs, an_arg, another_arg)
-    args = []
-    kwargs = {}
-    try:
-        for k,v in func_args.items():
-            if k == 'args':
-                try:
-                    args += ast.literal_eval(v)
-                except:
-                    msg = {"error":"could not evaluate {} as an *args array.".format(v)}
-                    print(msg, file=sys.stderr)
-                    return flask.jsonify(msg)
-            else:
-                kwargs[k] = ast.literal_eval(v)
-    except:
-        msg = {"error":"could not parse arguments!"}
-        print(msg, file=sys.stderr)
-        msg.update(func_args)
-        flask.jsonify(msg)
-
     result = "function returned nothing"
-    try:
-        if len(args) > 0 and len(kwargs.keys()) > 0:
+    if len(args) > 0 and len(kwargs.keys()) > 0:
+        try:
             result = callback(*args,**kwargs) 
-        elif len(args) > 0 and len(kwargs.keys()) == 0:
+        except Exception as e:
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...]&A=a&B=b&... (positional and keyword)".format(e,func_key,func_args)}
+            print(msg,file=sys.stderr)
+            return flask.jsonify(msg)
+    elif len(args) > 0 and len(kwargs.keys()) == 0:
+        try:    
             result = callback(*args) 
-        elif len(args) == 0 and len(kwargs.keys()) > 0:
-            print(kwargs, file=sys.stderr)
+        except Exception as e:
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...] (positional only)".format(e, func_key,func_args)}
+            print(msg,file=sys.stderr)
+            return flask.jsonify(msg)
+    elif len(args) == 0 and len(kwargs.keys()) > 0:
+        try:
             result = callback(**kwargs)
-        elif len(args) == 0 and len(kwargs.keys()) == 0:
+        except Exception as e:
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?X=x&Y=y&Z=z... (keyword only) ".format(e, func_key,func_args)}
+            print(msg,file=sys.stderr)
+            return flask.jsonify(msg)
+    elif len(args) == 0 and len(kwargs.keys()) == 0:
+        try:
             result = callback()
-    except:
-        msg = {"error":"Problem executing function {} with arguments func args: {}".format(func_key,func_args)}
-        print(msg, file=sys.stderr)
-        return flask.jsonify(msg)
-    return flask.jsonify({"msg":"success","result":result})
+        except Exception as e:
+            msg = {"error":"Execution endpoint exception: {}. Tried {}. Request endpoint type: endpoint/func (no arguments)".format(e,func_key)}
+            print(msg,file=sys.stderr)
+            return flask.jsonify(msg)
 
+    # TODO: do some inference on what to do with result here.
+
+    return flask.jsonify({"msg":"success","result":result})

@@ -225,49 +225,58 @@ def register_function():
 
 @app.route('/execute/<string:func_scope>/<string:func_name>', methods=['GET'])
 def execute(func_scope, func_name):
-    
+    """
+    Argument parsing is independant of the funciton actually working. We parse arguments here
+    and here only, then pass them along to the appropriate mlpux server via pickled data stream
+
+    Convention:
+    args are passed in args array in get request
+    kwargs are passed as typical for get request.
+    Example argument scenarios:
+    endpoint/func?args=[x,y,z...]&A=a&B=b&... (positional and keyword)".format(e,func_key,func_args)}
+    endpoint/func?args=[x,y,z...] (positional only)".format(e, func_key,func_args)}
+    endpoint/func?X=x&Y=y&Z=z... (keyword only) ".format(e, func_key,func_args)}
+    endpoint type: endpoint/func (no arguments)".format(e,func_key)}
+    """
+
+    # TODO Remove for debug, show raw request.
+    print(flask.request.headers, file=sys.stderr)
+
     func_key = func_scope + "." + func_name
-    func_args = variable_decode(flask.request.args)
-    print("GOT REQUEST: ",flask.request.args, file=sys.stderr)
-    print("DECODED:",func_args, file=sys.stderr)
-    print("TRYING TO EXECUTE:",func_key, file=sys.stderr)
-    print("CHECK",type(func_args), file=sys.stderr)
+    print("RECEIVED ARGUMENTS FROM GET REQUEST: ",flask.request.args, file=sys.stderr)
+    print("CONVERTED TO DICT:",variable_decode(flask.request.args), file=sys.stderr)
 
     # Dictionary of args
-    # Convention: 
-    # kwargs as usual for GET, but *args as:
-    # /base/path?args=[thing1, thing2...]
-    # Holy python order: (*args, *kwargs, an_arg, another_arg)
+    func_args = variable_decode(flask.request.args) 
     args = []
     kwargs = {}
-    # try:
-    for k,v in func_args.items():
-        if k == 'args':
-            try:
-                args += ast.literal_eval(v)
-            except:
-                msg = {"error":"could not evaluate {} as an *args array.".format(v)}
-                print(msg,file=sys.stderr)
-                return flask.jsonify(msg)
-        else:
-            kwargs[k] = ast.literal_eval(v)
-    # except:
-        # msg = {"error":"could not parse arguments!"}
-        # msg.update(func_args)
-        # print(msg,file=sys.stderr)
-        # flask.jsonify(msg)
-    
-    # args and kwargs are ready here.
-    print("PARSED ARGUMENTS", args,kwargs, file=sys.stdout)
-    payload = {}
-    if len(args) > 0:
-        payload = {
-            'args':json.dumps(args),
-        }
-    if len(kwargs) > 0:
-        payload.update(kwargs)
 
-    print("PAYLOAD",payload,file=sys.stderr)
+    # Parse out args and kwargs
+    # Any function can be called with *args and/or **kwargs.
+    try:
+        for k,v in func_args.items():
+            if k == 'args':
+                try:
+                    args += ast.literal_eval(v)
+                except:
+                    msg = {"error":"Parsing args parameter in GET reqeust failed. Could not evaluate {0} as an *args array with ast.literal_eval({0}).".format(v)}
+                    print(msg, file=sys.stderr)
+                    return flask.jsonify(msg)
+            else:
+                kwargs[k] = ast.literal_eval(v)
+    except Exception as e:
+        msg = {"error":"could not parse arguments! Exception: '{}'".format(e)}
+        print(msg, file=sys.stderr)
+        msg.update(func_args)
+        return flask.jsonify(msg)
+
+    # now that args and kwargs are filled, send via pickled POST message.
+    arguments = {
+        'func_key':func_key,
+        'args':args,
+        'kwargs':kwargs
+    }
+    print('PARSED ARGUMENTS {} FOR {}'.format(repr(arguments),func_key),file=sys.stderr)
 
     for client_uuid, client in mlpux_instances.items():
         for function in client['functions']:
@@ -275,13 +284,18 @@ def execute(func_scope, func_name):
                 mlpux_ip = mlpux_instances[client_uuid]['IP']
                 mlpux_port = mlpux_instances[client_uuid]['PORT']
 
-                r = requests.get('http://{}:{}/execute/{}/{}'.format(mlpux_ip,mlpux_port,func_scope,func_name),payload)
-                print("SENDING",mlpux_ip, mlpux_port, func_scope, func_name, payload, file=sys.stderr)
-                print("URL",r.url)
-                print("GOT",r.json(), file=sys.stderr)
-                return flask.jsonify(r.json())
-                break
-    return flask.jsonify({"FAILURE":"FAILURE"})
+                send_data = pickle.dumps(arguments,-1)
+                # TODO: Check if client is still connected
+                try:
+                    print('POSTING ARGUMENTS {} to mlpux server for {}'.format(repr(arguments),func_key), file=sys.stderr)
+                    print('BINARY DATA: ', send_data, file=sys.stderr) 
+                    r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
+                    print("SENT TO URL",r.url, file=sys.stderr)
+                    print("RECEIVED BACK: ", r.json(),file=sys.stderr)
+                    return flask.jsonify(r.json()) # Response from MLPUX server is passed directly back to front end
+                except:
+                    return flask.jsonify({'error':'problem communicating with mlpux client {}:{}'.format(mlpux_ip,mlpux_port)})
+    return flask.jsonify({"error":"No function was found. Function: {}".format(func_key)})
 
 # END FLASK APPLICATION ROUTES ################################################
 

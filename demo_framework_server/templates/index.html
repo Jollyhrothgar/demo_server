@@ -30,7 +30,7 @@
 
     <!-- My javascript here --> 
     <!--<script src="demo_framework_server/js/js.cookie.js"></script>    -->
-    <script type="text/javascript" src="demo_framework_server/js/functions.js"> </script>
+    <script type="text/javascript" src="demo_framework_server/js/mlpux_demo.js"> </script>
 
     <!-- Google Maps API -->
     <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqgpyknPVo1wWuY60K-bJYPpk-c49fTLs&signed_in=true&callback=initMap"></script>-->
@@ -78,19 +78,20 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </header>
 
     <section class="bg-dark" id="demos">
+      <div class="container">
+          <div class="row">
+            <center>
+              <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"></input> 
+            </center>
+          </div>
+          <p><br></p>
+      </div>
       <div class="container"> 
       <div class="row">
         <div class="col-lg-12 text-center">
           <h1 class="section-heading">Available Demos</h1>
           <div id="demo_list_div"></div> 
         </div>
-      </div>
-      </div>
-      <div class="row">
-        <div class="container">
-        <center>
-          <input id="demo_reload_button" type="button" onclick="getDemos()" class="btn btn-xl btn-primary" value="Reload Demos"></input> 
-        </center>
       </div>
       </div>
     </section>
@@ -107,17 +108,17 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
             <p><div id = "demo_documentation"></div></p>
           </div>
           <div id="demo_client_inputs"></div>
+          <center>
+            <div id="execute_demo"></div>
+          </center>
           <div id="demo_client_message"></div>
-          <div id="demo_client_session_div"></div>
           <div id="demo_confirm_exe"> </div>
           <div id="demo_results"> </div>
         </div>
       </div>
-      <div class="container">
-        <div class="row">
-          <center>
-            <div id="execute_demo"></div>
-          </center>
+      <div class="container"> 
+        <div class = "row">
+          <div id="demo_client_session_div"></div>
         </div>
       </div>
 

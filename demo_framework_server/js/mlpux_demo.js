@@ -1,5 +1,6 @@
 function initializeUI(){
     clearDemos();
+    getDemos();
 }
 
 function clearDemos(){
@@ -95,10 +96,23 @@ function showFunction(element_id){
             $('#demo_title').html('Demo: '+data['func_name']);
             $("#demo_subtitle_divider").html("<b>Module:</b> "+data['func_scope']+"<br><p> </p><br> <b>Signature:</b> "+data['signature']);
             $("#demo_documentation").html(show_newline(data['documentation']));
-            
-            $('#demo_client_session_div').html('<br><p>'+JSON.stringify(data)+'</p>');
+           
+            if(data['documentation'] !== null){
+                var docstring = data['documentation'].replace(/\s\s+/g, ' ');
+                var docstring = docstring.replace(/\n/g,' ');
+                data['documentation'] = docstring;
+            }
+            var display_attribs = $('<pre>').append(
+                $('<code>').append(JSON.stringify(data,null,4)
+                )
+            );
+            $("#demo_client_session_div").append(display_attribs);
             
             var input_form = $('<table id="list_params" align="center" width="85%" class="spacedTable">');
+            if(data['parameters'].length == 0){
+                var input_field = $('<div class="inputParameter" data-func-scope="'+data['func_scope']+'" data-arg-type="noargs" data-func-name="'+data['func_name']+'">');
+                input_form.append(input_field)
+            }
             for(var i = 0; i < data['parameters'].length; i++){
                 var input_field = $('<input id="'+data['parameters'][i]['name']+'" class="inputParameter" data-func-scope="'+data['func_scope']+'" data-arg-type="'+data['parameters'][i]['type']+'" data-func-name="'+data['func_name']+'">');
                 var input_field_label = $('<p>');
@@ -161,7 +175,10 @@ function sendFunctionArguments(){
                 var temp2 = temp[i].split('=');
                 payload[temp2[0]] = temp2[1];
             }
-        } else {
+        } else if (type =="noargs") {
+            payload.args = []
+        } 
+        else {
             payload[$(this).attr('id')] = $(this).val();
         }
     });
@@ -179,11 +196,11 @@ function sendFunctionArguments(){
             if(data['msg'] == 'success'){
                 // <div id="demo_confirm_exe"> </div>
                 // <div id="demo_results"> </div>
-                var result = $('<h2>').text(JSON.stringify(data['result']));
+                var result = $('<h2>').text(JSON.stringify(data['result'],null,4));
                 $("#demo_results").append(result);
             }
             if( 'error' in data ){
-                var result = $('<h2>').text(JSON.stringify(data['error']));
+                var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
                 $("#demo_results").append(result);
             }
         },
