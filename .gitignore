@@ -8,3 +8,4 @@ run_all.sh
 *.command
 server.log
 tests.log
+.ipynb_checkpoints*
