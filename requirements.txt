@@ -4,3 +4,5 @@ numpy
 matplotlib
 formencode
 requests
+mpld3
+pandas

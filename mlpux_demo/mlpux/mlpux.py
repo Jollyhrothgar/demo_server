@@ -23,7 +23,7 @@ import discovery
 # GLOBALS #####################################################################
 
 
-_DEMO_SERVER_ADDRESS = False
+_DEMO_SERVER_IP = False
 def set_ip(ip):
     """
     Code that should run once there is a connection to the server needs to run
@@ -31,8 +31,8 @@ def set_ip(ip):
 
     TODO a bit later
     """
-    global _DEMO_SERVER_ADDRESS
-    _DEMO_SERVER_ADDRESS = ip
+    global _DEMO_SERVER_IP
+    _DEMO_SERVER_IP = ip
 discovery.get_ip(service_name="demo server",service_found = set_ip)
 
 _MLPUX_IP_ADDRESS = '0.0.0.0' # always run locally
@@ -110,10 +110,10 @@ def show_functions():
     return flask.jsonify(display_out)
 
 
-def generate_ui_args(parameters, **ui_kwargs):
+def generate_ui_args(parameters):
     """
     Parse the information extracted from inspecting a function, along with the instructions
-    given by the decoration. ui_kwargs are ignored for now.
+    given by the decoration. 
 
     For now, we simply make a list of args. Annotations to be handled later.
 
@@ -198,12 +198,12 @@ def generate_ui_args(parameters, **ui_kwargs):
             )
     return ui_data
 
-def create_function_server(func, **ui_kwargs):
+def create_function_server(func):
     """
     Use inspect to get the properties of the function
     """
 
-    global _functions, _UUID, _MLPUX_PORT, _app_thread, _MLPUX_IP_ADDRESS, _DEMO_SERVER_ADDRESS
+    global _functions, _UUID, _MLPUX_PORT, _app_thread, _MLPUX_IP_ADDRESS, _DEMO_SERVER_IP
 
     func_name = func.__name__
     
@@ -236,7 +236,7 @@ def create_function_server(func, **ui_kwargs):
     documentation = members['__doc__']
     parameters = inspect.signature(func).parameters
     try:
-        parameters = generate_ui_args(parameters, **ui_kwargs)
+        parameters = generate_ui_args(parameters)
     except Exception as e:
         print("Problem with function: {}, Exception '{}'. Skipping".format(func_key,e), file=sys.stderr)
         return
@@ -254,7 +254,6 @@ def create_function_server(func, **ui_kwargs):
             'documentation':documentation,
             'func_name':func_name,
             'signature':str(inspect.signature(func)),
-            'ui_kwargs':ui_kwargs,
             'func_uuid':func_key,
             'func_scope':func_scope,
             'func_key':func_key
@@ -269,7 +268,7 @@ def create_function_server(func, **ui_kwargs):
     print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive(), file=sys.stderr)
 
     print("SIGNATURE:",_func_data['function']['signature'], file=sys.stderr)
-    print("TEST UP: ",_DEMO_SERVER_ADDRESS, file=sys.stderr)
+    print("TEST UP: ",_DEMO_SERVER_IP, file=sys.stderr)
 
     _functions[func_key]['attributes'] = dict(_func_data)
 
@@ -277,24 +276,24 @@ def create_function_server(func, **ui_kwargs):
 
     # Wait five seconds to find server.
     seconds = 0
-    while not _DEMO_SERVER_ADDRESS:
+    while not _DEMO_SERVER_IP:
         wait_interval = 0.25
         time.sleep(wait_interval)
         seconds += wait_interval
         if seconds > 5:
             # Use default for local running
             print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds), file=sys.stderr)
-            _DEMO_SERVER_ADDRESS = '0.0.0.0'
+            _DEMO_SERVER_IP = '0.0.0.0'
             break
 
-    if not _DEMO_SERVER_ADDRESS:
+    if not _DEMO_SERVER_IP:
         # Demo server was not found with the discovery service.
         print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
     else:
         # double check that server is still up, but don't bother if its not discoverable.
         try:
             # use port for development
-            r = requests.get('http://{}:{}/test_up'.format(_DEMO_SERVER_ADDRESS,5002))
+            r = requests.get('http://{}:{}/test_up'.format(_DEMO_SERVER_IP,5002))
         except ConnectionError as e:
             if _app_thread.isAlive():
                 print("DEMO SERVER DIED, MLPUX SERVER IS RUNNING IN BACKEND MODE. REEQUESTS MAY BE SENT TO: {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
@@ -305,25 +304,61 @@ def create_function_server(func, **ui_kwargs):
         # If we're here, the connection is okay
         print("SENDING FUNCTION", file=sys.stderr)
         # use port for non-privelaged development.
-        r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_ADDRESS,5002),data=data)
+        r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_IP,5002),data=data)
         print(r.text, file=sys.stderr)
 
         ret_data = json.loads(r.text)
         print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data, file=sys.stderr)
     return 
 
-def demo(*ui_args, **ui_kwargs):
-    print('*'*80, file=sys.stderr)
-    print ('ui_args:'  , ui_args)
-    print ('ui_kwargs:', ui_kwargs)
+# wrappers 
+# Goal is to pass wrapper arguments cascading down to the core demo function.
+# Usage would be akin to:
+#
+# @mlpux.ui_slider(arg_label=var3, min=10, max=20, step=0.5)
+# @mlpux.demo
+# def func(var1, var2, var3):
+#   ...
+# Desired effect: arguement value is set by manipulation of a slider element.
 
-    def decorator(func):
-        create_function_server(func, **ui_kwargs) # pass as key-word arguments
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
+# def demo(*ui_args, **ui_kwargs): # maybe do not support arguments to decorator
+def plot2D(func, **kwargs):
+    """
+    kwargs to be passed to matplotlib plot command
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+def plot3D(func, **kwargs):
+    """
+    kwargs to be passed to matplotlib plot command
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+def demo(func, **ui_kwargs):
+    """
+    inspects a function, func and spins off a server which can be used to 
+    remotely call the function via a web interface or REST API.
+
+    API generated for function is called through base server at _DEMO_SERVER_IP.
+
+    ui_kwargs will  be generated and passed in by functions which decorate 
+    the demo decorator.
+    """
+    print('*'*80, file=sys.stderr)
+    # print ('ui_args:'  , ui_args)
+    # print ('ui_kwargs:', ui_kwargs)
+
+    create_function_server(func) # pass as key-word arguments
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
 
 @app.route('/execute', methods=['POST','GET'])
 def execute_function():

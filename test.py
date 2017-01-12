@@ -14,7 +14,7 @@ import requests
 
 import discovery
 
-@mlpux.demo()
+@mlpux.demo
 def square(x):
     return x*x
 

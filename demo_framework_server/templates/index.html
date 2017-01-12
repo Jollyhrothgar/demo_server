@@ -35,6 +35,10 @@
     <!-- Google Maps API -->
     <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqgpyknPVo1wWuY60K-bJYPpk-c49fTLs&signed_in=true&callback=initMap"></script>-->
 
+    <!--MPLD3 + D3 Libraries-->
+    <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" src="https://mpld3.github.io/js/mpld3.v0.2.js"></script>
+
     <!-- Javascript which requires flask templating here --> 
     <script type=text/javascript>
 $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -121,7 +125,11 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
           <div id="demo_client_session_div"></div>
         </div>
       </div>
-
+      <div class = "container"> 
+        <div class = "row">
+          <div id = "development_testing"> </div>
+        </div> 
+      </div>
     </section>
 
     <!-- jQuery -->

@@ -7,14 +7,14 @@ A fake module which will be used for unit testing the demo framework.
 Here, I'll slowly accumulate a list of possible demo architectures to run through
 the demo framework.
 """
-@mlpux.demo(x = { 'var':'x', 'type':'slider', 'min_range':-25, 'max_range':25 } )
+@mlpux.demo
 def square(x:float):
     """
     takes a floating point input, returns the square of that input
     """
     return x*x
 
-@mlpux.demo()
+@mlpux.demo
 def no_args():
     """
     A functiont that returns some kind of string
@@ -22,14 +22,14 @@ def no_args():
     return_string = "whoop-de doo!"
     return return_string
 
-@mlpux.demo()
+@mlpux.demo
 def str_args(mystr:str, myint:int):
     """
     A function which puts an int and a string into a string
     """
     return "Hi there {0}, you earned {1} schmeckles".format(mystr, myint)
 
-@mlpux.demo()
+@mlpux.demo
 def args_notype(arg1, arg2, arg3):
     """
     A function which takes three arguments, but type is not specified.
@@ -48,7 +48,7 @@ def args_notype(arg1, arg2, arg3):
         }
     return complicated_object 
    
-@mlpux.demo()
+@mlpux.demo
 def args_notype_clone(arg1, arg2, arg3):
     """
     A function which takes three arguments, but type is not specified.
@@ -69,7 +69,7 @@ def args_notype_clone(arg1, arg2, arg3):
         }
     return json.dumps(complicated_object)
 
-@mlpux.demo()
+@mlpux.demo
 # annotation -> gets evaluated....
 def hard_func(*args, arg1, arg2, default1="Fanny", default2:float=19.5, **kwargs) -> str_args:
     """
@@ -89,7 +89,7 @@ def hard_func(*args, arg1, arg2, default1="Fanny", default2:float=19.5, **kwargs
     return ret_vals
     
 
-@mlpux.demo()
+@mlpux.demo
 def arbitrary_func(*args, **kwargs):
     """ 
     A function that takes an arbitrary list of named and unnamed arguments
@@ -101,7 +101,7 @@ def arbitrary_func(*args, **kwargs):
     return_string = "number of args: {0}, number of kwargs: {1}".format(len(args),len(kwargs))
     return return_string
 
-@mlpux.demo()
+@mlpux.demo
 def args_only(*args):
     """
     A function which consists only of positional arguments, with no keywords.
@@ -113,7 +113,7 @@ def args_only(*args):
         ret_val = {'status':'success'}
     return ret_val;
 
-@mlpux.demo()
+@mlpux.demo
 def kwargs_only(**kwargs):
     """
     A function that only takes keyword arguments, and returns them.
