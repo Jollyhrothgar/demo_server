@@ -78,6 +78,16 @@ def print_config():
     print(80*"=", file=sys.stderr)
 
 
+def try_json(data):
+    """
+    returns exception message if data cannot be json serialized.
+    returns jsonified data otherwise.
+    """
+    try:
+        return flask.jsonify(data)
+    except Exception as e:
+        return flask.jsonify({"error":"flask.jsonify failed with data:{}".format(data)})
+
 # FLASK APPLICATION ROUTES ####################################################
 
 @app.route('/test_up',methods=['GET'])
@@ -292,7 +302,7 @@ def execute(func_scope, func_name):
                     r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
                     print("SENT TO URL",r.url, file=sys.stderr)
                     print("RECEIVED BACK: ", r.json(),file=sys.stderr)
-                    return flask.jsonify(r.json()) # Response from MLPUX server is passed directly back to front end
+                    return try_json(r.json()) # Response from MLPUX server is passed directly back to front end
                 except:
                     return flask.jsonify({'error':'problem communicating with mlpux client {}:{}'.format(mlpux_ip,mlpux_port)})
     return flask.jsonify({"error":"No function was found. Function: {}".format(func_key)})
