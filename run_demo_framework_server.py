@@ -218,12 +218,12 @@ def register_function():
         mlpux_instances[client_uuid] = dict(mlpux_instance) 
         mlpux_instances[client_uuid]['IP'] = ip
         mlpux_instances[client_uuid]['PORT'] = _func_data['PORT']
-        mlpux_instances[client_uuid]['functions'] = [ dict(_func_data['function']) ]
+        mlpux_instances[client_uuid]['functions'] = [ dict(_func_data) ]
     else:
         # if somehow the connection dies to the client, there will be a new
         # client_uuid, so there should not be duplicate functions within one client_uuid.
         # must have a list of exactly one unique function
-        mlpux_instances[client_uuid]['functions'].append(dict(_func_data['function']))
+        mlpux_instances[client_uuid]['functions'].append(dict(_func_data))
         
     print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['func_name'], file=sys.stderr)
     print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']), file=sys.stderr)
