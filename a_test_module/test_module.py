@@ -8,7 +8,8 @@ Here, I'll slowly accumulate a list of possible demo architectures to run throug
 the demo framework.
 """
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
     """
     Make data set conisisting of x and y values for a 2D plot.
@@ -30,15 +31,18 @@ def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
     else:
         raise ValueError("Return of {} must be an iterable representing 2D data set. Options are 'tuple' or 'dict'".format(name))
 
-@mlpux.demo
-#@mlpux.slider(arg='x',min_val=1,max_val=10,ndiv=20)
-def square(x:float):
+@mlpux.Interactive()
+@mlpux.Slider(arg='y', min_val=0, max_val=50, ndiv=3)
+@mlpux.Slider(arg='x', min_val=-10, max_val=10, ndiv=20)
+@mlpux.Demo()
+def square(x:float, y:float):
     """
     takes a floating point input, returns the square of that input
     """
-    return x*x
+    return x*x, y*y
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def no_args():
     """
     A functiont that returns some kind of string
@@ -46,14 +50,16 @@ def no_args():
     return_string = "whoop-de doo!"
     return return_string
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def str_args(mystr:str, myint:int):
     """
     A function which puts an int and a string into a string
     """
     return "Hi there {0}, you earned {1} schmeckles".format(mystr, myint)
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def args_notype(arg1, arg2, arg3):
     """
     A function which takes three arguments, but type is not specified.
@@ -72,7 +78,8 @@ def args_notype(arg1, arg2, arg3):
         }
     return complicated_object 
    
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def args_notype_clone(arg1, arg2, arg3):
     """
     A function which takes three arguments, but type is not specified.
@@ -93,7 +100,8 @@ def args_notype_clone(arg1, arg2, arg3):
         }
     return json.dumps(complicated_object)
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 # annotation -> gets evaluated....
 def hard_func(*args, arg1=1, arg2=2, default1="Fanny", default2:float=19.5, **kwargs) -> str_args:
     """
@@ -113,7 +121,8 @@ def hard_func(*args, arg1=1, arg2=2, default1="Fanny", default2:float=19.5, **kw
     return ret_vals
     
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def arbitrary_func(*args, **kwargs):
     """ 
     A function that takes an arbitrary list of named and unnamed arguments
@@ -125,7 +134,8 @@ def arbitrary_func(*args, **kwargs):
     return_string = "number of args: {0}, number of kwargs: {1}".format(len(args),len(kwargs))
     return return_string
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def args_only(*args):
     """
     A function which consists only of positional arguments, with no keywords.
@@ -137,7 +147,8 @@ def args_only(*args):
         ret_val = {'status':'success'}
     return ret_val;
 
-@mlpux.demo
+@mlpux.Interactive()
+@mlpux.Demo()
 def kwargs_only(**kwargs):
     """
     A function that only takes keyword arguments, and returns them.
@@ -146,5 +157,3 @@ def kwargs_only(**kwargs):
     if len(ret_val.keys()) == 0:
         ret_val = {'status':'success'}
     return ret_val
-
-

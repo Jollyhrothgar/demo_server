@@ -14,9 +14,9 @@ import requests
 
 import discovery
 
-@mlpux.demo
-def square(x):
-    return x*x
+# @mlpux.Demo()
+# def square(x):
+    # return x*x
 
 def run_tests():
     # Check what happens when functions are run (the decorator is processed)
@@ -26,7 +26,7 @@ def run_tests():
 
     print(80*'=')
     print("Test 2: a module with float arguments")
-    ret_val = test_module.square(10.)
+    ret_val = test_module.square(10., 20.)
     print(ret_val)
 
     print(80*'=')

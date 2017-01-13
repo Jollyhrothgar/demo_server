@@ -115,6 +115,12 @@ def webhook():
 def index():
     return flask.render_template('index.html')
 
+@app.route('/show_mlpux', methods=['GET'])
+def show_mlpux():
+    global mlpux_instances
+    # Crashes with a direct dump for some stupid fucking reason.
+    return flask.jsonify(json.loads(json.dumps(mlpux_instances)))
+
 # mlpux_instances structure:
 #    {
 #        client_uuid: {
@@ -199,7 +205,7 @@ def request_demo():
     for function in mlpux_instances[client_uuid]['functions']:
         if func_key == function['func_key']:
             # TODO 1/4/2017: handle function signature better.
-            d = {k:v for k,v in function.items() if k in ['annotation','func_name','func_scope','documentation','signature','func_key','parameters']}
+            d = {k:v for k,v in function.items() if k in ['annotation','func_name','func_scope','documentation','signature','func_key','parameters','gui']}
             d['client_uuid'] = client_uuid
             return flask.jsonify(dict(d))
     return flask.jsonify({"error":"function not found"})
@@ -207,26 +213,40 @@ def request_demo():
 @app.route('/register_function',methods=['POST'])
 def register_function():
     global mlpux_instance, mlpux_instances
-    # TODO
-    # need input checking here
     request_content = flask.request.data
     ip = flask.request.remote_addr
     _func_data = pickle.loads(request_content) # mlpux.py: _func_data
     client_uuid = _func_data['client_uuid']
-    
+
+    function = None
     if client_uuid not in mlpux_instances:
         mlpux_instances[client_uuid] = dict(mlpux_instance) 
         mlpux_instances[client_uuid]['IP'] = ip
         mlpux_instances[client_uuid]['PORT'] = _func_data['PORT']
         mlpux_instances[client_uuid]['functions'] = [ dict(_func_data) ]
+        function = dict(_func_data)
     else:
         # if somehow the connection dies to the client, there will be a new
         # client_uuid, so there should not be duplicate functions within one client_uuid.
         # must have a list of exactly one unique function
-        mlpux_instances[client_uuid]['functions'].append(dict(_func_data))
-        
-    print("FLASK SERVER UPDATED WITH ", mlpux_instances[client_uuid]['functions'][-1]['func_name'], file=sys.stderr)
-    print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']), file=sys.stderr)
+        # 
+        # Other option is that a function has been updated.
+        append_function = True
+        for i,function in enumerate(mlpux_instances[client_uuid]['functions']):
+            if function['func_uuid'] == _func_data['func_uuid']:
+                # Update
+                mlpux_instances[client_uuid]['functions'][i] = dict(_func_data)
+                append_function = False
+                function = dict(_func_data)
+        # Add new
+        if append_function:
+            mlpux_instances[client_uuid]['functions'].append(dict(_func_data))
+            function = dict(_func_data)
+
+    for param in function['parameters']:
+        if param['gui'] is not None:
+            print("FLASK SERVER UPDATED WITH ", function['func_name'], function['parameters'], file=sys.stderr)
+            print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']), file=sys.stderr)
     print(80*"=", file=sys.stderr)
    
     # TODO implement failure handling

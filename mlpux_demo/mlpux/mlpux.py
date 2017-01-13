@@ -2,7 +2,7 @@
 import inspect
 import threading
 import itertools
-from functools import wraps
+import functools
 from collections import OrderedDict
 import json
 import pickle
@@ -73,14 +73,14 @@ def start_server(ip, port):
     while not done:
         try:
             r = requests.get('http://{}:{}/test_up'.format(ip,port))
-            print(r.text, file=sys.stderr)
+            #print(r.text, file=sys.stderr)
         except:
             time.sleep(0.2)
         else:
             if int(r.text) == 200:
                 done = True
 
-def update_param_gui(func_key, register, param_name, gui):
+def update_param_gui(func_key, param_name, gui):
     """
         ui_param = {
                 "name":None,
@@ -93,11 +93,15 @@ def update_param_gui(func_key, register, param_name, gui):
                 "gui":None
         }
     """
-    if func_key not in register:
+    global _function_registry
+    if func_key not in _function_registry:
         raise ValueError("{} not registered to _function_register")
-    for param in register[func_key]['info']['parameters']:
+    for i,param in enumerate(_function_registry[func_key]['info']['parameters']):
+        print(i,param,file=sys.stderr)
         if param['name'] == param_name:
-            param['gui'] = gui
+            _function_registry[func_key]['info']['parameters'][i]['gui'] = dict(gui)
+            print("UPDATING",_function_registry[func_key]['info']['parameters'][i]['gui'], file=sys.stderr)
+            return
     raise ValueError("No parameter updated. Did you enter the parameter's name correctly? Lookup: {}, given:{}".format(func_key, param_name))
     return
 
@@ -164,7 +168,7 @@ def generate_ui_args(func):
 
         # Skip callable parameters that are default.
         if param["DEFAULT"] and hasattr(v.default,'__call__'):
-                print("Skipping callable default parameter", file=sys.stderr)
+                #print("Skipping callable default parameter", file=sys.stderr)
                 continue
         if param["DEFAULT"] is not False:
             ui_param['default_value'] = repr(v.default)
@@ -196,17 +200,17 @@ def generate_ui_args(func):
         position+=1
 
     # Now, we need to figure out the number of input fields
-    for param in param_data:
-        print(
-            "PARAM: {:>10}, ".format(param["NAME"]),
-            "POSITIONAL_OR_KEYWORD: {:>10}, ".format(param["POSITIONAL_OR_KEYWORD"]),
-            "POSITIONAL_ONLY: {:>10}, ".format(param["POSITIONAL_ONLY"]),
-            "VAR_POSITIONAL: {:>10}, ".format(param["VAR_POSITIONAL"]),
-            "VAR_KEYWORD: {:>10}, ".format(param["VAR_KEYWORD"]), 
-            "KEYWORD_ONLY: {:>10}".format(param["KEYWORD_ONLY"]),
-            "ANNOTATION: {:>10}".format(param["ANNOTATION"]),
-            "SUM: {:>10}".format(sum([int(v) for k,v in param.items() if isinstance(v,bool)])) # check mutual exclusivity
-            )
+    # for param in param_data:
+        #print(
+            # "PARAM: {:>10}, ".format(param["NAME"]),
+            # "POSITIONAL_OR_KEYWORD: {:>10}, ".format(param["POSITIONAL_OR_KEYWORD"]),
+            # "POSITIONAL_ONLY: {:>10}, ".format(param["POSITIONAL_ONLY"]),
+            # "VAR_POSITIONAL: {:>10}, ".format(param["VAR_POSITIONAL"]),
+            # "VAR_KEYWORD: {:>10}, ".format(param["VAR_KEYWORD"]), 
+            # "KEYWORD_ONLY: {:>10}".format(param["KEYWORD_ONLY"]),
+            # "ANNOTATION: {:>10}".format(param["ANNOTATION"]),
+            # "SUM: {:>10}".format(sum([int(v) for k,v in param.items() if isinstance(v,bool)])) # check mutual exclusivity
+            # )
     return ui_data
 
 def error_if_func_exists(func_key,registry):
@@ -247,7 +251,7 @@ def generate_func_identifiers(func):
 
     # File Scope
     module_file = os.path.splitext(os.path.basename(os.path.normpath(members['__globals__']['__file__'])))[0]
-    print(type(module_folder), file=sys.stderr)
+    #print(type(module_folder), file=sys.stderr)
     
     func_scope = ""
     if module_folder is None:
@@ -281,14 +285,14 @@ def generate_function_entry(func):
     documentation = members['__doc__']
     signature = str(inspect.signature(func))
 
-    print('UPDATING INFORMATION FOR FUNCTION:', func_name, file=sys.stderr)
+    print('UPDATING INFORMATION FOR FUNCTION:', func_key, file=sys.stderr)
     print('FUNCTION SCOPE',func_scope, file=sys.stderr)
     print('FUNCTION KEY:',func_key, file=sys.stderr)
 
     try:
         parameters = generate_ui_args(func)
     except Exception as e:
-        print("Problem with function: {}, Exception '{}'. Skipping".format(func_key,e), file=sys.stderr)
+        #print("Problem with function: {}, Exception '{}'. Skipping".format(func_key,e), file=sys.stderr)
         return
 
     parsed = {
@@ -316,7 +320,7 @@ def wait_for_demo_server_discovery(seconds=5):
         seconds += wait_interval
         if seconds > 5:
             # Use default for local running
-            print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds), file=sys.stderr)
+            #print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds), file=sys.stderr)
             _DEMO_SERVER_IP = '0.0.0.0'
             break
     return
@@ -342,23 +346,23 @@ def update_demo_server(func_key):
     """
     global _function_registry, _UUID, _app_thread, _DEMO_SERVER_IP, _MLPUX_PORT
 
-    print('MLPUX LOCAL ADDRESS {}:{}'.format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
+    #print('MLPUX LOCAL ADDRESS {}:{}'.format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
 
     if _app_thread is None:
-        print("Starting server thread on port ",_MLPUX_PORT, file=sys.stderr)
+        #print("Starting server thread on port ",_MLPUX_PORT, file=sys.stderr)
         start_server(ip = _MLPUX_IP_ADDRESS, port = _MLPUX_PORT) 
-    else:
-        print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive(), file=sys.stderr)
+    # else:
+        #print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive(), file=sys.stderr)
     
     wait_for_demo_server_discovery(seconds=5)
     if not _DEMO_SERVER_IP:
         # Demo server was not found with the discovery service.
-        print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
+        #print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
         raise ValueError("Server backend is unreachable {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
     else:
         # In case server went down since last time a function was registered.
         check_if_demo_server_alive(ip=_DEMO_SERVER_IP, port=5002)
-        print("SENDING FUNCTION", file=sys.stderr)
+        #print("SENDING FUNCTION", file=sys.stderr)
 
         # Update func_data with network information to call back
         payload = _function_registry[func_key]['info']
@@ -367,64 +371,97 @@ def update_demo_server(func_key):
         data = pickle.dumps(payload,-1)
 
         r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_IP,5002),data=data)
-        print(r.text, file=sys.stderr)
+        #print(r.text, file=sys.stderr)
 
         ret_data = json.loads(r.text)
-        print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data, file=sys.stderr)
+        #print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data, file=sys.stderr)
     return 
 
 ### DECORATORS ################################################################
-def slider(func, arg, min_val, max_val, ndiv):
-    """
-    if arg is matched in func signature, its UI representation will be a slider
-    with minimum min_val, maximum max_val, and divisions div.
-    """
+class Slider:
     global _function_registry
+    def __init__(self, arg, min_val, max_val, ndiv ):
+        #print("Args for Slider.__init__:", arg, min_val, max_val, ndiv )
+        self.gui = { 'param':arg, 'min':min_val, 'max':max_val, 'ndiv':ndiv }
+ 
+    def __call__(self, *args, **kwargs):
+        print("Args for Slider.__call__", *args)
+        print("Kwargs for Slider.__call__", **kwargs)
+        func = args[0]['func']
+        func_key = args[0]['key']
+        
+        if func_key in _function_registry:
+            # update parameter gui
+            update_param_gui(func_key, self.gui['param'], self.gui)
 
-    gui = {
-        'param':arg,
-        'min':min_val,
-        'max':max_val,
-        'ndiv':ndiv
-    }
-    func_key, func_data = generate_function_entry(func)
-    
-    if func_key in _function_registry:
-        # update parameter gui
-        update_param_gui(func_key, _function_registry, arg, gui)
-    else:
-        _function_registry[func_key] = func_data
-        update_param_gui(func_key, _function_registry, arg, gui)
+        else:
+            raise ValueError("Function must be decorated with Demo first, then others")
 
-    # This will be the same for any additional decorator
-    def outer(func):
-        @wraps(func )
-        def wrapper(*args, **kwargs):
-            return func(*args,**kwargs)
-        return wrapper
-    return outer
+        print("SLIDER", func_key, self.gui, file=sys.stderr)
+        update_demo_server(func_key)
+        
+        # Pass through for the funciton - this never changes.
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return {'func':wrapped, 'key':func_key}
 
-def demo(func):
-    """
-    inspects a function, func and spins off a server which can be used to 
-    remotely call the function via a web interface or REST API.
-
-    API generated for function is called through base server at _DEMO_SERVER_IP.
-
-    Must be called last, takes no arguments.
-    """
+class Demo:
     global _function_registry
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+ 
+    def __call__(self, func):
+        func_key, func_data = generate_function_entry(func)
+        if func_key not in _function_registry:
+            _function_registry[func_key] = func_data
+        print("DEMO", _function_registry[func_key]['callback'], "key", func_key, file=sys.stderr)
+        update_demo_server(func_key)
 
-    print('*'*80, file=sys.stderr)
-    # parse func args first.
-    func_key, func_data = generate_function_entry(func)
-    if func_key not in _function_registry:
-        _function_registry[func_key] = func_data
-    update_demo_server(func_key)
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return func(*args, **kwargs)
-    return wrapper
+        # Passthrough
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return {"func":wrapped,"key":func_key}
+
+class Interactive:
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, *args, **kwargs):
+        func = args[0]['func']
+
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return wrapped
+
+# def demo(func):
+    # """
+    # inspects a function, func and spins off a server which can be used to 
+    # remotely call the function via a web interface or REST API.
+
+    # API generated for function is called through base server at _DEMO_SERVER_IP.
+
+    # Must be called last, takes no arguments.
+    # """
+    # global _function_registry
+
+    # #print('*'*80, file=sys.stderr)
+    # # parse func args first.
+    # func_key, func_data = generate_function_entry(func)
+    # if func_key not in _function_registry:
+        # _function_registry[func_key] = func_data
+   
+    # print("DEMO", _function_registry[func_key]['callback'], file=sys.stderr)
+    # update_demo_server(func_key)
+
+    # @functools.wraps(func)
+    # def wrapper(*args, **kwargs):
+        # return func(*args, **kwargs)
+    # return wrapper
 
 # FLASK ROUTES ################################################################ 
 @app.route('/test_up', methods=['GET'])
@@ -450,9 +487,9 @@ def execute_function():
     global _function_registry
     
     request_content = flask.request.data
-    print("MLPUX SERVER RECEIVED: {}".format(repr(request_content)), file=sys.stderr)
+    #print("MLPUX SERVER RECEIVED: {}".format(repr(request_content)), file=sys.stderr)
     arguments = pickle.loads(request_content)
-    print("DECODED: {}".format(repr(arguments)), file=sys.stderr)
+    #print("DECODED: {}".format(repr(arguments)), file=sys.stderr)
     try:
         func_key = arguments['func_key']
         args = arguments['args']
