@@ -265,6 +265,7 @@ def execute(func_scope, func_name):
     # Any function can be called with *args and/or **kwargs.
     try:
         for k,v in func_args.items():
+            print(k, v, file=sys.stderr)
             if k == 'args':
                 try:
                     args += ast.literal_eval(v)
@@ -275,6 +276,7 @@ def execute(func_scope, func_name):
             else:
                 kwargs[k] = ast.literal_eval(v)
     except Exception as e:
+        print("args:",args,"kwargs:",kwargs,file=sys.stderr)
         msg = {"error":"could not parse arguments! Exception: '{}'".format(e)}
         print(msg, file=sys.stderr)
         msg.update(func_args)

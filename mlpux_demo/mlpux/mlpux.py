@@ -99,16 +99,6 @@ def start_server(ip, port):
             if int(r.text) == 200:
                 done = True
 
-def try_json(data):
-    """
-    returns exception message if data cannot be json serialized.
-    returns jsonified data otherwise.
-    """
-    try:
-        return flask.jsonify(data)
-    except Exception as e:
-        return flask.jsonify({"error":"flask.jsonify failed with data:{}".format(data)})
-
 @app.route('/test_up', methods=['GET'])
 def test_up():
     return flask.make_response("200".encode(encoding="utf8"))
@@ -129,6 +119,8 @@ def generate_ui_args(parameters):
 
     Here we should infer all the UI types. For now we just handle the basic
     case.
+
+    All callable parameters must have default values.
     """
     # parameters is a dict of 'name':Parameter objects
     param_data = []
@@ -176,9 +168,12 @@ def generate_ui_args(parameters):
                 str(repr(v.annotation)) if v.annotation is not inspect.Parameter.empty else False
         param["NAME"] = v.name
 
+        # Skip callable parameters that are default.
         if param["DEFAULT"] and hasattr(v.default,'__call__'):
                 print("Skipping callable default parameter", file=sys.stderr)
                 continue
+        if param["DEFAULT"] is not False:
+            ui_param['default_value'] = repr(v.default)
         if param['VAR_KEYWORD']:
             ui_param['type'] = 'keyword'
         if param['VAR_POSITIONAL']:
@@ -188,15 +183,19 @@ def generate_ui_args(parameters):
                 raise ValueError("Someone wrote a really ambiguous function signature. You must place positional arguments first in your function signature. Think carefully about symantics and readability of your function. If you make me rewrite this module to accomodate your shitty python, I will end you. --Mike")
         if param['POSITIONAL_OR_KEYWORD'] or param['KEYWORD_ONLY']:
             ui_param['type'] = 'standard'
-
         if param["ANNOTATION"] is not False:
-            ui_param['annotation'] = ui_param['annotation'].replace('>','')
+            # sanitize for html
+            try:
+                ui_param['annotation'] = str(repr(v.annotation)).replace('>','')
+                ui_param['annotation'] = ui_param['annotation'].replace('<','')
+            except: 
+                ui_param['annotation'] = "FIX ANNOTATION: mlpux.generate_ui_args"
 
-            ui_param['annotation'] = ui_param['annotation'].replace('>','')
         ui_param['name'] = param["NAME"]
         param_data.append(dict(param))
         ui_data.append(dict(ui_param))
         position+=1
+
     # Now, we need to figure out the number of input fields
     for param in param_data:
         print(

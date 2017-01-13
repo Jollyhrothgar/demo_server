@@ -7,6 +7,7 @@ A fake module which will be used for unit testing the demo framework.
 Here, I'll slowly accumulate a list of possible demo architectures to run through
 the demo framework.
 """
+
 @mlpux.demo
 def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
     """
@@ -93,7 +94,7 @@ def args_notype_clone(arg1, arg2, arg3):
 
 @mlpux.demo
 # annotation -> gets evaluated....
-def hard_func(*args, arg1, arg2, default1="Fanny", default2:float=19.5, **kwargs) -> str_args:
+def hard_func(*args, arg1=1, arg2=2, default1="Fanny", default2:float=19.5, **kwargs) -> str_args:
     """
     A complicated function signature with list-type arguments, named arguments,
     default arguments, and keyword arguments. Yikes!!! There's even partial

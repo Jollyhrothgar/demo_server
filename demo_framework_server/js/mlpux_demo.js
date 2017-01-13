@@ -3,6 +3,10 @@ function initializeUI(){
     getDemos();
 }
 
+function clearDemoOutput(){
+    $("#demo_results").html('');
+}
+
 function clearDemos(){
     $('#demo_list_div').html('');
     $('#demo_client_session_div').html('');
@@ -149,7 +153,14 @@ function showFunction(element_id){
             execute_button.attr('type','button');
             execute_button.attr('class','btn btn-xl btn-primary');
             execute_button.attr('value','Execute Demo');
+            var clear_output = $("<input>");
+            clear_output.attr('id','clear_output_button');
+            clear_output.attr('onclick',"clearDemoOutput()");
+            clear_output.attr('type','button');
+            clear_output.attr('class','btn btn-xl btn-primary');
+            clear_output.attr('value','Clear Output');
             $("#execute_demo").append(execute_button);
+            $("#execute_demo").append(clear_output);
         },
         error:function(data){
             $('#demo_client_message').html('<h1> CONNECTION FAILED </h1>');
