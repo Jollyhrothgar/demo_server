@@ -31,6 +31,7 @@ def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
         raise ValueError("Return of {} must be an iterable representing 2D data set. Options are 'tuple' or 'dict'".format(name))
 
 @mlpux.demo
+#@mlpux.slider(arg='x',min_val=1,max_val=10,ndiv=20)
 def square(x:float):
     """
     takes a floating point input, returns the square of that input

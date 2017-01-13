@@ -80,6 +80,27 @@ def start_server(ip, port):
             if int(r.text) == 200:
                 done = True
 
+def update_param_gui(func_key, register, param_name, gui):
+    """
+        ui_param = {
+                "name":None,
+                "type":None,
+                "position":position,
+                "input_type":'input',
+                "default_value":None,
+                "user_input":None,
+                "annotation":None,
+                "gui":None
+        }
+    """
+    if func_key not in register:
+        raise ValueError("{} not registered to _function_register")
+    for param in register[func_key]['info']['parameters']:
+        if param['name'] == param_name:
+            param['gui'] = gui
+    raise ValueError("No parameter updated. Did you enter the parameter's name correctly? Lookup: {}, given:{}".format(func_key, param_name))
+    return
+
 def generate_ui_args(func):
     """
     Parse the information extracted from inspecting a function, along with the
@@ -91,6 +112,8 @@ def generate_ui_args(func):
     case.
 
     All callable parameters must have default values.
+
+    First pass, do nothing. This should be called exactly once per function.
     """
     parameters = inspect.signature(func).parameters
     param_data = []
@@ -120,7 +143,7 @@ def generate_ui_args(func):
                 "default_value":None,
                 "user_input":None,
                 "annotation":None,
-                "ui_type":None # to be filled when needed
+                "gui":None
         }
         
         param["POSITIONAL_ONLY"] = \
@@ -234,7 +257,7 @@ def generate_func_identifiers(func):
     func_key = func_scope + "." + func_name
     return func_key, func_scope, func_name
 
-def parse_function(func):
+def generate_function_entry(func):
     """ 
     extract information from function using inspect module.
 
@@ -350,18 +373,36 @@ def update_demo_server(func_key):
         print("SUCCESSFULLY REGISTERED FUNCTION TO SERVER!",ret_data, file=sys.stderr)
     return 
 
-
 ### DECORATORS ################################################################
-def slider(func, arg, min_val, max_val, div):
+def slider(func, arg, min_val, max_val, ndiv):
     """
     if arg is matched in func signature, its UI representation will be a slider
     with minimum min_val, maximum max_val, and divisions div.
     """
+    global _function_registry
 
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return func(*args,**kwargs)
-    return wrapper
+    gui = {
+        'param':arg,
+        'min':min_val,
+        'max':max_val,
+        'ndiv':ndiv
+    }
+    func_key, func_data = generate_function_entry(func)
+    
+    if func_key in _function_registry:
+        # update parameter gui
+        update_param_gui(func_key, _function_registry, arg, gui)
+    else:
+        _function_registry[func_key] = func_data
+        update_param_gui(func_key, _function_registry, arg, gui)
+
+    # This will be the same for any additional decorator
+    def outer(func):
+        @wraps(func )
+        def wrapper(*args, **kwargs):
+            return func(*args,**kwargs)
+        return wrapper
+    return outer
 
 def demo(func):
     """
@@ -370,16 +411,15 @@ def demo(func):
 
     API generated for function is called through base server at _DEMO_SERVER_IP.
 
-    ui_kwargs will  be generated and passed in by functions which decorate 
-    the demo decorator.
+    Must be called last, takes no arguments.
     """
     global _function_registry
 
     print('*'*80, file=sys.stderr)
     # parse func args first.
-    func_key, func_data = parse_function(func)
-    error_if_func_exists(func_key,_function_registry)
-    _function_registry[func_key] = func_data
+    func_key, func_data = generate_function_entry(func)
+    if func_key not in _function_registry:
+        _function_registry[func_key] = func_data
     update_demo_server(func_key)
     @wraps(func)
     def wrapper(*args, **kwargs):
