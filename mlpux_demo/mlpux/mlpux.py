@@ -86,11 +86,9 @@ def update_param_gui(func_key, param_name, gui):
                 "name":None,
                 "type":None,
                 "position":position,
-                "input_type":'input',
                 "default_value":None,
-                "user_input":None,
                 "annotation":None,
-                "gui":None
+                "param_gui":None
         }
     """
     global _function_registry
@@ -99,8 +97,8 @@ def update_param_gui(func_key, param_name, gui):
     for i,param in enumerate(_function_registry[func_key]['info']['parameters']):
         print(i,param,file=sys.stderr)
         if param['name'] == param_name:
-            _function_registry[func_key]['info']['parameters'][i]['gui'] = dict(gui)
-            print("UPDATING",_function_registry[func_key]['info']['parameters'][i]['gui'], file=sys.stderr)
+            _function_registry[func_key]['info']['parameters'][i]['param_gui'] = dict(gui)
+            print("UPDATING",_function_registry[func_key]['info']['parameters'][i]['param_gui'], file=sys.stderr)
             return
     raise ValueError("No parameter updated. Did you enter the parameter's name correctly? Lookup: {}, given:{}".format(func_key, param_name))
     return
@@ -143,11 +141,9 @@ def generate_ui_args(func):
                 "name":None,
                 "type":None,
                 "position":position,
-                "input_type":'input',
                 "default_value":None,
-                "user_input":None,
                 "annotation":None,
-                "gui":None
+                "param_gui":None
         }
         
         param["POSITIONAL_ONLY"] = \
@@ -298,6 +294,7 @@ def generate_function_entry(func):
     parsed = {
                 'callback':func,
                 'info':{
+                    'display':None,
                     'parameters':parameters,
                     'documentation':documentation,
                     'func_name':func_name,
@@ -378,54 +375,60 @@ def update_demo_server(func_key):
     return 
 
 ### DECORATORS ################################################################
-class Slider:
+"""
+Building Your Own Decorators
+
+Input Widget Base:
+class Input:
     global _function_registry
-    def __init__(self, arg, min_val, max_val, ndiv ):
-        #print("Args for Slider.__init__:", arg, min_val, max_val, ndiv )
-        self.gui = { 'param':arg, 'min':min_val, 'max':max_val, 'ndiv':ndiv }
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+        ### YOUR CODE HERE ###
+        1) Define the necessary information the js front end needs t
  
     def __call__(self, *args, **kwargs):
-        print("Args for Slider.__call__", *args)
-        print("Kwargs for Slider.__call__", **kwargs)
         func = args[0]['func']
         func_key = args[0]['key']
         
-        if func_key in _function_registry:
-            # update parameter gui
-            update_param_gui(func_key, self.gui['param'], self.gui)
-
-        else:
-            raise ValueError("Function must be decorated with Demo first, then others")
-
-        print("SLIDER", func_key, self.gui, file=sys.stderr)
-        update_demo_server(func_key)
+        ### YOUR CODE HERE ###
         
+
         # Pass through for the funciton - this never changes.
         @functools.wraps(func)
         def wrapped(*inner_args, **inner_kwargs):
             return func(*inner_args, **inner_kwargs)
         return {'func':wrapped, 'key':func_key}
 
-class Demo:
+
+Output Widget Base:
+# Output Widget
+class Output
     global _function_registry
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
  
-    def __call__(self, func):
-        func_key, func_data = generate_function_entry(func)
-        if func_key not in _function_registry:
-            _function_registry[func_key] = func_data
-        print("DEMO", _function_registry[func_key]['callback'], "key", func_key, file=sys.stderr)
-        update_demo_server(func_key)
-
-        # Passthrough
+    def __call__(self, *args, **kwargs):
+        func = args[0]['func']
+        func_key = args[0]['key']
+        
+        ### YOUR CODE HERE### 
+        
+        # Pass through for the funciton - this never changes.
         @functools.wraps(func)
         def wrapped(*inner_args, **inner_kwargs):
             return func(*inner_args, **inner_kwargs)
-        return {"func":wrapped,"key":func_key}
+        return {'func':wrapped, 'key':func_key}
+"""
+
 
 class Interactive:
+    """
+    Decorate functions with this (must be top-most decorator) in order to retain
+    the ability to interactively call them in a module.
+    """
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
@@ -438,30 +441,90 @@ class Interactive:
             return func(*inner_args, **inner_kwargs)
         return wrapped
 
-# def demo(func):
-    # """
-    # inspects a function, func and spins off a server which can be used to 
-    # remotely call the function via a web interface or REST API.
+# Input Widget
+class Slider:
+    """
+    Decorate above mlpux.Demo to enable a slider input widget for a parameter
+    argument.
+    """
+    global _function_registry
+    def __init__(self, arg, min_val, max_val, ndiv ):
+        self.param = arg
+        self.param_gui = {'slider':{ 'param':arg, 'min':min_val, 'max':max_val, 'ndiv':ndiv }}
+ 
+    def __call__(self, *args, **kwargs):
+        func = args[0]['func']
+        func_key = args[0]['key']
+        
+        if func_key in _function_registry:
+            # update parameter gui
+            update_param_gui(func_key, self.param, self.param_gui)
+            print(self.__class__.__name__, func_key, self.param_gui, file=sys.stderr)
+            update_demo_server(func_key)
 
-    # API generated for function is called through base server at _DEMO_SERVER_IP.
+        else:
+            raise ValueError("Function must be decorated with Demo first, then others")
+        
+        # Pass through for the funciton - this never changes.
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return {'func':wrapped, 'key':func_key}
 
-    # Must be called last, takes no arguments.
-    # """
-    # global _function_registry
+# Output Widget
+class Plot2D:
+    """
+    Decorate a function to try to plot its output on a 2D
+    """
+    global _function_registry
+    def __init__(self, title, x_domain_pos=0, y_domain_pos=1, style='scatter' ):
+        self.display = { 
+                'plot2d':{
+                    'style':style,
+                    'x_domain_pos':x_domain_pos,
+                    'y_domain_pos':y_domain_pos,
+                    'title':title,
+                    }
+                }
 
-    # #print('*'*80, file=sys.stderr)
-    # # parse func args first.
-    # func_key, func_data = generate_function_entry(func)
-    # if func_key not in _function_registry:
-        # _function_registry[func_key] = func_data
-   
-    # print("DEMO", _function_registry[func_key]['callback'], file=sys.stderr)
-    # update_demo_server(func_key)
+    def __call__(self, *args, **kwargs):
+        func = args[0]['func']
+        func_key = args[0]['key']
 
-    # @functools.wraps(func)
-    # def wrapper(*args, **kwargs):
-        # return func(*args, **kwargs)
-    # return wrapper
+        if func_key in _function_registry:
+            _function_registry[func_key]['info']['display'] = self.display
+            update_demo_server(func_key)
+            print(self.__class__.__name__, func_key, self.display, file=sys.stderr)
+        else:
+            raise ValueError("Function must be decorated by mlpux.Demo before decorating with mlpux.Plot2D")
+        
+        # Pass through for the funciton - this never changes.
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return {'func':wrapped, 'key':func_key}
+
+
+
+# Base Widget
+class Demo:
+    global _function_registry
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+ 
+    def __call__(self, func):
+        func_key, func_data = generate_function_entry(func)
+        if func_key not in _function_registry:
+            _function_registry[func_key] = func_data
+        print(self.__class__.__name__, _function_registry[func_key]['callback'], "key", func_key, file=sys.stderr)
+        update_demo_server(func_key)
+
+        # Passthrough
+        @functools.wraps(func)
+        def wrapped(*inner_args, **inner_kwargs):
+            return func(*inner_args, **inner_kwargs)
+        return {"func":wrapped,"key":func_key}
 
 # FLASK ROUTES ################################################################ 
 @app.route('/test_up', methods=['GET'])
@@ -536,4 +599,12 @@ def execute_function():
             msg = {"error":"Execution endpoint exception: {}. Tried {}. Request endpoint type: endpoint/func (no arguments)".format(e,func_key)}
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
-    return flask.jsonify({"msg":"success","result":result})
+
+    return process_output(result)
+
+def process_output(data):
+    """
+    data guaranteed to be successfully resultant from a funciton execution.
+    Here, we transform the data to something that can be shown on the front-end.
+    """
+    return flask.jsonify({"msg":"success","result":data})

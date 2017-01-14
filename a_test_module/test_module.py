@@ -9,6 +9,9 @@ the demo framework.
 """
 
 @mlpux.Interactive()
+@mlpux.Plot2D(title="A Plot Title")
+@mlpux.Slider(arg='x_min', min_val=0, max_val=50, ndiv=30)
+@mlpux.Slider(arg='x_max', min_val=100, max_val=250, ndiv=30)
 @mlpux.Demo()
 def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
     """
@@ -32,14 +35,12 @@ def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
         raise ValueError("Return of {} must be an iterable representing 2D data set. Options are 'tuple' or 'dict'".format(name))
 
 @mlpux.Interactive()
-@mlpux.Slider(arg='y', min_val=0, max_val=50, ndiv=3)
-@mlpux.Slider(arg='x', min_val=-10, max_val=10, ndiv=20)
 @mlpux.Demo()
-def square(x:float, y:float):
+def square(x:float):
     """
     takes a floating point input, returns the square of that input
     """
-    return x*x, y*y
+    return x*x
 
 @mlpux.Interactive()
 @mlpux.Demo()

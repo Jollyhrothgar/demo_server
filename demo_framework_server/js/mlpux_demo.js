@@ -72,6 +72,80 @@ function show_newline(text_string) {
     return text_string.replace(/\n/g, "<br/>");
 }
 
+function make_param_label(name, type, annotation){
+    var label = $('<p>');
+    if(type == 'standard' && annotation !== null){
+        var anno = annotation
+        clean_anno = anno.replace(/</g,"");
+        clean_anno = clean_anno.replace(/>/g,"");
+        label.append(('<b>'+name+'</b> ('+clean_anno+')'));
+    } else if(type == 'standard' && annotation == null){
+        label.append('<b>'+name+'<b>');
+    }
+    if(type == 'keyword'){
+        label.append('<b>Keyword Argument List</b> <br> comma separated values <br> i.e.: arg1=10, arg2=42.42');
+    }
+    if(type == 'positional'){
+        label.append('<b>Positional Argument List</b> <br> comma separated values <br> i.e.: "daimler", 10, 88.3');
+    }
+    return label;
+}
+
+function echo_param_output(param_id, echo_id){
+    var value = $("#"+param_id).val();
+    $("#"+echo_id).text(value);
+}
+
+function make_input_slider(param, data_func_scope, data_func_name){
+    var input_field = $('<input>');
+    var echo_id = 'echo_'+param.name;
+    input_field.attr('id',param.name);
+    input_field.attr('type','range');
+    input_field.attr('min', param.param_gui.min);
+    input_field.attr('max', param.param_gui.max);
+    input_field.attr('step', param.param_gui.ndiv);
+    input_field.attr('class','inputParameter');
+    input_field.attr('data-func-scope',data_func_scope);
+    input_field.attr('data-arg-type',param['type']);
+    input_field.attr('data-func-name',data_func_name);
+    input_field.attr('onchange','echo_param_output("'+param.name+'","'+echo_id+'")');
+    
+    if(param.default_value !== null){
+        input_field.attr('value',param.default_value);
+    }
+    var input_field_label = make_param_label(param.name, param.type, param.annotation);
+    var widget = {label:input_field_label, field:input_field};
+    return widget
+}
+
+function make_input_field(param, data_func_scope, data_func_name){
+    var input_field = $('<input>');
+    input_field.attr('id',param.name);
+    input_field.attr('class','inputParameter');
+    input_field.attr('data-func-scope',data_func_scope);
+    input_field.attr('data-arg-type',param['type']);
+    input_field.attr('data-func-name',data_func_name);
+    
+    if(param.default_value !== null){
+        input_field.attr('value',param.default_value);
+    }
+    var input_field_label = make_param_label(param.name, param.type, param.annotation);
+    var widget = {label:input_field_label, field:input_field};
+    return widget
+}
+
+function make_input_widget(param, data_func_scope, data_func_name ){
+    var widget = ""
+    console.log(param.param_gui);
+    if (param.param_gui == null){
+        widget = make_input_field(param, data_func_scope, data_func_name);
+    } else if (param.param_gui.hasOwnProperty("slider")) {
+        console.log("SLLLLIIIIDERRRRR",param.param_gui)
+        widget = make_input_slider(param, data_func_scope, data_func_name);
+    }
+    return widget
+}
+
 function showFunction(element_id){
     var client_uuid = $(jq(element_id)).attr("data-client-uuid");
     var func_key = $(jq(element_id)).attr("data-func-key");
@@ -118,33 +192,19 @@ function showFunction(element_id){
                 input_form.append(input_field)
             }
             for(var i = 0; i < data['parameters'].length; i++){
-                var input_field = $('<input id="'+data['parameters'][i]['name']+'" class="inputParameter" data-func-scope="'+data['func_scope']+'" data-arg-type="'+data['parameters'][i]['type']+'" data-func-name="'+data['func_name']+'">');
-                var input_field_label = $('<p>');
-                if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] !== null){
-                    var anno = data['parameters'][i]['annotation']
-                    clean_anno = anno.replace(/</g,"");
-                    clean_anno = clean_anno.replace(/>/g,"");
-                    input_field_label.html('<b>'+data['parameters'][i]['name']+'</b> ('+clean_anno+')');
-                } else if(data['parameters'][i]['type'] == 'standard' && data['parameters'][i]['annotation'] == null){
-                    input_field_label.html('<b>'+data['parameters'][i]['name']+'<b>');
-                }
-                if(data['parameters'][i]['type'] == 'keyword'){
-                    input_field_label.html('<b>Keyword Argument List</b> <br> comma separated values <br> i.e.: arg1=10, arg2=42.42');
-                }
-                if(data['parameters'][i]['type'] == 'positional'){
-                    input_field_label.html('<b>Positional Argument List</b> <br> comma separated values <br> i.e.: "daimler", 10, 88.3');
-                }
-                
-                if(data['parameters'][i]['default_value'] !== null){
-                    input_field.attr('value',data['parameters'][i]['default_value'])
-                }
+                var widget = make_input_widget(
+                    data['parameters'][i],
+                    data['func_scope'],
+                    data['func_name']
+                );
 
                 input_form.append(
                     $('<tr>').append(
-                        $('<td>').html(input_field_label),
-                        $('<td>').html(input_field)
+                        $('<td>').html(widget.label),
+                        $('<td>').html(widget.field),
+                        $('<td>').html('<p id="echo_'+data['parameters'][i]['name']+'"></p>')
                     )
-                )
+                );
             }
             $('#demo_client_inputs').append(input_form);
             var execute_button = $("<input>");

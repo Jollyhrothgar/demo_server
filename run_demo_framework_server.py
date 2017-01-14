@@ -38,13 +38,40 @@ app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 
 # regestry of known instances of mlpux decorated functions.
 mlpux_instances = {} # maps client_uuid to mlpux decorated function
-
-# template for how to talk to functions
-mlpux_instance = {
-    'PORT':None,
-    'IP':None,
-    'functions':[], # dict of func name to func params
-}
+""" 
+    mlpux_instances = 
+    {
+        <mlpux client uuid>:{
+            "IP":           <mlpux client ip address>,
+            "PORT":         <mlpux client port>,
+            "client_uuid":  <mlpux client ip>,
+            "functions":[
+                { 
+                    "PORT":          < duplicate mlpux client port>,
+                    "client_uuid":   < duplicate mlpux client ip>,
+                    "display":       <display parameters>,
+                    "documentation": <mlpux client function docstring>,
+                    "func_key":      <mlpux client function func_key>,
+                    "func_name":     <mlpux client function name>,
+                    "func_scope":    <mlpux client function scope: either: <file> or <module dir>.<file>,
+                    "func_uuid":     <mlpux client function uuid (currently func_key>,
+                    "signature":     <mlpux stringified signature>,
+                    "parameters":[
+                        {
+                            "annotation":    <parameter annotation >,
+                            "default_value": <parameter default value, or None>,
+                            "name":          <parameter name>,
+                            "param_gui":     <dict of gui parametrs>,
+                            "position":      <int referring to param position in function signature> ,
+                            "type":          <"standard", "keyword", or "positional">,
+                        },
+                        {...}, # for all parameters in the funciton signature
+                    ]
+                },
+                { .. }, # another function
+            ]
+    }
+"""
 
 # TODO
 # Need a periodic check to see if the various function servers are up, and if not, kill from UI
@@ -78,7 +105,7 @@ def print_config():
     print(80*"=", file=sys.stderr)
 
 
-def try_json(data):
+def process_output(data):
     """
     returns exception message if data cannot be json serialized.
     returns jsonified data otherwise.
@@ -121,21 +148,6 @@ def show_mlpux():
     # Crashes with a direct dump for some stupid fucking reason.
     return flask.jsonify(json.loads(json.dumps(mlpux_instances)))
 
-# mlpux_instances structure:
-#    {
-#        client_uuid: {
-#            'PORT':<port number>,
-#            'IP':<ip address>,
-#            'functions':[
-#                'parameters':parameters,
-#                'documentation':documentation, 
-#                'func_name':func.__name__,
-#                'ui_args':ui_kwargs,
-#                'func_uuid':uuid.uuid4()
-#            ],
-#            ...similarly for all functions associated with the uuid
-#        }
-#    }
 @app.route("/request_demo_list",methods=['GET'])
 def request_demo_list():
     """
@@ -204,8 +216,7 @@ def request_demo():
 
     for function in mlpux_instances[client_uuid]['functions']:
         if func_key == function['func_key']:
-            # TODO 1/4/2017: handle function signature better.
-            d = {k:v for k,v in function.items() if k in ['annotation','func_name','func_scope','documentation','signature','func_key','parameters','gui']}
+            d = {k:v for k,v in function.items() if k in ['annotation','func_name','func_scope','documentation','signature','func_key','parameters','param_gui']}
             d['client_uuid'] = client_uuid
             return flask.jsonify(dict(d))
     return flask.jsonify({"error":"function not found"})
@@ -217,39 +228,36 @@ def register_function():
     ip = flask.request.remote_addr
     _func_data = pickle.loads(request_content) # mlpux.py: _func_data
     client_uuid = _func_data['client_uuid']
-
     function = None
     if client_uuid not in mlpux_instances:
-        mlpux_instances[client_uuid] = dict(mlpux_instance) 
-        mlpux_instances[client_uuid]['IP'] = ip
-        mlpux_instances[client_uuid]['PORT'] = _func_data['PORT']
-        mlpux_instances[client_uuid]['functions'] = [ dict(_func_data) ]
+
+        mlpux_instances[client_uuid] = {
+            "IP":ip,
+            "PORT":_func_data['PORT'],
+            'functions':[dict(_func_data)]
+
+        }
         function = dict(_func_data)
     else:
-        # if somehow the connection dies to the client, there will be a new
-        # client_uuid, so there should not be duplicate functions within one client_uuid.
-        # must have a list of exactly one unique function
-        # 
-        # Other option is that a function has been updated.
         append_function = True
         for i,function in enumerate(mlpux_instances[client_uuid]['functions']):
             if function['func_uuid'] == _func_data['func_uuid']:
-                # Update
+                # Update Existing Function
                 mlpux_instances[client_uuid]['functions'][i] = dict(_func_data)
                 append_function = False
                 function = dict(_func_data)
-        # Add new
+        # Add New Function
         if append_function:
             mlpux_instances[client_uuid]['functions'].append(dict(_func_data))
             function = dict(_func_data)
 
+    # Print message that a parameter has been updated.
     for param in function['parameters']:
-        if param['gui'] is not None:
+        if param['param_gui'] is not None:
             print("FLASK SERVER UPDATED WITH ", function['func_name'], function['parameters'], file=sys.stderr)
             print("CLIENT AT {}:{}".format(mlpux_instances[client_uuid]['IP'], mlpux_instances[client_uuid]['PORT']), file=sys.stderr)
+    # Keep output separated
     print(80*"=", file=sys.stderr)
-   
-    # TODO implement failure handling
     ret_val = {'status':'SUCCESS', 'PORT':mlpux_instances[client_uuid]['PORT']}
     return flask.jsonify(ret_val)
 
@@ -268,9 +276,6 @@ def execute(func_scope, func_name):
     endpoint/func?X=x&Y=y&Z=z... (keyword only) ".format(e, func_key,func_args)}
     endpoint type: endpoint/func (no arguments)".format(e,func_key)}
     """
-
-    # TODO Remove for debug, show raw request.
-    print(flask.request.headers, file=sys.stderr)
 
     func_key = func_scope + "." + func_name
     print("RECEIVED ARGUMENTS FROM GET REQUEST: ",flask.request.args, file=sys.stderr)
@@ -317,16 +322,15 @@ def execute(func_scope, func_name):
                 mlpux_port = mlpux_instances[client_uuid]['PORT']
 
                 send_data = pickle.dumps(arguments,-1)
-                # TODO: Check if client is still connected
                 try:
                     print('POSTING ARGUMENTS {} to mlpux server for {}'.format(repr(arguments),func_key), file=sys.stderr)
                     print('BINARY DATA: ', send_data, file=sys.stderr) 
                     r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
                     print("SENT TO URL",r.url, file=sys.stderr)
                     print("RECEIVED BACK: ", r.json(),file=sys.stderr)
-                    return try_json(r.json()) # Response from MLPUX server is passed directly back to front end
-                except:
-                    return flask.jsonify({'error':'problem communicating with mlpux client {}:{}'.format(mlpux_ip,mlpux_port)})
+                    return process_output(r.json())
+                except Exception as e:
+                    return flask.jsonify({'error':'problem communicating with mlpux client {}:{}. Exception: {}'.format(mlpux_ip,mlpux_port,e)})
     return flask.jsonify({"error":"No function was found. Function: {}".format(func_key)})
 
 # END FLASK APPLICATION ROUTES ################################################

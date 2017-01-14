@@ -26,7 +26,7 @@ def run_tests():
 
     print(80*'=')
     print("Test 2: a module with float arguments")
-    ret_val = test_module.square(10., 20.)
+    ret_val = test_module.square(10.)
     print(ret_val)
 
     print(80*'=')
