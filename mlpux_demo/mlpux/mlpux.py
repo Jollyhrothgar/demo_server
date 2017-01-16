@@ -17,12 +17,16 @@ import sys
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
 
+import numpy as np
+from math import fabs
+
+import random
 # Local
 import discovery 
 
 # GLOBALS #####################################################################
 
-
+_DEMO_SERVER_PORT = 5002
 _DEMO_SERVER_IP = False
 def set_ip(ip):
     """
@@ -246,7 +250,15 @@ def generate_func_identifiers(func):
         module_folder = None
 
     # File Scope
-    module_file = os.path.splitext(os.path.basename(os.path.normpath(members['__globals__']['__file__'])))[0]
+    try:
+        module_file = os.path.splitext(os.path.basename(os.path.normpath(members['__globals__']['__file__'])))[0]
+    except Exception as e:
+        print("Couldn't acceess __globals__ or __file__ attribute of function. Exception: {}".format(e), file=sys.stderr)
+        print("Using UUIDs for func_key, func_scope")
+        func_scope = str(uuid.uuid4())
+        time.sleep(0.1)
+        func_key = str(uuid.uuid4())
+        return func_key, func_scope, func_name
     #print(type(module_folder), file=sys.stderr)
     
     func_scope = ""
@@ -322,7 +334,7 @@ def wait_for_demo_server_discovery(seconds=5):
             break
     return
 
-def check_if_demo_server_alive(ip,port=80):
+def check_if_demo_server_alive(ip,port=_DEMO_SERVER_PORT):
     """
     Pings the demo server with a get request. ConnectionError causes ValueError
     """
@@ -358,7 +370,7 @@ def update_demo_server(func_key):
         raise ValueError("Server backend is unreachable {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT))
     else:
         # In case server went down since last time a function was registered.
-        check_if_demo_server_alive(ip=_DEMO_SERVER_IP, port=5002)
+        check_if_demo_server_alive(ip=_DEMO_SERVER_IP, port=_DEMO_SERVER_PORT)
         #print("SENDING FUNCTION", file=sys.stderr)
 
         # Update func_data with network information to call back
@@ -367,7 +379,7 @@ def update_demo_server(func_key):
         payload['client_uuid'] = _UUID
         data = pickle.dumps(payload,-1)
 
-        r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_IP,5002),data=data)
+        r = requests.post(url='http://{}:{}/register_function'.format(_DEMO_SERVER_IP,_DEMO_SERVER_PORT),data=data)
         #print(r.text, file=sys.stderr)
 
         ret_data = json.loads(r.text)
@@ -600,11 +612,58 @@ def execute_function():
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
 
-    return process_output(result)
+    out = process_output(result)
+    return flask.jsonify(out)
+
+
+def mapify_data(data):
+    """
+    Returns a list of GPS coordinates and central area
+
+    Calculates center as average, as points are expected to be closely clustered.
+    """
+    print("FOUND MAP-LIKE DATA", file=sys.stderr)
+
+    lat = []
+    lon = []
+    output = {
+        'msg':'success',
+        'map':{
+            'center':None,
+            'points':[]
+        }
+    }
+
+    lat_sum = 0.
+    lon_sum = 0.
+    num = 0.
+
+    for pair in data:
+        output['map']['points'].append({'lat':pair[0], 'lng':pair[1]})
+        lat.append(pair[0])
+        lon.append(pair[1])
+        lat_sum += pair[0]
+        lon_sum += pair[1]
+        num += 1.
+    
+    output['map']['center'] = {'lat':(lat_sum/num), 'lng':(lon_sum/num)}
+    return output
 
 def process_output(data):
     """
     data guaranteed to be successfully resultant from a funciton execution.
     Here, we transform the data to something that can be shown on the front-end.
     """
-    return flask.jsonify({"msg":"success","result":data})
+
+    # Check if output is map-like
+    if hasattr(data,'__iter__'):
+        random.shuffle(data)
+        print(len(data[0]),file=sys.stderr)
+        print(data[0], file=sys.stderr)
+        if len(data[0]) == 2:
+            if fabs(data[0][0]) <= 90. and fabs(data[0][1]) <= 180.:
+                print("HEEEY",file=sys.stderr)
+                out = mapify_data(data)
+                return out
+    # Otherwise return the normal thing.
+    return {"msg":"success","result":data}

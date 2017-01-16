@@ -33,7 +33,7 @@
     <script type="text/javascript" src="demo_framework_server/js/mlpux_demo.js"> </script>
 
     <!-- Google Maps API -->
-    <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqgpyknPVo1wWuY60K-bJYPpk-c49fTLs&signed_in=true&callback=initMap"></script>-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBqgpyknPVo1wWuY60K-bJYPpk-c49fTLs&signed_in=true&callback=initMap"></script>
 
     <!--MPLD3 + D3 Libraries-->
     <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
@@ -128,6 +128,7 @@ $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
       <div class = "container"> 
         <div class = "row">
           <div id = "development_testing"> </div>
+          <div id = "location_map" style="height:500px;width:300px;margin:auto;width:100%;padding:10px;" > </div>
         </div> 
       </div>
     </section>

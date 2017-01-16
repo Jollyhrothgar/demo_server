@@ -7,6 +7,42 @@ function clearDemoOutput(){
     $("#demo_results").html('');
 }
 
+
+/// MAP STUFF 
+
+// Global Map Variable
+var map;// handle for talking to map
+var map_points = {}; // any time map is updated, store lat/lon here
+ 
+function initMap(){
+    console.log("google called back");
+    map = new google.maps.Map(document.getElementById('location_map'), {
+        center:{lat: 37.386044, lng: -122.036287}, // Sunnyvale
+        zoom: 13,
+        scrollwheel:false,
+    });
+}
+
+function recenterMap(lattitude, longitude){
+    map.setCenter({lat:parseFloat(lattitude),lng:parseFloat(longitude)});
+}
+
+// Takes a list of {lat:coordinate, lng:coordinate} objects and plots them
+function plotPoints(center, coordinates){
+    // clear all the markers
+    
+    map.panTo(center);
+    map.setCenter(center);
+    for(var i = 0; i < coordinates.length; i++){
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(coordinates[i]),
+            map:map
+        });
+        console.log(coordinates[i])
+    }
+}
+/// END MAP STUFF
+
 function clearDemos(){
     $('#demo_list_div').html('');
     $('#demo_client_session_div').html('');
@@ -219,13 +255,37 @@ function showFunction(element_id){
             clear_output.attr('type','button');
             clear_output.attr('class','btn btn-xl btn-primary');
             clear_output.attr('value','Clear Output');
+            var plot_something = $("<input>");
+            plot_something.attr('id','plot_testing');
+            plot_something.attr('onclick','makeTestPlot()');
+            plot_something.attr('type','button');
+            plot_something.attr('class','btn btn-xl btn-primary');
+            plot_something.attr('value','Test Plot Interface');
             $("#execute_demo").append(execute_button);
             $("#execute_demo").append(clear_output);
+            $("#execute_demo").append(plot_something);
         },
         error:function(data){
             $('#demo_client_message').html('<h1> CONNECTION FAILED </h1>');
         }
     });
+}
+
+function makeTestPlot(){
+    console.log('PLOTTING');
+    var endpoint = '/test_plot';
+    $.ajax({
+        url:$SCRIPT_ROOT+endpoint,
+        type:"GET",
+        success:function(data){
+            console.log("RESPONSE",data);
+            $("#development_testing").html(data);
+        },
+        error:function(data){
+            console.log("ERROR WITH EXECUTION");
+        }
+    });
+    
 }
 
 function sendFunctionArguments(){
@@ -265,19 +325,24 @@ function sendFunctionArguments(){
         success:function(data){
             console.log("RESPONSE",data);
             if(data['msg'] == 'success'){
-                // <div id="demo_confirm_exe"> </div>
-                // <div id="demo_results"> </div>
-                var result = $('<h2>').text(JSON.stringify(data['result'],null,4));
-                $("#demo_results").append(result);
-            }
-            if( 'error' in data ){
+                if( data.hasOwnProperty('map') ) {
+                    $("#demo_results").append("See the map!");
+                    plotPoints(data['map']['center'],data['map']['points']);
+                } else if (data.hasOwnProperty('result')) {
+                    var result = $('<h2>').text(JSON.stringify(data['result'],null,4));
+                    $("#demo_results").append(result);
+                }
+            } else if( data.hasOwnProperty('error') ){
                 var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
-                $("#demo_results").append(result);
+                $("#demo_results").append(result['error']);
+                if(data.hasOwnProperty('remove_function') ) {
+                    console.log("ACTIOOOON", data.action)
+                }
             }
         },
         error:function(data){
             console.log("ERROR WITH EXECUTION");
-                $("#demo_results").append(result);
+                $("#demo_results").append("EXECUTION ERROR - AJAX REQUEST FAILED");
         }
     });
 }

@@ -18,6 +18,17 @@ import time
 import threading
 import discovery
 import requests
+import random
+
+
+# Plotting
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+plt.ioff()
+import mpld3
+from mpld3 import plugins
 
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
@@ -116,6 +127,17 @@ def process_output(data):
         return flask.jsonify({"error":"flask.jsonify failed with data:{}".format(data)})
 
 # FLASK APPLICATION ROUTES ####################################################
+
+@app.route('/test_plot',methods=['GET'])
+def test_plot():
+    from threading import Lock
+    lock = Lock()
+    x = range(100)
+    y = [a * 2 + random.randint(-20, 20) for a in x]
+    with lock:
+        fig, ax = plt.subplots()
+        ax.plot(x, y)
+    return mpld3.fig_to_html(fig)
 
 @app.route('/test_up',methods=['GET'])
 def test_up():
@@ -322,6 +344,15 @@ def execute(func_scope, func_name):
                 mlpux_port = mlpux_instances[client_uuid]['PORT']
 
                 send_data = pickle.dumps(arguments,-1)
+                # Check if client is up TODO
+                # try:
+                    # r = requests.get(url='http:{}/{}'.format(mlpux_ip, mlpux_port))
+                # except Exception as e:
+                    # msg = {'error':"MLPUX server seems to be unreachable: {}:{}".format(mlpux_ip,mlpux_port)}
+                    # msg.update({'remove_function':{'func_name':func_name,'func_key':func_key}})
+                    # return flask.jsonify(msg)
+                   
+
                 try:
                     print('POSTING ARGUMENTS {} to mlpux server for {}'.format(repr(arguments),func_key), file=sys.stderr)
                     print('BINARY DATA: ', send_data, file=sys.stderr) 

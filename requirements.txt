@@ -6,3 +6,14 @@ formencode
 requests
 mpld3
 pandas
+jupyter
+bokeh
+jinja2
+six
+requests
+tornado >= 4.0
+werkzeug
+markupsafe
+greenlet
+pyzmq
+pyyaml
