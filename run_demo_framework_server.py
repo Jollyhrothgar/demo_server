@@ -358,7 +358,7 @@ def execute(func_scope, func_name):
                     print('BINARY DATA: ', send_data, file=sys.stderr) 
                     r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
                     print("SENT TO URL",r.url, file=sys.stderr)
-                    print("RECEIVED BACK: ", r.json(),file=sys.stderr)
+                    print("Received response from client", file=sys.stderr)
                     return process_output(r.json())
                 except Exception as e:
                     return flask.jsonify({'error':'problem communicating with mlpux client {}:{}. Exception: {}'.format(mlpux_ip,mlpux_port,e)})

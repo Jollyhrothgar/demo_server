@@ -12,7 +12,7 @@ function clearDemoOutput(){
 
 // Global Map Variable
 var map;// handle for talking to map
-var map_points = {}; // any time map is updated, store lat/lon here
+var map_points = []; // any time map is updated store google.maps pointers here.
  
 function initMap(){
     console.log("google called back");
@@ -33,12 +33,16 @@ function plotPoints(center, coordinates){
     
     map.panTo(center);
     map.setCenter(center);
+    for(var i = 0; i < map_points.length; i++){
+        map_points[i].setMap(null)
+    }
+    map_points.length = 0;
     for(var i = 0; i < coordinates.length; i++){
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(coordinates[i]),
             map:map
         });
-        console.log(coordinates[i])
+        map_points.push(marker);
     }
 }
 /// END MAP STUFF
