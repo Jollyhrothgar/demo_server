@@ -274,7 +274,32 @@ function showFunction(element_id){
         }
     });
 }
+ 
 
+/*
+$("#query").click(function() {  
+
+  $("#loading-div-background").show();
+  $("#container").hide();
+  var plot_type = $('input:radio[name=plot_type]:checked').val();
+  var qu = {"plot_type":plot_type}
+  $.ajax({
+    type: "POST",
+    async:true,
+    contentType: "application/json; charset=utf-8",
+    url: "/query",
+    data: JSON.stringify(qu),
+    success: function (data) {     
+     var graph = $("#container");
+     graph.html(data);   
+     $("#loading-div-background").hide();      
+     $("#container").show();
+   },
+   dataType: "html"
+ });
+});
+
+*/
 function makeTestPlot(){
     console.log('PLOTTING');
     var endpoint = '/test_plot';
@@ -283,6 +308,9 @@ function makeTestPlot(){
         type:"GET",
         success:function(data){
             console.log("RESPONSE",data);
+            var graph = $("#development_testing");
+            graph.html(data);
+            $('#development_testing').show();
             $("#development_testing").html(data);
         },
         error:function(data){
@@ -335,6 +363,7 @@ function sendFunctionArguments(){
                 } else if (data.hasOwnProperty('result')) {
                     var result = $('<h2>').text(JSON.stringify(data['result'],null,4));
                     $("#demo_results").append(result);
+                    $('html,body').animate({scrollTop:$('#location_map').offset().top}, 'slow');
                 }
             } else if( data.hasOwnProperty('error') ){
                 var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
