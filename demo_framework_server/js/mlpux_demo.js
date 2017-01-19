@@ -5,6 +5,11 @@ function initializeUI(){
 
 function clearDemoOutput(){
     $("#demo_results").html('');
+    map.panTo(sunnyvale);
+    map.setCenter(sunnyvale);
+    for(var i = 0; i < map_points.length; i++){
+        map_points[i].setMap(null)
+    }
 }
 
 
@@ -13,11 +18,12 @@ function clearDemoOutput(){
 // Global Map Variable
 var map;// handle for talking to map
 var map_points = []; // any time map is updated store google.maps pointers here.
+var sunnyvale = {lat: 37.386044, lng: -122.036287};
  
 function initMap(){
     console.log("google called back");
     map = new google.maps.Map(document.getElementById('location_map'), {
-        center:{lat: 37.386044, lng: -122.036287}, // Sunnyvale
+        center:sunnyvale, // Sunnyvale
         zoom: 13,
         scrollwheel:false,
     });
@@ -370,6 +376,7 @@ function sendFunctionArguments(){
 
                     } else if (data['display'] == 'table'){
                         console.log('making a table');
+                        $("#demo_results").append(data['table_soup']);
 
                     } else if (data['display'] == 'plain') {
                         console.log('dumping json');

@@ -171,7 +171,7 @@ def kwargs_only(**kwargs):
 
 @mlpux.Interactive()
 @mlpux.Demo()
-def generate_gps_list(num=2,lat_var=90./10000., lon_var=180./10000. , center=None):
+def generate_gps_list(num=2,lat_var=90./10000., lon_var=180./10000.):
     """
     Generate gaussian distribution of GPS coordinates around a central
     point. If no central point is supplied, 
@@ -182,10 +182,7 @@ def generate_gps_list(num=2,lat_var=90./10000., lon_var=180./10000. , center=Non
     """
     sign = np.array([-1,1])
     
-    if center is None:
-        center = (random.uniform(-90.,90.), random.uniform(-180.,180.))
-    elif(len(center) is not 2):
-        raise ValueError("center must be a tuple of length 2")
+    center = (random.uniform(-90.,90.), random.uniform(-180.,180.))
     list_of_list_pairs = []
     list_of_tuples = []
     lat_list = []
