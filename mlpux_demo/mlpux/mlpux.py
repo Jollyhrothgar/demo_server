@@ -615,6 +615,11 @@ def execute_function():
     out = process_output(result)
     return flask.jsonify(out)
 
+def plotify_data(data):
+    pass
+
+def tabify_data(data):
+    pass
 
 def mapify_data(data):
     """
@@ -622,16 +627,12 @@ def mapify_data(data):
 
     Calculates center as average, as points are expected to be closely clustered.
     """
-    print("FOUND MAP-LIKE DATA", file=sys.stderr)
-
-    lat = []
-    lon = []
+    print("Testing for map-like-data", file=sys.stderr)
     output = {
         'msg':'success',
-        'map':{
-            'center':None,
-            'points':[]
-        }
+        'center':None,
+        'points':[],
+        'display':'map',
     }
 
     lat_sum = 0.
@@ -639,14 +640,27 @@ def mapify_data(data):
     num = 0.
 
     for pair in data:
-        output['map']['points'].append({'lat':pair[0], 'lng':pair[1]})
-        lat.append(pair[0])
-        lon.append(pair[1])
-        lat_sum += pair[0]
-        lon_sum += pair[1]
+        try:
+            if not isinstance(pair, str) and len(pair) > 2:
+                raise ValueError("Mapping can't understand format of data. Exception: {}".format(repr(pair)))
+            output['points'].append({'lat':pair[0], 'lng':pair[1]})
+            lat_sum += pair[0]
+            lon_sum += pair[1]
+        except Exception as e:
+            try:
+                lat_lng = pair.split(',')
+                lat_lng[0] = float(lat_lng[0])
+                lat_lng[1] = float(lat_lng[1])
+                output['points'].append({'lat':lat_lng[0], 'lng':lat_lng[1]}) 
+                lat_sum += lat_lng[0]
+                lon_sum += lat_lng[1]
+            except Exception as f:
+                raise ValueError("Data encountered isn't subscriptable into lat-lng pair: {}. Exception {}, and {}".format(repr(pair), e, f))
+            
         num += 1.
     
-    output['map']['center'] = {'lat':(lat_sum/num), 'lng':(lon_sum/num)}
+    output['center'] = {'lat':(lat_sum/num), 'lng':(lon_sum/num)}
+    print("Successfuly parsed map-like data", file=sys.stderr)
     return output
 
 def process_output(data):
@@ -655,15 +669,14 @@ def process_output(data):
     Here, we transform the data to something that can be shown on the front-end.
     """
 
-    # Check if output is map-like
-    if hasattr(data,'__iter__'):
-        random.shuffle(data)
-        print(len(data[0]),file=sys.stderr)
-        print(data[0], file=sys.stderr)
-        if len(data[0]) == 2:
-            if fabs(data[0][0]) <= 90. and fabs(data[0][1]) <= 180.:
-                print("HEEEY",file=sys.stderr)
-                out = mapify_data(data)
-                return out
-    # Otherwise return the normal thing.
-    return {"msg":"success","result":data}
+    out = {'msg':'success', 'display':'plain', 'result':data}
+
+    try:
+        out = mapify_data(data)
+        return dict(out)
+    except Exception as e:
+        print("Data was not mappable {}, Exception: {}".format(data,e),file=sys.stderr)
+
+    # try/except each data type
+
+    return dict(out)
