@@ -19,7 +19,7 @@ import threading
 import discovery
 import requests
 import random
-
+from threading import Lock
 
 # Plotting
 import matplotlib
@@ -46,6 +46,7 @@ API_TOKEN = '8icMAisLE_cMZZ9v1TtE'
 API_URL = 'http://192.168.0.125/api/v3/projects/all?private_token={}'
 API_URL = API_URL.format(API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
+lock = Lock() # global lock used for plotting (maybe plot with interactive: on)
 
 # regestry of known instances of mlpux decorated functions.
 mlpux_instances = {} # maps client_uuid to mlpux decorated function
@@ -53,28 +54,28 @@ mlpux_instances = {} # maps client_uuid to mlpux decorated function
     mlpux_instances = 
     {
         <mlpux client uuid>:{
-            "IP":           <mlpux client ip address>,
-            "PORT":         <mlpux client port>,
-            "client_uuid":  <mlpux client ip>,
+            "IP":           < mlpux client ip address >,
+            "PORT":         < mlpux client port >,
+            "client_uuid":  < mlpux client ip >,
             "functions":[
                 { 
-                    "PORT":          < duplicate mlpux client port>,
-                    "client_uuid":   < duplicate mlpux client ip>,
-                    "display":       <display parameters>,
-                    "documentation": <mlpux client function docstring>,
-                    "func_key":      <mlpux client function func_key>,
-                    "func_name":     <mlpux client function name>,
-                    "func_scope":    <mlpux client function scope: either: <file> or <module dir>.<file>,
-                    "func_uuid":     <mlpux client function uuid (currently func_key>,
-                    "signature":     <mlpux stringified signature>,
+                    "PORT":          < duplicate mlpux client port >,
+                    "client_uuid":   < duplicate mlpux client ip >,
+                    "display":       < display parameters >,
+                    "documentation": < mlpux client function docstring >,
+                    "func_key":      < mlpux client function func_key >,
+                    "func_name":     < mlpux client function name >,
+                    "func_scope":    < mlpux client function scope: either: < file > or < module dir >.< file >,
+                    "func_uuid":     < mlpux client function uuid (currently func_key >,
+                    "signature":     < mlpux stringified signature >,
                     "parameters":[
                         {
-                            "annotation":    <parameter annotation >,
-                            "default_value": <parameter default value, or None>,
-                            "name":          <parameter name>,
-                            "param_gui":     <dict of gui parametrs>,
-                            "position":      <int referring to param position in function signature> ,
-                            "type":          <"standard", "keyword", or "positional">,
+                            "annotation":    < parameter annotation  >,
+                            "default_value": < parameter default value, or None >,
+                            "name":          < parameter name >,
+                            "param_gui":     < dict of gui parametrs >,
+                            "position":      < int referring to param position in function signature > ,
+                            "type":          <"standard", "keyword", or "positional" >,
                         },
                         {...}, # for all parameters in the funciton signature
                     ]
@@ -121,19 +122,32 @@ def process_output(data):
     returns exception message if data cannot be json serialized.
     returns jsonified data otherwise.
     """
-    try:
-        return flask.jsonify(data)
-    except Exception as e:
-        return flask.jsonify({"error":"flask.jsonify failed with data:{}".format(data)})
+    
+    if data['display'] == 'plot':
+        lock = Lock()
+        x = data['x']
+        y = data['y']
+
+        with lock:
+            fig, ax = plt.subplots()
+            ax.plot(x, y)
+        try:
+            data['plot_soup'] = mpld3.fig_to_html(fig)
+            return flask.jsonify(data)
+        except Exception as e:
+            return flask.jsonify({'error':"couldn't plot data: {}, {}, exception: {}".format(repr(x), repr(y), e)})
+    else:
+        try:
+            return flask.jsonify(data)
+        except Exception as e:
+            return flask.jsonify({"error":"flask.jsonify failed with data:{}".format(data)})
 
 # FLASK APPLICATION ROUTES ####################################################
-
 @app.route('/test_plot',methods=['GET'])
 def test_plot():
-    from threading import Lock
     lock = Lock()
     x = range(100)
-    y = [a * 2 + random.randint(-20, 20) for a in x]
+    y = [a**2 for a in x]
     with lock:
         fig, ax = plt.subplots()
         ax.plot(x, y)

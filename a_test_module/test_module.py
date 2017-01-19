@@ -29,7 +29,7 @@ def make_2D_data(x_min, x_max, num, ret_type='tuple', func=np.sin):
     y = func(x)
 
     if ret_type == 'tuple':
-        return x, y
+        return list(x),list(y)
     if ret_type == 'dict':
         return {'x':list(x), 'y':list(y) }
     else:
