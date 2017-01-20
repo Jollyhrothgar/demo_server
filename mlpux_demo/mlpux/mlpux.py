@@ -322,16 +322,17 @@ def generate_function_entry(func):
             }
     return func_key, parsed
 
-def wait_for_demo_server_discovery(seconds=5):
+def wait_for_demo_server_discovery(wait_seconds=60):
     """
     Waits for discovery service to update the value of _DEMO_SERVER_IP.
     """
     global _DEMO_SERVER_IP
+    seconds = 0.
     while not _DEMO_SERVER_IP:
         wait_interval = 0.25
         time.sleep(wait_interval)
         seconds += wait_interval
-        if seconds > 5:
+        if seconds > wait_seconds:
             # Use default for local running
             #print("WAITED FOR {} SECONDS AND NO DISCOVERY. USING DEFAULT ADDRESS FOR DEMO SERVER: 0.0.0.0".format(seconds), file=sys.stderr)
             _DEMO_SERVER_IP = '0.0.0.0'
@@ -367,7 +368,7 @@ def update_demo_server(func_key):
     # else:
         #print("IS MLPUX SERVER THREAD RUNNING: ", _app_thread.isAlive(), file=sys.stderr)
     
-    wait_for_demo_server_discovery(seconds=5)
+    wait_for_demo_server_discovery(wait_seconds=60)
     if not _DEMO_SERVER_IP:
         # Demo server was not found with the discovery service.
         #print("DEMO SERVICE WAS NOT DISCOVERED, REQUESTS MUST BE SENT TO:  {}:{}".format(_MLPUX_IP_ADDRESS,_MLPUX_PORT), file=sys.stderr)
