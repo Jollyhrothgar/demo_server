@@ -38,7 +38,7 @@ from formencode.variabledecode import variable_encode
 discovery.discoverable(service_name="demo server")
 HOSTNAME = '0.0.0.0'
 GITLAB_SERVER = '192.168.0.125'
-PORT = 5002 # switch to 80 for deployment
+PORT = 80 # switch to 80 for deployment
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
 DEMO_DIR = os.path.join(os.path.dirname(__file__),'demos')

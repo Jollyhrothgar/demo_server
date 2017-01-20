@@ -27,7 +27,7 @@ import discovery
 
 # GLOBALS #####################################################################
 
-_DEMO_SERVER_PORT = 5002
+_DEMO_SERVER_PORT = 80
 _DEMO_SERVER_IP = False
 def set_ip(ip):
     """
