@@ -267,6 +267,9 @@ def generate_func_identifiers(func):
         func_scope = module_file
     else:
         func_scope = module_folder + "." + module_file
+
+    if len(func_scope) > 1 and func_scope[0] == '.':
+        func_scope = func_scope[1:]
     func_key = func_scope + "." + func_name
     return func_key, func_scope, func_name
 
