@@ -171,12 +171,14 @@ def favicon():
 
 @app.route('/webhook', methods=['GET','POST','TCP'])
 def webhook():
-    recreate_demos()
-    # For individual projects which are each cloned to demos
-    # data = flask.request.json
-    # recreate_demo(data['repository']['name'])
-    # print("webhook:", json.dumps(data,indent=2) ,"end webhook.", file=sys.stderr)
-    return ""
+    if os.path.isdir(DEMO_DIR):
+        print("Removing Demo Area: {}".format(DEMO_DIR), file=sys.stderr)
+        shutil.rmtree(DEMO_DIR)
+    print("Creating Demo Area", file=sys.stderr)
+    
+    os.system('git clone http://{}/demo_framework/demos.git'.format(GITLAB_SERVER))
+    os.system('./deploy.sh')
+    return "OK"
 
 @app.route('/')
 def index():
@@ -401,59 +403,6 @@ def lookup_function_name(client_uuid, func_key, mlpux_instances):
             return func_name
     print("ERROR: function {} does not exist for client {}".format(func_name,client_uuid), file=sys.stderr)
     return func_name
-
-def git_cmd(*args):
-    """
-    Take a comma separated list of arguments and pass to git in shell subprocess
-    """
-    return subprocess.check_output(['git']+list(args))
-
-# all demos live in one repo
-def recreate_demo():
-    if os.path.isdir('{}/{}'.format(DEMO_DIR, project_name)):
-        print("Removing Demo Area: {}/{}".format(DEMO_DIR, project_name), file=sys.stderr)
-        shutil.rmtree('{}/{}'.format(DEMO_DIR, project_name))
-    print("Creating Demo Area", file=sys.stderr)
-    git_cmd('clone', 'http://{}/demos'.format(GITLAB_SERVER))
-
-    # Deploy MLPUX Demos
-    subprocess.check_output(['./deploy.sh'])
-    return
-
-# used for when each demo had its own repo
-# def recreate_demo(project_name):
-    # if os.path.isdir('{}/{}'.format(DEMO_DIR, project_name)):
-        # print("Removing Demo Area: {}/{}".format(DEMO_DIR, project_name), file=sys.stderr)
-        # shutil.rmtree('{}/{}'.format(DEMO_DIR, project_name))
-    # print("Creating Demo Area", file=sys.stderr)
-    # git_cmd('clone', 'http://{}/demos/{}'.format(GITLAB_SERVER, project_name), '{}/{}'.format(DEMO_DIR, project_name))
-    # open('{}/__init__.py'.format(DEMO_DIR),'a').close()
-
-    # # example - we can import everything, but we still don't have access to the output
-    # # of mlpux.build_ui decorator. 
-    # exec("import demos.test_module.test_module as {}".format(project_name))
-    # # for i in dir(project_name):
-        # # print(i, file=sys.stderr)
-    # stuff = eval("{}.no_args()".format(project_name))
-    # print(stuff, file=sys.stderr)
-    # return
-# def get_demos():
-    # """
-    # Uses the GitLab API to get a full repository listing and extract the projects
-    # which belong to the demos group.
-    # """
-    # global demos
-    # all_projects = json.loads(urlopen(API_URL).read().decode())
-    # for project in all_projects:
-        # if project['namespace']['name'] == 'demos':
-            # tokens = project['name_with_namespace'].split()
-            # demos.append(tokens[2]) # third token is project name
-            # print("DEMO FOUND: ", project['path_with_namespace'], file=sys.stderr)
-    # for demo in demos:
-        # recreate_demo(demo)
-    # return
-
-
 # END HELPER FUNCTIONS ########################################################
 
 # UNIT TESTS ##################################################################

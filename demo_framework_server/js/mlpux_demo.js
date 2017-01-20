@@ -88,6 +88,9 @@ function getDemos(){
         contentType : "application/json",
         success : function(data) {
             console.log("Requested Demo List: ", data);
+            if (data.length == 0){
+                return
+            } 
             var demo_executable = $('<table>');
             demo_executable.attr('id',"demo_executable")
             demo_executable.attr('align',"center");
