@@ -17,6 +17,7 @@ import sys
 from formencode.variabledecode import variable_decode
 from formencode.variabledecode import variable_encode
 
+import pandas as pd
 import numpy as np
 from math import fabs
 
@@ -615,19 +616,87 @@ def execute_function():
     out = process_output(result)
     return flask.jsonify(out)
 
-def plotify_data(data):
-    pass
+def plotify(data):
+    """
+    Attempts to split data into two arrays which can be plotted.
+    """
 
-def tabify_data(data):
-    pass
+    out = {
+        'display':'plot',
+        'x':None,
+        'y':None,
+        'z':None,
+        'plot_kwargs':None, # parse into matplotlib plot command
+        'msg':'success'
+    }
+    if not hasattr(data,'__iter__'):
+        raise ValueError("Plottable data must be iterable. Exception: {}".format(e))
 
-def mapify_data(data):
+    # Check data shape for instance like data = x:list, y:list, z:list
+    data_shape = np.shape(np.array(data))
+    if data_shape[0] in [1,2,3]:
+        print(data_shape)
+        if len(data_shape) != 1:
+            lengths = [len(item) for item in data]
+            for length in lengths :
+                if length != lengths[0]:
+                    raise ValueError("Data x, y, and z values must have same length (lengths: {}), data:{}".format(lengths, repr(data)))
+        if len(data_shape) == 1:
+            x = np.array(data)   
+            if not np.issubdtype(x.dtype, np.number):
+                raise ValueError('Data set is not numeric, and cannot be plotted, data: {}'.repr(data))
+            y = np.arange(0,x.size)
+            out['x'] = x.tolist()
+            out['y'] = y.tolist()
+            return out
+        else:
+            x = np.array(data[0])
+            if not np.issubdtype(x.dtype, np.number):
+                raise ValueError('Data set is not numeric, and cannot be plotted, data: {}'.repr(data))
+            y = np.array(data[1])
+            if not np.issubdtype(x.dtype, np.number):
+                raise ValueError('Data set is not numeric, and cannot be plotted, data: {}'.repr(data))
+            out['x'] = x.tolist()
+            out['y'] = y.tolist()
+            return out
+            # TODO special case for z: could be RGB, could be a point, etc.
+    return out
+
+
+def tabify(data):
+    """
+    Attempts to display data in a nicely formatted pandas dataframe
+    """ 
+    out = {
+        'display':'table',
+        'msg':'success',
+        'table_soup':None
+    }
+    try:
+        out['table_soup'] = pd.DataFrame(data).to_html()
+        return out
+    except Exception as e:
+        raise ValueError("data can't be displayed as table. Data: {}, exception: {}".format(repr(data), e))
+    try:
+        out['table_soup'] = pd.DataFrame({0:item for item in data }).to_html()
+        return out
+    except Exception as e:
+        raise ValueError("data can't be displayed as table. Data: {}, exception: {}".format(repr(data), e))
+
+    try:
+        out['table_soup'] = pd.DataFrame({ i:{k:data[k]} for i,k in enumerate(data.keys())}).to_html()
+        return out
+    except Exception as e:
+        raise ValueError("data can't be displayed as table. Data: {}, exception: {}".format(repr(data), e))
+
+    return out
+
+def mapify(data):
     """
     Returns a list of GPS coordinates and central area
 
     Calculates center as average, as points are expected to be closely clustered.
     """
-    print("Testing for map-like-data", file=sys.stderr)
     output = {
         'msg':'success',
         'center':None,
@@ -671,12 +740,25 @@ def process_output(data):
 
     out = {'msg':'success', 'display':'plain', 'result':data}
 
+    print("Testing for map-like-data", file=sys.stderr)
     try:
-        out = mapify_data(data)
-        return dict(out)
+        out = mapify(data)
+        return out
     except Exception as e:
         print("Data was not mappable {}, Exception: {}".format(data,e),file=sys.stderr)
 
-    # try/except each data type
+    print("Testing for plot-like data", file=sys.stderr)
+    try:
+        out = plotify(data)
+        return out
+    except Exception as e:
+        print("Data was not plottable {}, Exception: {}".format(data,e, file=sys.stderr))
 
-    return dict(out)
+    print("checking if data can be drawn on a table", file=sys.stderr)
+    try:
+        out = tabify(data)
+        return out 
+    except Exception as e:
+        print("Data was not able to be displated in a Pandas DataFrame, data {}, Exception {}".format(data, e, file=sys.stderr))
+    
+    return out

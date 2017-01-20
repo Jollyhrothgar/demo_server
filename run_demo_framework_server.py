@@ -122,7 +122,6 @@ def process_output(data):
     returns exception message if data cannot be json serialized.
     returns jsonified data otherwise.
     """
-    
     if data['display'] == 'plot':
         lock = Lock()
         x = data['x']
