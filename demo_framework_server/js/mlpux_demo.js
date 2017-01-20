@@ -55,6 +55,8 @@ function plotPoints(center, coordinates){
 
 function clearDemos(){
     $('#demo_list_div').html('');
+    $('#demo_executables').html('');
+    $('#demo_selector_div').html('');
     $('#demo_client_session_div').html('');
     $('#demo_title').html('');
     $('#demo_title_divider').html('');
@@ -67,6 +69,17 @@ function clearDemos(){
     $("#execute_demo").html('');
 }
 
+function showDemo(func_scope){
+    $('.hidable').each(function (index) {
+        //console.log(index, this);
+        $(this).hide();
+        if($(this).attr('data-func-scope') == func_scope )  {
+            $(this).show();
+        }
+    });
+    console.log($(".hidable"));
+}
+
 function getDemos(){
     clearDemos();
     $.ajax({
@@ -75,34 +88,81 @@ function getDemos(){
         contentType : "application/json",
         success : function(data) {
             console.log("Requested Demo List: ", data);
-                var demo_list = $('<table id="demo_list" align="center" width="85%" class="spacedTable">')
-                $('#demo_list_div').html('') // this resets anything already in the div
-                demo_list.append(
+            var demo_executable = $('<table>');
+            demo_executable.attr('id',"demo_executable")
+            demo_executable.attr('align',"center");
+            demo_executable.attr('width',"85%");
+            demo_executable.addClass("spacedTable");
+            demo_executable.attr('data-func-scope',data[0]['func_scope']);
+            $('#demo_executables').html('') // this resets anything already in the div
+            var header_table = {};
+            for(var i = 0; i < data.length; i++){
+                console.log(data[i]);
+                var id = "func_"+data[i]['func_key'];
+                var button = $('<br><a>');
+                header_table[data[i]['func_scope']] = { 'func_scope':data[i]['func_scope'], 'IP':data[i]['IP'], 'PORT':data[i]['PORT'] };
+                button.attr('href','#client_session');
+                button.attr('data-func-key',data[i]['func_key']);
+                button.attr('data-client-uuid',data[i]['client_uuid']);
+                button.attr('id',id);
+                button.attr('type','button');
+                button.addClass('btn');
+                button.addClass('page-scroll');
+                button.addClass('btn-primary');
+                button.attr('onclick','showFunction(\''+id+'\')');
+                button.append('Select');
+
+                var row = $('<tr>').append(
+                    $('<td>').append(button),
+                    $('<td>').text(data[i]['func_scope']),
+                    $('<td>').text(data[i]['func_name']),
+                    $('<td>').text(data[i]['IP']),
+                    $('<td>').text(data[i]['PORT'])
+                );
+                row.addClass('hidable');
+                row.attr('data-func-scope',data[i]['func_scope']);
+                demo_executable.append(row);
+            }
+            $('#demo_executables').append(demo_executable);
+
+            var demo_selector = $('<table>');
+            demo_selector.attr('id','demo_selector');
+            demo_selector.attr('align','center');
+            demo_selector.attr('width','85%');
+            demo_selector.addClass('spacedTable');
+            demo_selector.append(
+                $('<tr>').append(
+                    $('<th>').text(''),
+                    $('<th>').text('Module'),
+                    $('<th>').text('IP'),
+                    $('<th>').text('PORT')
+                )
+            );
+
+            for(var func_scope in header_table){
+                var demo_button = $('<br><a>');
+                demo_button.attr('id','demo_show_button');
+                demo_button.attr('type','button');
+                demo_button.addClass('btn');
+                demo_button.addClass('btn-primary');
+                demo_button.attr('onclick','showDemo(\''+func_scope+'\')');
+                demo_button.append('Show');
+                demo_selector.append(
                     $('<tr>').append(
-                        $('<th>').text(''),
-                        $('<th>').text('Module'),
-                        $('<th>').text('Demo Name'),
-                        $('<th>').text('IP'),
-                        $('<th>').text('PORT')
+                        $('<td>').append(demo_button),
+                        $('<td>').append(func_scope),
+                        $('<td>').append(header_table[func_scope]['IP']),
+                        $('<td>').append(header_table[func_scope]['PORT'])
                     )
                 );
-                for(var i = 0; i < data.length; i++){
-                    console.log(data[i]);
-                    var id = "func_"+data[i]['func_key'];
-                    demo_list.append(
-                        $('<tr>').append(
-                            $('<td>').html('<br><a href="#client_session" data-func-key="'+data[i]['func_key']+'" data-client-uuid="'+data[i]['client_uuid']+'" id="'+id+'" type="button" class="btn page-scroll btn-primary page-scroll" onclick="showFunction(\''+id+'\')"> Show </a><br>'),
-                            $('<td>').text(data[i]['func_scope']),
-                            $('<td>').text(data[i]['func_name']),
-                            $('<td>').text(data[i]['IP']),
-                            $('<td>').text(data[i]['PORT'])
-                        )
-                    );
-                }
-                $('#demo_list_div').append(demo_list);
             }
+            $("#demo_selector_div").append(demo_selector);
+            $('.hidable').each(function (index) {
+                //console.log(index, this);
+                $(this).hide();
+            });
         }
-    );
+    });
 }
 
 // func_key has css elements in the id such as '.', so we must escape it to 
@@ -199,6 +259,10 @@ function showFunction(element_id){
     console.log("func_key",func_key);
     console.log("Reqesting function info from client id:", client_uuid);
     console.log("Function id: ", func_key);
+
+    // Calling showDemo with null ensures nothing is matched and therefore the
+    // table is hidden.
+    showDemo(null);
 
     $('#demo_title_divider').html('<hr>');
     $('#demo_client_inputs').html('');
