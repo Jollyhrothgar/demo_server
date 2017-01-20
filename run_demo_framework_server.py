@@ -201,7 +201,7 @@ def request_demo_list():
 
     # Remove dead clients
     for client_uuid in dead_clients:
-        print ("LOST CONTACT WITH", mlpux_instances['client_uuid'], "REMOVING")
+        print ("LOST CONTACT WITH", mlpux_instances['client_uuid'], "REMOVING", file=sys.stderr)
         del mlpux_instances[client_uuid]
 
     # Now that we've pruned the dead stuff, we may proceed.

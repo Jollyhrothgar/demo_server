@@ -362,34 +362,38 @@ function sendFunctionArguments(){
         data:payload,
         success:function(data){
             console.log("RESPONSE",data);
-            if(data['msg'] == 'success'){
-                if ( data.hasOwnProperty('display') ){
-                    if( data['display'] == 'map' ) {
-                        console.log('making a map');
-                        $("#demo_results").append("See the map!");
-                        plotPoints(data['center'],data['points']);
-                        $('html,body').animate({scrollTop:$('#location_map').offset().top}, 'slow');
-                    } else if (data['display'] == 'plot') {
-                        console.log('making a plot');
-                        $("#demo_results").append(data['plot_soup']);
-                        //$("#demo_results").html(data);
+            if( data.hasOwnProperty('msg') ){
+                if (data['msg'] == 'success') {
+                    if ( data.hasOwnProperty('display') ){
+                        if( data['display'] == 'map' ) {
+                            console.log('making a map');
+                            $("#demo_results").append("See the map!");
+                            plotPoints(data['center'],data['points']);
+                            $('html,body').animate({scrollTop:$('#location_map').offset().top}, 'slow');
+                        } else if (data['display'] == 'plot') {
+                            console.log('making a plot');
+                            $("#demo_results").append(data['plot_soup']);
+                            //$("#demo_results").html(data);
 
-                    } else if (data['display'] == 'table'){
-                        console.log('making a table');
-                        $("#demo_results").append(data['table_soup']);
+                        } else if (data['display'] == 'table'){
+                            console.log('making a table');
+                            $("#demo_results").append(data['table_soup']);
 
-                    } else if (data['display'] == 'plain') {
-                        console.log('dumping json');
-                        var plain_display = $('<pre>').append(
-                            $('<code>').append(JSON.stringify(data,null,4)
-                            )
-                        );
-                        $("#demo_results").append(plain_display);
+                        } else if (data['display'] == 'plain') {
+                            console.log('dumping json');
+                            var plain_display = $('<pre>').append(
+                                $('<code>').append(JSON.stringify(data,null,4)
+                                )
+                            );
+                            $("#demo_results").append(plain_display);
+                        }
                     }
                 }
             } else if( data.hasOwnProperty('error') ){
-                var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
-                $("#demo_results").append(result['error']);
+                console.log("ERROR HERE");
+                // TODO: Figure out why this error doesn't shoe up
+                //var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
+                //$("#demo_results").append(result);
             } else {
                 console.log('UNHANDLED DISPLAY OUTPUT');
                 var result = $('<h2>').append(JSON.stringify(data,null,4));
@@ -399,7 +403,7 @@ function sendFunctionArguments(){
         },
         error:function(data){
             console.log("ERROR WITH EXECUTION");
-                $("#demo_results").append("EXECUTION ERROR - AJAX REQUEST FAILED");
+            $("#demo_results").append("EXECUTION ERROR - AJAX REQUEST FAILED");
         }
     });
 }
