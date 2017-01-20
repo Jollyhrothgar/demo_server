@@ -592,21 +592,21 @@ def execute_function():
         try:
             result = callback(*args,**kwargs) 
         except Exception as e:
-            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...]&A=a&B=b&... (positional and keyword)".format(e,func_key,func_args)}
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...]&A=a&B=b&... (positional and keyword)".format(e,func_key,"args: "+str(repr(args))+" kwargs: "+str(repr(kwargs)))}
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
     elif len(args) > 0 and len(kwargs.keys()) == 0:
         try:    
             result = callback(*args) 
         except Exception as e:
-            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...] (positional only)".format(e, func_key,func_args)}
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?args=[x,y,z...] (positional only)".format(e, func_key,"args: "+str(repr(args))+" kwargs: "+str(repr(kwargs)))}
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
     elif len(args) == 0 and len(kwargs.keys()) > 0:
         try:
             result = callback(**kwargs)
         except Exception as e:
-            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?X=x&Y=y&Z=z... (keyword only) ".format(e, func_key,func_args)}
+            msg = {"error":"Execution endpoint exception: {}. Tried {} with args {}. Request endpoint type: endpoint/func?X=x&Y=y&Z=z... (keyword only) ".format(e, func_key,"args: "+str(repr(args))+" kwargs: "+str(repr(kwargs)))}
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
     elif len(args) == 0 and len(kwargs.keys()) == 0:

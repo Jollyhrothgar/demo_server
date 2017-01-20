@@ -91,13 +91,13 @@ def check_up(client_uuid):
     """
     checks for whether or not attached mlpux clients are alive
     """
-    # global mlpux_instances
-    # try:
-        # ip = mlpux_instances[client_uuid]['IP']
-    # except:
-        # for key in mlpux_instances.keys():
-            # print(client_uuid,key, file=sys.stderr)
-
+    global mlpux_instances
+    try:
+        ip = mlpux_instances[client_uuid]['IP']
+        port = mlpux_instances[client_uuid]['PORT']
+        r = requests.get(url="http://{}:{}/test_up".format(ip,port))
+    except:
+        return False
     return True
 
 def print_config():
@@ -122,6 +122,9 @@ def process_output(data):
     returns exception message if data cannot be json serialized.
     returns jsonified data otherwise.
     """
+    if 'error' in data:
+        return flask.jsonify(data)
+
     if data['display'] == 'plot':
         lock = Lock()
         x = data['x']
@@ -201,7 +204,7 @@ def request_demo_list():
 
     # Remove dead clients
     for client_uuid in dead_clients:
-        print ("LOST CONTACT WITH", mlpux_instances['client_uuid'], "REMOVING", file=sys.stderr)
+        print ("LOST CONTACT WITH", mlpux_instances[client_uuid]['IP'],':',mlpux_instances[client_uuid]['PORT'], "REMOVING", file=sys.stderr)
         del mlpux_instances[client_uuid]
 
     # Now that we've pruned the dead stuff, we may proceed.
@@ -371,7 +374,7 @@ def execute(func_scope, func_name):
                     print('BINARY DATA: ', send_data, file=sys.stderr) 
                     r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
                     print("SENT TO URL",r.url, file=sys.stderr)
-                    print("Received response from client", file=sys.stderr)
+                    print("Received response from client {}".format(repr(r.json())), file=sys.stderr)
                     return process_output(r.json())
                 except Exception as e:
                     return flask.jsonify({'error':'problem communicating with mlpux client {}:{}. Exception: {}'.format(mlpux_ip,mlpux_port,e)})

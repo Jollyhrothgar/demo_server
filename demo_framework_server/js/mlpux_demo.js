@@ -276,6 +276,7 @@ function showFunction(element_id){
             $("#execute_demo").append(plot_something);
         },
         error:function(data){
+            getDemos();
             $('#demo_client_message').html('<h1> CONNECTION FAILED </h1>');
         }
     });
@@ -391,9 +392,10 @@ function sendFunctionArguments(){
                 }
             } else if( data.hasOwnProperty('error') ){
                 console.log("ERROR HERE");
-                // TODO: Figure out why this error doesn't shoe up
-                //var result = $('<h2>').text(JSON.stringify(data['error'],null,4));
-                //$("#demo_results").append(result);
+                getDemos();
+                error_msg = $('<h2>').append("Problem with execution");
+                error_msg.append(data['error']);
+                $("#demo_results").append($('<h2>').append(error_msg));
             } else {
                 console.log('UNHANDLED DISPLAY OUTPUT');
                 var result = $('<h2>').append(JSON.stringify(data,null,4));
