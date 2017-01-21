@@ -263,10 +263,17 @@ def generate_func_identifiers(func):
     #print(type(module_folder), file=sys.stderr)
     
     func_scope = ""
-    if module_folder is None:
-        func_scope = module_file
-    else:
-        func_scope = module_folder + "." + module_file
+    abs_file = inspect.getabsfile(func) 
+    path_list = abs_file.split(os.sep)
+    
+    # Rigel wants func_scope to be the demo directory.
+    try:
+        func_scope = path_list[-2]
+    except:
+        if module_folder is None:
+            func_scope = module_file
+        else:
+            func_scope = module_folder + "." + module_file
 
     if len(func_scope) > 1 and func_scope[0] == '.':
         func_scope = func_scope[1:]
@@ -520,8 +527,6 @@ class Plot2D:
         def wrapped(*inner_args, **inner_kwargs):
             return func(*inner_args, **inner_kwargs)
         return {'func':wrapped, 'key':func_key}
-
-
 
 # Base Widget
 class Demo:
