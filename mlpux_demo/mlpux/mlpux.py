@@ -44,6 +44,34 @@ _MLPUX_IP_ADDRESS = '0.0.0.0' # always run locally
 _UUID = str(uuid.uuid4())
 
 _function_registry = {}
+### Structure of _function_registry ###
+#_function_registry = {
+#    < func_key: lookup key for function, defined in generate_func_identifiers() >:{
+#        'callback':func,
+#        'info':{
+#            'display':None,
+#            'parameters':[
+#                {
+#                        "name":None,
+#                        "type":None,
+#                        "position":position,
+#                        "default_value":None,
+#                        "annotation":None,
+#                        "param_gui":None
+#                },
+#                {},
+#                ...
+#            ] ,
+#            'documentation':< python function doc string > ,
+#            'func_name':< name of python function >,
+#            'signature':< the stringified signature of a function >,
+#            'func_uuid':< semi-unique indentifier for functions > 
+#            'func_scope':< in order of prefernece: directory of demo or the filename containing the decorated function >
+#            'func_key':< semi-unique function string identifier, equal to func_scope + '.' + func_name > 
+#        }
+#    }
+#}
+####
 app = flask.Flask(__name__)
 _kill_server = threading.Event()
 _app_thread = None

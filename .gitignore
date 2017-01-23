@@ -10,3 +10,4 @@ server.log
 tests.log
 .ipynb_checkpoints*
 notebook
+testing
