@@ -527,12 +527,15 @@ class Slider:
 class Plot2D:
     """
     Decorate a function to try to plot its output on a 2D
+    style = scatter
+    style = line
+    style = bar
     """
     global _function_registry
     def __init__(self, title, x_domain_pos=0, y_domain_pos=1, style='scatter' ):
         self.display = { 
                 'plot2d':{
-                    'style':style,
+                    'style':style, 
                     'x_domain_pos':x_domain_pos,
                     'y_domain_pos':y_domain_pos,
                     'title':title,
@@ -650,10 +653,10 @@ def execute_function():
             print(msg,file=sys.stderr)
             return flask.jsonify(msg)
 
-    out = process_output(result)
+    out = process_output(result, func_key)
     return flask.jsonify(out)
 
-def plotify(data):
+def plotify(data, func_key):
     """
     Attempts to split data into two arrays which can be plotted.
     """
@@ -663,7 +666,6 @@ def plotify(data):
         'x':None,
         'y':None,
         'z':None,
-        'plot_kwargs':None, # parse into matplotlib plot command
         'msg':'success'
     }
     if not hasattr(data,'__iter__'):
@@ -700,7 +702,7 @@ def plotify(data):
     return out
 
 
-def tabify(data):
+def tabify(data, func_key):
     """
     Attempts to display data in a nicely formatted pandas dataframe
     """ 
@@ -728,7 +730,7 @@ def tabify(data):
 
     return out
 
-def mapify(data):
+def mapify(data, func_key):
     """
     Returns a list of GPS coordinates and central area
 
@@ -769,7 +771,7 @@ def mapify(data):
     print("Successfuly parsed map-like data", file=sys.stderr)
     return output
 
-def process_output(data):
+def process_output(data, func_key):
     """
     data guaranteed to be successfully resultant from a funciton execution.
     Here, we transform the data to something that can be shown on the front-end.
@@ -779,21 +781,21 @@ def process_output(data):
 
     print("Testing for map-like-data", file=sys.stderr)
     try:
-        out = mapify(data)
+        out = mapify(data, func_key)
         return out
     except Exception as e:
         print("Data was not mappable {}, Exception: {}".format(data,e),file=sys.stderr)
 
     print("Testing for plot-like data", file=sys.stderr)
     try:
-        out = plotify(data)
+        out = plotify(data, func_key)
         return out
     except Exception as e:
         print("Data was not plottable {}, Exception: {}".format(data,e, file=sys.stderr))
 
     print("checking if data can be drawn on a table", file=sys.stderr)
     try:
-        out = tabify(data)
+        out = tabify(data, func_key)
         return out 
     except Exception as e:
         print("Data was not able to be displated in a Pandas DataFrame, data {}, Exception {}".format(data, e, file=sys.stderr))
