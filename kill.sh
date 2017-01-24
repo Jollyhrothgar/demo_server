@@ -1,11 +1,9 @@
 #!/bin/bash
 
 #Kill all main.py running on the system
-./kill.sh
-
-#Iterate over every directory in demos area
-for demo in `find demos -maxdepth 2 | grep 'main.py'`; do
-	python $demo &
+for process in `ps aux | grep '[m]ain.py' | awk '{print $2}'`; do
+	echo "Killing process: $process"
+	kill $process
 done
 
 # This is a fancier version for when/if demo modules will support
