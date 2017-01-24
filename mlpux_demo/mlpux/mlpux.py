@@ -532,12 +532,10 @@ class Plot2D:
     style = bar
     """
     global _function_registry
-    def __init__(self, title, x_domain_pos=0, y_domain_pos=1, style='scatter' ):
+    def __init__(self, title="", style='scatter' ):
         self.display = { 
                 'plot2d':{
                     'style':style, 
-                    'x_domain_pos':x_domain_pos,
-                    'y_domain_pos':y_domain_pos,
                     'title':title,
                     }
                 }

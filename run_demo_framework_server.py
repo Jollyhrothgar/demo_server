@@ -115,9 +115,21 @@ def print_config():
     print('API_TOKEN : {}'.format(API_TOKEN), file=sys.stderr)
     print('API_URL : {}'.format(API_URL), file=sys.stderr)
     print(80*"=", file=sys.stderr)
+def get_function(client_uuid, func_key):
+    """
 
+    """
+    try:
+        instance = mlpux_instances[client_uuid]
+        for function in instance['functions']:
+            if function["func_key"] == func_key:
+                return function
+        return None
+    except: 
+        return None
+    return None
 
-def process_output(data):
+def process_output(data, client_uuid, func_key):
     """
     returns exception message if data cannot be json serialized.
     returns jsonified data otherwise.
@@ -132,6 +144,8 @@ def process_output(data):
 
         with lock:
             fig, ax = plt.subplots()
+            # TODO: get the plot info from mlpux_instances
+            function = get_function(client_uuid, func_key)
             ax.plot(x, y)
         try:
             data['plot_soup'] = mpld3.fig_to_html(fig)
@@ -379,7 +393,7 @@ def execute(func_scope, func_name):
                     r = requests.post(url='http://{}:{}/execute'.format(mlpux_ip,mlpux_port), data=send_data)
                     print("SENT TO URL",r.url, file=sys.stderr)
                     print("Received response from client {}".format(repr(r.json())), file=sys.stderr)
-                    return process_output(r.json())
+                    return process_output(r.json(), client_uuid, func_key)
                 except Exception as e:
                     return flask.jsonify({'error':'problem communicating with mlpux client {}:{}. Exception: {}'.format(mlpux_ip,mlpux_port,e)})
     return flask.jsonify({"error":"No function was found. Function: {}".format(func_key)})
