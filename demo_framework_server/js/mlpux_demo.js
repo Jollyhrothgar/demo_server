@@ -67,6 +67,7 @@ function clearDemos(){
     $("#demo_confirm_exe").html('');
     $("#demo_results").html('');
     $("#execute_demo").html('');
+    $("#location_map").hide();
 }
 
 function showDemo(func_scope){
@@ -434,6 +435,7 @@ function sendFunctionArguments(){
                 if (data['msg'] == 'success') {
                     if ( data.hasOwnProperty('display') ){
                         if( data['display'] == 'map' ) {
+                            $("#location_map").show();
                             console.log('making a map');
                             $("#demo_results").append("See the map!");
                             plotPoints(data['center'],data['points']);
