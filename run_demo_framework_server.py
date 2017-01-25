@@ -369,8 +369,6 @@ def execute(func_scope, func_name):
         'kwargs':kwargs
     }
     print('PARSED ARGUMENTS {} FOR {}'.format(repr(arguments),func_key),file=sys.stderr)
-    print("Trying to execute:{}",func_key
-
     for client_uuid, client in mlpux_instances.items():
         for function in client['functions']:
             if func_key == function['func_key'] and func_name == function['func_name']:
