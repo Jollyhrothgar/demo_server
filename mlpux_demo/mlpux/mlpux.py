@@ -197,7 +197,6 @@ def generate_ui_args(func):
 
         # Skip callable parameters that are default.
         if param["DEFAULT"] and hasattr(v.default,'__call__'):
-                #print("Skipping callable default parameter", file=sys.stderr)
                 continue
         if param["DEFAULT"] is not False:
             ui_param['default_value'] = repr(v.default)
@@ -286,7 +285,7 @@ def generate_func_identifiers(func):
         print("Using UUIDs for func_key, func_scope")
         func_scope = str(uuid.uuid4())
         time.sleep(0.1)
-        func_key = str(uuid.uuid4())
+        func_key = str(uuid.uuid4()) + "." + func_name
         return func_key, func_scope, func_name
     #print(type(module_folder), file=sys.stderr)
     
@@ -568,7 +567,7 @@ class Demo:
         func_key, func_data = generate_function_entry(func)
         if func_key not in _function_registry:
             _function_registry[func_key] = func_data
-        print(self.__class__.__name__, _function_registry[func_key]['callback'], "key", func_key, file=sys.stderr)
+        print("Demo for callback:", _function_registry[func_key]['callback'], "func_key", func_key, file=sys.stderr)
         update_demo_server(func_key)
 
         # Passthrough
