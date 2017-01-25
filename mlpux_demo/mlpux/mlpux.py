@@ -285,7 +285,7 @@ def generate_func_identifiers(func):
         print("Using UUIDs for func_key, func_scope")
         func_scope = str(uuid.uuid4())
         time.sleep(0.1)
-        func_key = str(uuid.uuid4()) + "." + func_name
+        func_key = func_scope + "." + func_name
         return func_key, func_scope, func_name
     #print(type(module_folder), file=sys.stderr)
     

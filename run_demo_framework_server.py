@@ -286,7 +286,6 @@ def register_function():
     client_uuid = _func_data['client_uuid']
     function = None
     if client_uuid not in mlpux_instances:
-
         mlpux_instances[client_uuid] = {
             "IP":ip,
             "PORT":_func_data['PORT'],
@@ -370,6 +369,7 @@ def execute(func_scope, func_name):
         'kwargs':kwargs
     }
     print('PARSED ARGUMENTS {} FOR {}'.format(repr(arguments),func_key),file=sys.stderr)
+    print("Trying to execute:{}",func_key
 
     for client_uuid, client in mlpux_instances.items():
         for function in client['functions']:
@@ -378,15 +378,6 @@ def execute(func_scope, func_name):
                 mlpux_port = mlpux_instances[client_uuid]['PORT']
 
                 send_data = pickle.dumps(arguments,-1)
-                # Check if client is up TODO
-                # try:
-                    # r = requests.get(url='http:{}/{}'.format(mlpux_ip, mlpux_port))
-                # except Exception as e:
-                    # msg = {'error':"MLPUX server seems to be unreachable: {}:{}".format(mlpux_ip,mlpux_port)}
-                    # msg.update({'remove_function':{'func_name':func_name,'func_key':func_key}})
-                    # return flask.jsonify(msg)
-                   
-
                 try:
                     print('POSTING ARGUMENTS {} to mlpux server for {}'.format(repr(arguments),func_key), file=sys.stderr)
                     print('BINARY DATA: ', send_data, file=sys.stderr) 
