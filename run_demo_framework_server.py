@@ -145,9 +145,10 @@ def process_output(data, client_uuid, func_key):
         with lock:
             fig, ax = plt.subplots()
             # TODO: get the plot info from mlpux_instances
+            # TODO: fully mirror _function_registry and mlpux_instances, its stupid to have two slightly separate structures.
             function = get_function(client_uuid, func_key)
-            function['info']['display'] is not None:
-                print("DISPLAY {}".format(repr(function['info']['display'])), file=sys.stderr)
+            if function['display'] is not None:
+                print("DISPLAY {}".format(repr(function['display'])), file=sys.stderr)
             ax.plot(x, y)
         try:
             data['plot_soup'] = mpld3.fig_to_html(fig)
