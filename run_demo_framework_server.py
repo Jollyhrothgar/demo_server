@@ -146,6 +146,8 @@ def process_output(data, client_uuid, func_key):
             fig, ax = plt.subplots()
             # TODO: get the plot info from mlpux_instances
             function = get_function(client_uuid, func_key)
+            function['info']['display'] is not None:
+                print("DISPLAY {}".format(repr(function['info']['display'])), file=sys.stderr)
             ax.plot(x, y)
         try:
             data['plot_soup'] = mpld3.fig_to_html(fig)

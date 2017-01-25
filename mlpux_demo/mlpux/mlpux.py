@@ -426,53 +426,51 @@ def update_demo_server(func_key):
     return 
 
 ### DECORATORS ################################################################
-"""
-Building Your Own Decorators
-
-Input Widget Base:
-class Input:
-    global _function_registry
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
-
-        ### YOUR CODE HERE ###
-        1) Define the necessary information the js front end needs t
- 
-    def __call__(self, *args, **kwargs):
-        func = args[0]['func']
-        func_key = args[0]['key']
-        
-        ### YOUR CODE HERE ###
-        
-
-        # Pass through for the funciton - this never changes.
-        @functools.wraps(func)
-        def wrapped(*inner_args, **inner_kwargs):
-            return func(*inner_args, **inner_kwargs)
-        return {'func':wrapped, 'key':func_key}
-
-
-Output Widget Base:
-# Output Widget
-class Output
-    global _function_registry
-    def __init__(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
- 
-    def __call__(self, *args, **kwargs):
-        func = args[0]['func']
-        func_key = args[0]['key']
-        
-        ### YOUR CODE HERE### 
-        
-        # Pass through for the funciton - this never changes.
-        @functools.wraps(func)
-        def wrapped(*inner_args, **inner_kwargs):
-            return func(*inner_args, **inner_kwargs)
-        return {'func':wrapped, 'key':func_key}
-"""
+# Building Your Own Decorators
+# 
+# Input Widget Base:
+# class Input:
+#     global _function_registry
+#     def __init__(self, *args, **kwargs):
+#         self.args = args
+#         self.kwargs = kwargs
+# 
+#         ### YOUR CODE HERE ###
+#         1) Define the necessary information the js front end needs t
+#  
+#     def __call__(self, *args, **kwargs):
+#         func = args[0]['func']
+#         func_key = args[0]['key']
+#         
+#         ### YOUR CODE HERE ###
+#         
+# 
+#         # Pass through for the funciton - this never changes.
+#         @functools.wraps(func)
+#         def wrapped(*inner_args, **inner_kwargs):
+#             return func(*inner_args, **inner_kwargs)
+#         return {'func':wrapped, 'key':func_key}
+# 
+# 
+# Output Widget Base:
+# # Output Widget
+# class Output
+#     global _function_registry
+#     def __init__(self, *args, **kwargs):
+#         self.args = args
+#         self.kwargs = kwargs
+#  
+#     def __call__(self, *args, **kwargs):
+#         func = args[0]['func']
+#         func_key = args[0]['key']
+#         
+#         ### YOUR CODE HERE### 
+#         
+#         # Pass through for the funciton - this never changes.
+#         @functools.wraps(func)
+#         def wrapped(*inner_args, **inner_kwargs):
+#             return func(*inner_args, **inner_kwargs)
+#         return {'func':wrapped, 'key':func_key}
 
 
 class Interactive:
