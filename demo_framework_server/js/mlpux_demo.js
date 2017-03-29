@@ -297,7 +297,7 @@ function showFunction(element_id){
                 $('<code>').append(JSON.stringify(data,null,4)
                 )
             );
-            $("#demo_client_session_div").append($('<h2 align="center">').html("Infromation Parsed From "+data['func_name']));
+            $("#demo_client_session_div").append($('<h2 align="center">').html("Information parsed from "+data['func_name']));
             $("#demo_client_session_div").append(display_attribs);
             
             var input_form = $('<table id="list_params" align="center" width="85%" class="spacedTable">');
