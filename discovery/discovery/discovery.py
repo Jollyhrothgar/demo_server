@@ -159,8 +159,8 @@ def _sweep_request(msg,port):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ip = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1].split(".")
     print("Searching for services on the {}.{}.X.XXX subnet".format(ip[0],ip[1]))
-    for subnet in range(2):
-        for dest in range(255):
+    for subnet in range(10):
+        for dest in range(30): # max is 255
             ip[2] = str(subnet)
             ip[3] = str(dest+1)
             try:
