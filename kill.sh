@@ -5,8 +5,3 @@ for process in `ps aux | grep '[m]ain.py' | awk '{print $2}'`; do
 	echo "Killing process: $process"
 	kill $process
 done
-
-for process in `ps aux | grep 'run_demo_framework_server.py' | awk '{print $2}'`; do
-	echo "Killing process: $process"
-	kill $process
-done

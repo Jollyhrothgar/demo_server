@@ -37,7 +37,7 @@ from formencode.variabledecode import variable_encode
 # GLOBALS #####################################################################
 discovery.discoverable(service_name="demo server")
 HOSTNAME = '0.0.0.0'
-GITLAB_SERVER = '192.168.0.125'
+GITLAB_SERVER = '192.168.7.4' # now on a static IP
 PORT = 5002 # problem with 80 due to conflict with gitlab server
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
