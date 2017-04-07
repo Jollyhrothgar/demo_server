@@ -274,8 +274,8 @@ def generate_func_identifiers(func):
     # Folder Scope
     try:
         module_folder = os.path.basename(members['__globals__']['__package__'])
-    except AttributeError:
-        module_folder = None
+    except:
+        module_folder = str(uuid.uuid4())
 
     # File Scope
     try:

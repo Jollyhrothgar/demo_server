@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup( 
-    name='Distutils',
+    name='mlpux',
     package_dir = {'':'mlpux'},
     version='0.1.0',
     author='Mike Beaumier',
