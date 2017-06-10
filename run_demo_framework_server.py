@@ -42,9 +42,10 @@ PORT = 5002 # problem with 80 due to conflict with gitlab server
 STATIC = os.path.join(os.path.dirname(__file__),'demo_framework_server')
 TEMPLATES = os.path.join(os.path.dirname(__file__),'demo_framework_server/templates')
 DEMO_DIR = os.path.join(os.path.dirname(__file__),'demos')
-API_TOKEN = '8icMAisLE_cMZZ9v1TtE'
+GOOGLE_MAPS_TOKEN = os.getenv('GOOGLE_MAPS_KEY')
+GITLAB_API_TOKEN = os.getenv('GITLAB_API_TOKEN')
 API_URL = 'http://192.168.0.125/api/v3/projects/all?private_token={}'
-API_URL = API_URL.format(API_TOKEN)
+API_URL = API_URL.format(GITLAB_API_TOKEN)
 app = flask.Flask(__name__, static_folder=STATIC, template_folder=TEMPLATES)
 lock = Lock() # global lock used for plotting (maybe plot with interactive: on)
 
@@ -104,7 +105,7 @@ def print_config():
     """
     prints configuration to console
     """
-    global HOSTNAME, GITLAB_SERVER, PORT, STATIC, TEMPLATES, DEMO_DIR, API_TOKEN, API_URL, API_URL
+    global HOSTNAME, GITLAB_SERVER, PORT, STATIC, TEMPLATES, DEMO_DIR, GITLAB_API_TOKEN, API_URL, API_URL
     print(80*"=", file=sys.stderr)
     print('HOSTNAME : {}'.format(HOSTNAME), file=sys.stderr)
     print('GITLAB_SERVER : {}'.format(GITLAB_SERVER), file=sys.stderr)
@@ -112,7 +113,7 @@ def print_config():
     print('STATIC : {}'.format(STATIC), file=sys.stderr)
     print('TEMPLATES : {}'.format(TEMPLATES), file=sys.stderr)
     print('DEMO_DIR : {}'.format(DEMO_DIR), file=sys.stderr)
-    print('API_TOKEN : {}'.format(API_TOKEN), file=sys.stderr)
+    print('GITLAB_API_TOKEN : {}'.format(GITLAB_API_TOKEN), file=sys.stderr)
     print('API_URL : {}'.format(API_URL), file=sys.stderr)
     print(80*"=", file=sys.stderr)
 def get_function(client_uuid, func_key):
@@ -199,7 +200,8 @@ def webhook():
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html')
+    api_key = GOOGLE_MAPS_TOKEN
+    return flask.render_template(api_key=api_key, 'index.html')
 
 @app.route('/show_mlpux', methods=['GET'])
 def show_mlpux():
